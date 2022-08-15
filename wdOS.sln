@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Core", "..\wdOS.Core\wdOS.Core.csproj", "{694032ED-9067-487A-982C-1CD04D2796AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{694032ED-9067-487A-982C-1CD04D2796AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{694032ED-9067-487A-982C-1CD04D2796AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{694032ED-9067-487A-982C-1CD04D2796AF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{694032ED-9067-487A-982C-1CD04D2796AF}.Debug|x64.Build.0 = Debug|Any CPU
+		{694032ED-9067-487A-982C-1CD04D2796AF}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{694032ED-9067-487A-982C-1CD04D2796AF}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{694032ED-9067-487A-982C-1CD04D2796AF}.Release|x64.ActiveCfg = Release|Any CPU
+		{694032ED-9067-487A-982C-1CD04D2796AF}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96A31AB2-D4ED-4A57-8310-1C0E08B8C02A}
+	EndGlobalSection
+EndGlobal

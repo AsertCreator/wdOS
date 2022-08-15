@@ -1,0 +1,12 @@
+C:\Users\User\source\repos\wdOS\bin\Debug\net5.0\wdOS.deps.json
+C:\Users\User\source\repos\wdOS\bin\Debug\net5.0\wdOS.dll
+C:\Users\User\source\repos\wdOS\bin\Debug\net5.0\wdOS.pdb
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\wdOS.csproj.AssemblyReference.cache
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\wdOS.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\wdOS.AssemblyInfoInputs.cache
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\wdOS.AssemblyInfo.cs
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\wdOS.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\wdOS.dll
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\refint\wdOS.dll
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\wdOS.pdb
+C:\Users\User\source\repos\wdOS\obj\Debug\net5.0\ref\wdOS.dll
