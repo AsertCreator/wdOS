@@ -1,5 +1,5 @@
 # wdOS
-[Cosmos][Cosmos]-based operating system for x86 PCS. Don't even try to ask me about name.
+[Cosmos](https://github.com/CosmosOS/Cosmos)-based operating system for x86 PCS. Don't even try to ask me about name.
 ## Implementation of things
 ### What is implemented
 - Terminal "TShell"
@@ -16,7 +16,7 @@
 **A**: Why not?
 
 **Q**: How?
-**A**: This OS uses [Cosmos][Cosmos] which allows to write OSes on any .NET language
+**A**: This OS uses [Cosmos](https://github.com/CosmosOS/Cosmos) which allows to write OSes on any .NET language
 
 **Q**: Minimum system requirements?
 **RAM**: idk, maybe 64/128 mb
@@ -29,4 +29,3 @@
 
 **Q**: Can i make apps or drivers
 **A**: No
-[Cosmos]: https://github.com/CosmosOS/Cosmos
