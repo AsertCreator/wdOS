@@ -44,13 +44,6 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "Cosmos.Build": {
-              "target": "Package",
-              "version": "[0.0.0-*, )",
-              "noWarn": [
-                "NU1604"
-              ]
-            },
             "Cosmos.Debug.Kernel": {
               "target": "Package",
               "version": "[0.0.0-*, )",

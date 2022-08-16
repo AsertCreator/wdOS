@@ -1,10 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "Y2nrgnBi17PUPEzKh1StucKImsUHEUaP5hcUre2YpPKdBbUhWPaPU+kwMfFyhpdagPfImpuq2mStcDszXcWP0g==",
+  "dgSpecHash": "LJLK8ZKlYvKSiTXAb9SiimhMMozM5m/9eID/e4mtOdiqTcxNbmS30jUN6BtLeAzocyh6Lk8Dk7R6jGozmdppXw==",
   "success": true,
   "projectFilePath": "C:\\Users\\User\\source\\repos\\wdOS\\wdOS.Plugs\\wdOS.Plugs.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\User\\.nuget\\packages\\cosmos.build\\0.1.0-localbuild20220801123940\\cosmos.build.0.1.0-localbuild20220801123940.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\cosmos.common\\0.1.0-localbuild20220801123953\\cosmos.common.0.1.0-localbuild20220801123953.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\cosmos.core\\0.1.0-localbuild20220801123953\\cosmos.core.0.1.0-localbuild20220801123953.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\cosmos.debug.kernel\\0.1.0-localbuild20220801123953\\cosmos.debug.kernel.0.1.0-localbuild20220801123953.nupkg.sha512",

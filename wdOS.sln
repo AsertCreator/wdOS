@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Core", "..\wdOS.Core\wdOS.Core.csproj", "{694032ED-9067-487A-982C-1CD04D2796AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C4054E54-6586-4FCF-BEC5-BA1765E607D4} = {C4054E54-6586-4FCF-BEC5-BA1765E607D4}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wdOS.Plugs", "wdOS.Plugs\wdOS.Plugs.csproj", "{C4054E54-6586-4FCF-BEC5-BA1765E607D4}"
 EndProject
