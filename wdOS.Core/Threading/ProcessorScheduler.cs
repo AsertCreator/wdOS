@@ -36,10 +36,7 @@ namespace wdOS.Core.Threading
                 {
                     // do nothing, its  i d l e  after all
                     Kernel.Log("idle");
-                    while (true)
-                    {
-
-                    }
+                    while (true) { }
                 });
                 PITControl(1);
                 INTs.SetIrqHandler(0, SwitchTask);
@@ -78,12 +75,12 @@ namespace wdOS.Core.Threading
         {
             IOPort counter0 = new IOPort(0x40);
             IOPort cmd = new IOPort(0x43);
-            int divisor = 1193182;
-            cmd.Byte = (0x06 | 0x30);
+            ushort divisor = 0;
+            cmd.Byte = 0x36;
             counter0.Byte = (byte)divisor;
             counter0.Byte = (byte)(divisor >> 8);
             IOPort pA1 = new IOPort(0xA1);
-            IOPort p21 = new IOPort(0x21);
+            IOPort p21 = new IOPort(0xA1);
             pA1.Byte = 0x00;
             p21.Byte = 0x00;
         }
@@ -102,6 +99,8 @@ namespace wdOS.Core.Threading
                 CurrentThread.EBX = context.EBX;
                 CurrentThread.ECX = context.ECX;
                 CurrentThread.EDX = context.EDX;
+                CurrentThread.ESI = context.ESI;
+                CurrentThread.EDI = context.EDI;
             // select next thread
             tryagain:
                 ThreadID++;
@@ -114,13 +113,15 @@ namespace wdOS.Core.Threading
                     CurrentThread.IsRunning = true;
                     NativeSwitch(CurrentThread.EIP,
                         CurrentThread.EAX, CurrentThread.EBX, CurrentThread.ECX, CurrentThread.EDX,
-                        CurrentThread.ESP, CurrentThread.EBP);
+                        CurrentThread.ESP, CurrentThread.EBP, CurrentThread.ESI, CurrentThread.EDI);
                 }
                 else goto tryagain;
             }
         }
+        [PlugMethod(Assembler = typeof(JumpASM))]
+        internal static void JumpTo(uint address) { }
         [PlugMethod(Assembler = typeof(NativeSwitchASM))]
-        internal static void NativeSwitch(uint address, uint eax, uint ebx, uint ecx, uint edx, uint ebp, uint esp) { }
+        internal static void NativeSwitch(uint address, uint eax, uint ebx, uint ecx, uint edx, uint ebp, uint esp, uint esi, uint edi) { }
         [PlugMethod(Assembler = typeof(GetECAddressASM))]
         internal static uint GetECAddress() => 0;
         [Plug(Target = typeof(ProcessorScheduler))]
@@ -128,14 +129,23 @@ namespace wdOS.Core.Threading
         {
             public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
             {
-                new LiteralAssemblerCode("mov edi, [esp + 8]");
                 new LiteralAssemblerCode("mov eax, [esp + 12]");
                 new LiteralAssemblerCode("mov ebx, [esp + 16]");
-                new LiteralAssemblerCode("mov ecx, [esp + 24]");
-                new LiteralAssemblerCode("mov edx, [esp + 32]");
-                new LiteralAssemblerCode("mov ebp, [esp + 36]");
-                new LiteralAssemblerCode("mov esp, [esp + 42]");
-                new LiteralAssemblerCode("jmp dword[edi]");
+                new LiteralAssemblerCode("mov ecx, [esp + 20]");
+                new LiteralAssemblerCode("mov edx, [esp + 24]");
+                new LiteralAssemblerCode("mov ebp, [esp + 28]");
+                new LiteralAssemblerCode("mov esp, [esp + 32]");
+                new LiteralAssemblerCode("mov esi, [esp + 36]");
+                new LiteralAssemblerCode("mov edi, [esp + 40]");
+                new LiteralAssemblerCode("jmp dword[esp + 8]");
+            }
+        }
+        [Plug(Target = typeof(ProcessorScheduler))]
+        internal class JumpASM : AssemblerMethod
+        {
+            public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
+            {
+                new LiteralAssemblerCode("jmp dword[esp + 8]");
             }
         }
         internal static void Dummy() { bool lol = false; if (lol) Thread.ExecuteCode(); }

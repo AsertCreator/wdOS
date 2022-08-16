@@ -25,6 +25,8 @@ namespace wdOS.Core.Threading
         internal uint EBX;
         internal uint ECX;
         internal uint EDX;
+        internal uint ESI;
+        internal uint EDI;
         internal void Wait(int ms)
         {
             Kernel.WaitForSeconds(ms);

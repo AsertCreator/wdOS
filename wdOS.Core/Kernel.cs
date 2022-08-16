@@ -20,6 +20,7 @@ namespace wdOS.Core
         internal static Debugger Debugger;
         internal static CosmosVFS VFS = new();
         internal static Shell ShellToRun = new TShell();
+        internal static List<Application> Applications = new();
         internal static List<KeyboardBase> Keyboards = new();
         internal static List<MouseBase> Mice = new();
         internal static int RestartTimeout = 5;
