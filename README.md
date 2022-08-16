@@ -6,7 +6,7 @@
 - GUI Shell "CShell" (not working)
 - File System Utils (not working)
 ### Currently under development
-- ELF File Parsing and executing
+- Executables Parsing and executing
 - Multithreading
 - Application API
 ### What will be implemented
