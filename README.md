@@ -8,8 +8,8 @@
 ### Currently under development
 - ELF File Parsing and executing
 - Multithreading
-### What will be implemented
 - Application API
+### What will be implemented
 - Driver API
 ## Not Asked Questions
 **Q**: Why?
