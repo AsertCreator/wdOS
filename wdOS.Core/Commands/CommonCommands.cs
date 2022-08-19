@@ -194,4 +194,14 @@ namespace wdOS.Core.Commands
             return 0;
         }
     }
+    internal class ExecuteSWCommand : ConsoleCommand
+    {
+        internal override string Name => "execsw";
+        internal override string ShortDescription => "executes internal shareware(?)";
+        internal override int Execute(string[] args)
+        {
+
+            return 0;
+        }
+    }
 }

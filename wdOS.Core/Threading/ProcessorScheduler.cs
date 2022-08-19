@@ -84,6 +84,12 @@ namespace wdOS.Core.Threading
             pA1.Byte = 0x00;
             p21.Byte = 0x00;
         }
+
+        internal static void JumpTo(int v)
+        {
+            throw new NotImplementedException();
+        }
+
         internal static void SwitchTask(ref INTs.IRQContext context)
         {
             Kernel.Log("Switch!");
@@ -145,7 +151,8 @@ namespace wdOS.Core.Threading
         {
             public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
             {
-                new LiteralAssemblerCode("jmp dword[esp + 8]");
+                XS.Set(XSRegisters.EAX, XSRegisters.ESP, sourceDisplacement: 8);
+                XS.Call(XSRegisters.EAX);
             }
         }
         internal static void Dummy() { bool lol = false; if (lol) Thread.ExecuteCode(); }

@@ -28,7 +28,8 @@ namespace wdOS.Core
         internal const int VersionMinor = 0;
         internal const int VersionPatch = 0;
         internal const bool UseMultiThreading = false;
-        internal const bool UseELFAppParsing = false;
+        internal const bool UseLEFAppParsing = false;
+        internal const bool UsePlainAppParsing = true;
         protected override void BeforeRun()
         {
             Debugger = mDebugger;
@@ -43,7 +44,7 @@ namespace wdOS.Core
                     ProcessorScheduler.StartMultiThreading();
                     Log("MT is compatible!");
                 }
-                if (UseELFAppParsing)
+                if (UseLEFAppParsing)
                 {
                     ProcessorScheduler.StartMultiThreading();
                     Log("MT is compatible!");
