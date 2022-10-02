@@ -9,7 +9,7 @@ namespace wdOS.Core
 {
     internal struct LEFHeader
     {
-        internal const ushort RequiredMagic = 0x104F;
+        internal const ushort RequiredMagic = 0xFFEF;
         internal ushort LEF_Magic;
         internal byte LEF_Class;
         internal byte LEF_Version;

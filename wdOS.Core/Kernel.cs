@@ -19,17 +19,20 @@ namespace wdOS.Core
         internal const string AssemblyName = nameof(Core);
         internal static Debugger Debugger;
         internal static CosmosVFS VFS = new();
-        internal static Shell ShellToRun = new TShell();
+        internal static Shell ShellToRun = new CShell();
         internal static List<Application> Applications = new();
         internal static List<KeyboardBase> Keyboards = new();
         internal static List<MouseBase> Mice = new();
         internal static int RestartTimeout = 5;
-        internal const int VersionMajor = 1;
-        internal const int VersionMinor = 0;
-        internal const int VersionPatch = 0;
-        internal const bool UseMultiThreading = false;
-        internal const bool UseLEFAppParsing = false;
-        internal const bool UsePlainAppParsing = true;
+        internal class BuildConstants
+        {
+            internal const int VersionMajor = 0;
+            internal const int VersionMinor = 1;
+            internal const int VersionPatch = 1;
+            internal const bool UseMultiThreading = false;
+            internal const bool UseLEFAppParsing = false;
+            internal const bool UsePlainAppParsing = true;
+        }
         protected override void BeforeRun()
         {
             Debugger = mDebugger;
@@ -38,42 +41,11 @@ namespace wdOS.Core
             DetectPointingDevices();
             try
             {
-                Log("Checking MT compatibility");
-                if (UseMultiThreading)
-                {
-                    ProcessorScheduler.StartMultiThreading();
-                    Log("MT is compatible!");
-                }
-                if (UseLEFAppParsing)
-                {
-                    ProcessorScheduler.StartMultiThreading();
-                    Log("MT is compatible!");
-                }
-                else Log("MT is not compatible");
                 Console.WriteLine("Starting components...");
                 VFSManager.RegisterVFS(VFS, false);
-                if (UseMultiThreading)
-                {
-                    Log("Starting Shell thread...");
-                    ProcessorScheduler.CreateThread(0, "Shell", () =>
-                    {
-                        ShellToRun.BeforeRun();
-                        while (true)
-                        {
-                            ShellToRun.Run();
-                        }
-                    });
-                    while (true) { Console.WriteLine("MT Error!"); }
-                }
-                else
-                {
-                    Log("Starting Shell...");
-                    ShellToRun.BeforeRun();
-                    while (true)
-                    {
-                        ShellToRun.Run();
-                    }
-                }
+                Console.WriteLine($"Starting {ShellToRun.Name}...");
+                ShellToRun.BeforeRun();
+                while (true) ShellToRun.Run();
             }
             catch (Exception e) { Log($"Kernel crashed! Message: {e.Message}"); Panic(e.Message); }
         }
@@ -91,15 +63,10 @@ namespace wdOS.Core
         internal static void WaitForShutdown(bool restart, int timeout)
         {
             Console.WriteLine($"{(restart ? "Restarting" : "Shutting down")} in {timeout}");
-            WaitForSeconds(timeout);
+            WaitFor(timeout * 1000);
             ShutdownPC(restart);
         }
-        internal static void WaitForSeconds(int timeout)
-        {
-            DateTime target = DateTime.Now.AddSeconds(timeout);
-            while (DateTime.Now < target) { }
-        }
-        internal static void WaitForMilliSeconds(int timeout)
+        internal static void WaitFor(int timeout)
         {
             DateTime target = DateTime.Now.AddMilliseconds(timeout);
             while (DateTime.Now < target) { }
@@ -114,28 +81,18 @@ namespace wdOS.Core
             WaitForShutdown(true, RestartTimeout + 10);
         }
         internal static string GetStrTime() => $"{RTC.Hour}:{RTC.Minute}:{RTC.Second}";
-        internal static string GetVersion() => $"{VersionMajor}.{VersionMinor}.{VersionPatch}";
+        internal static string GetVersion() => $"{BuildConstants.VersionMajor}.{BuildConstants.VersionMinor}.{BuildConstants.VersionPatch}";
         internal static void Log(string text) => Debugger.Send($"[{AssemblyName}][{GetStrTime()}] {text}");
         protected override void Run() { }
-        internal static int ShutdownProcess()
-        {
-            try
-            {
-                Log("Starting shutdown process...");
-                // TODO: shutdown somethings
-                Log("Done shutdown process!");
-                return 0;
-            }
-            catch { Log("Shutdown process failed!"); return -1; }
-        }
         internal static void ShutdownPC(bool restart)
         {
             try
             {
-                if (ShutdownProcess() == -1)
-                { Panic("shutdown process failed!"); }
-                if (!restart) { Sys.Power.Shutdown(); Sys.Power.QemuShutdown(); }
-                else { Sys.Power.Reboot(); Sys.Power.QemuReboot(); }
+                Log("Starting shutdown process...");
+                // TODO: Shutdown something
+                Log("Done shutdown process!");
+                if (!restart) { Sys.Power.QemuShutdown(); Sys.Power.Shutdown(); }
+                else { Sys.Power.QemuReboot(); Sys.Power.Reboot(); }
             }
             catch { if (!restart) { Panic("shutdown failed!"); } else { Panic("restart failed!"); } }
         }

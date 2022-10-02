@@ -12,14 +12,18 @@ namespace wdOS.Core.Commands
         internal override int Execute(string[] args)
         {
             var path = PathUtils.CanonicalPath(true, TShell.GetFullPath(), ArrayUtils.ConnectArgs(args));
+            Console.WriteLine(path);
             if (ArrayUtils.ConnectArgs(args).Contains(':')) 
             { 
-                TShell.Path = "";
-                TShell.Volume = Convert.ToByte(args[0][0]);
+                //TShell.Path = 
+                Console.WriteLine(path.Substring(3));
+                //TShell.Volume = 
+                Console.WriteLine(Convert.ToByte(args[0][0]));
                 return 0; 
             }
             if (!VFSManager.FileExists(path) && VFSManager.DirectoryExists(path))
-                TShell.Path = path;
+                //TShell.Path =
+                Console.WriteLine(path);
             return 0;
         }
     }

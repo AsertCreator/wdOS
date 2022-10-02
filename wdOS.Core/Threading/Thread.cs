@@ -14,35 +14,37 @@ namespace wdOS.Core.Threading
         internal string Name;
         internal int TID = NextTID++;
         internal int PID;
-        internal ulong LeftWaiting;
         internal uint EIP;
         internal uint ESP;
         internal uint EBP;
         internal uint StackTop;
         internal ThreadStart Entry;
         internal bool IsRunning = false;
+        internal bool IsDead = false;
         internal uint EAX;
         internal uint EBX;
         internal uint ECX;
         internal uint EDX;
         internal uint ESI;
         internal uint EDI;
-        internal void Wait(int ms)
+        internal uint EFlags;
+        internal void Sleep(int ms)
         {
-            Kernel.WaitForSeconds(ms);
+            Kernel.WaitFor(ms);
         }
         internal uint* SetupStack(uint* stack)
         {
             Kernel.Log($"Setting up stack at 0x{(uint)stack:X8}");
             ProcessorScheduler.Dummy();
+            // setup TSS
             uint origin = (uint)stack;
             *--stack = 0xFFFFFFFF; // trash
             *--stack = 0xFFFFFFFF; // trash
             *--stack = 0xFFFFFFFF; // trash
             *--stack = 0xFFFFFFFF; // trash
-            *--stack = 0x10; // ss ?
+            *--stack = 0x00; // ss ?
             *--stack = 0x00000202; // eflags
-            *--stack = 0x8; // cs
+            *--stack = 0x00; // cs
             *--stack = ProcessorScheduler.GetECAddress(); // eip
             *--stack = 0; // error
             *--stack = 0; // int
@@ -54,20 +56,19 @@ namespace wdOS.Core.Threading
             *--stack = 0; // esi
             *--stack = 0; // edi
             *--stack = origin; //ebp
-            *--stack = 0x10; // ds
-            *--stack = 0x10; // fs
-            *--stack = 0x10; // es
-            *--stack = 0x10; // gs
+            *--stack = 0x00; // ds
+            *--stack = 0x00; // fs
+            *--stack = 0x00; // es
+            *--stack = 0x00; // gs
             EIP = ProcessorScheduler.GetECAddress();
-            Kernel.Log("Stack setup done!");
+            Kernel.Log($"Stack setup done for {TID}");
             return stack;
         }
         internal static void ExecuteCode()
         {
-            Kernel.Log($"Executing code of \"{Current.Name}\" thread");
             Current.Entry();
-            Kernel.Log($"Reached end of \"{Current.Name}\" thread");
-            ProcessorScheduler.StopThread(Current);
+            Current.IsDead = true;
+            while (true) { }
         }
     }
 }

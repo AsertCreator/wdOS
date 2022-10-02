@@ -19,7 +19,6 @@ namespace wdOS.Core
         internal LEFSectionHeader CodeSectionHeader = new();
         internal LEFSectionHeader DataSectionHeader = new();
         internal byte* ExecData;
-        internal bool TryingRead;
         internal Thread MainThread;
         internal CrashInfo Info;
         internal bool Destroyed;
@@ -96,7 +95,7 @@ namespace wdOS.Core
             {
                 var result = 0;
                 CmdArgs = args;
-                if (Kernel.UseMultiThreading) result = MTStart();
+                if (Kernel.BuildConstants.UseMultiThreading) result = MTStart();
                 else result = NMTStart();
                 return result;
             }
@@ -108,9 +107,12 @@ namespace wdOS.Core
         }
         private int NMTStart()
         {
-            ProcessorScheduler.JumpTo(ExecData[CodeSectionHeader.LEF_FileOffset].GetHashCode());
-            Destroy();
-            return 0;
+            fixed (void* addr = &ExecData) 
+            {
+                ProcessorScheduler.JumpTo(ExecData[CodeSectionHeader.LEF_FileOffset]);
+                Destroy();
+                return 0; 
+            }
         }
         private int MTStart()
         {
@@ -118,9 +120,11 @@ namespace wdOS.Core
             MainThread.PID = PID;
             MainThread.Entry = () =>
             {
-                ProcessorScheduler.JumpTo(ExecData[CodeSectionHeader.LEF_FileOffset].GetHashCode());
-                Destroy();
-                while (true) { }
+                fixed (void* addr = &ExecData)
+                {
+                    ProcessorScheduler.JumpTo(ExecData[CodeSectionHeader.LEF_FileOffset]);
+                    Destroy();
+                }
             };
             return 0;
         }
@@ -128,7 +132,7 @@ namespace wdOS.Core
         {
             Destroyed = true;
             Kernel.Applications.Remove(this);
-            if (Kernel.UseMultiThreading)
+            if (Kernel.BuildConstants.UseMultiThreading)
             { ProcessorScheduler.StopThread(MainThread); }
         }
     }

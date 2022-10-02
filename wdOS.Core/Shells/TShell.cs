@@ -13,9 +13,9 @@ namespace wdOS.Core.Shells
         internal static string Path = "";
         internal static bool Running = true;
         internal override string Name => "TShell";
-        internal override int MajorVersion => Kernel.VersionMajor;
-        internal override int MinorVersion => Kernel.VersionMinor;
-        internal override int PatchVersion => Kernel.VersionPatch;
+        internal override int MajorVersion => Kernel.BuildConstants.VersionMajor;
+        internal override int MinorVersion => Kernel.BuildConstants.VersionMinor;
+        internal override int PatchVersion => Kernel.BuildConstants.VersionPatch;
         internal void Init()
         {
             AllCommands.Add(new HelpCommand());
@@ -26,6 +26,7 @@ namespace wdOS.Core.Shells
             AllCommands.Add(new FormatCommand());
             AllCommands.Add(new ListPartCommand());
             AllCommands.Add(new ChangeVolumeCommand());
+            AllCommands.Add(new ExecuteSWCommand());
             AllCommands.Add(new MkdirCommand());
             AllCommands.Add(new ShutdownCommand());
             AllCommands.Add(new RestartCommand());

@@ -1,10 +1,8 @@
 ﻿using Cosmos.Core;
 using Cosmos.Core.Memory;
 using Cosmos.HAL;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using IL2CPU.API.Attribs;
 using XSharp;
@@ -20,26 +18,28 @@ namespace wdOS.Core.Threading
         internal static List<Thread> AllThreads = new();
         internal static Thread CurrentThread;
         internal static PIT.PITTimer Timer;
+        internal static PIT PITManager;
         internal static bool Initiliazed;
         internal static bool DidRunCreate;
         internal static int ThreadID;
         internal static int ThreadCount;
-        internal const int NanosecondTimeout = 2 * 1000 * 1000 + 1000;
-        internal const int NanosecondRoom = 1000;
-        internal const int StackSize = 16 * 1024;
+        internal const int NanosecondTimeout = 2 * 1000 + 1000;
+        internal const int StackSize = 32 * 1024;
         internal static void StartMultiThreading()
         {
             if (!Initiliazed)
             {
-                Kernel.Log("Initilizing multithreading");
+                Kernel.Log("Initilizing multithreading...");
                 CreateThread(0, "System Idle", () =>
                 {
                     // do nothing, its  i d l e  after all
-                    Kernel.Log("idle");
+                    Kernel.Log("Idle");
                     while (true) { }
                 });
-                PITControl(1);
-                INTs.SetIrqHandler(0, SwitchTask);
+                PITManager = new();
+                Timer = new(new PIT.PITTimer.OnTrigger(SwitchTask), NanosecondTimeout , true);
+                PITManager.RegisterTimer(Timer);
+                CPU.UpdateIDT(false);
                 Initiliazed = true;
                 Kernel.Log("Done initilizing multithreading");
             }
@@ -53,7 +53,7 @@ namespace wdOS.Core.Threading
                 Name = name,
                 Entry = start,
             };
-            thread.StackTop = Heap.SafeAlloc(StackSize);
+            thread.StackTop = GCImplementation.AllocNewObject(StackSize);// Heap.SafeAlloc(StackSize);
             thread.ESP = (uint)thread.SetupStack((uint*)(thread.StackTop + 4000));
             AllThreads.Add(thread);
             ThreadCount++;
@@ -71,28 +71,8 @@ namespace wdOS.Core.Threading
                 Kernel.Log($"Stopped \"{tid.Name}\" thread: pid={tid.PID},tid={tid.TID}");
             }
         }
-        internal static void PITControl(ushort freq)
+        internal static void SwitchTask(INTs.IRQContext context)
         {
-            IOPort counter0 = new IOPort(0x40);
-            IOPort cmd = new IOPort(0x43);
-            ushort divisor = 0;
-            cmd.Byte = 0x36;
-            counter0.Byte = (byte)divisor;
-            counter0.Byte = (byte)(divisor >> 8);
-            IOPort pA1 = new IOPort(0xA1);
-            IOPort p21 = new IOPort(0xA1);
-            pA1.Byte = 0x00;
-            p21.Byte = 0x00;
-        }
-
-        internal static void JumpTo(int v)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal static void SwitchTask(ref INTs.IRQContext context)
-        {
-            Kernel.Log("Switch!");
             if (ThreadCount > 1)
             {
                 CurrentThread.IsRunning = false;
@@ -107,6 +87,7 @@ namespace wdOS.Core.Threading
                 CurrentThread.EDX = context.EDX;
                 CurrentThread.ESI = context.ESI;
                 CurrentThread.EDI = context.EDI;
+                CurrentThread.EFlags = (uint)context.EFlags;
             // select next thread
             tryagain:
                 ThreadID++;
@@ -117,12 +98,16 @@ namespace wdOS.Core.Threading
                 {
                     // switch thread
                     CurrentThread.IsRunning = true;
+                    Cosmos.Core.Global.PIC.EoiMaster();
+                    Cosmos.Core.Global.PIC.EoiSlave();
                     NativeSwitch(CurrentThread.EIP,
                         CurrentThread.EAX, CurrentThread.EBX, CurrentThread.ECX, CurrentThread.EDX,
                         CurrentThread.ESP, CurrentThread.EBP, CurrentThread.ESI, CurrentThread.EDI);
                 }
                 else goto tryagain;
             }
+            Cosmos.Core.Global.PIC.EoiMaster();
+            Cosmos.Core.Global.PIC.EoiSlave();
         }
         [PlugMethod(Assembler = typeof(JumpASM))]
         internal static void JumpTo(uint address) { }

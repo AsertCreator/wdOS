@@ -18,11 +18,21 @@
         <Profile>VMware</Profile>
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
-        <VMWareEdition>Workstation</VMWareEdition>
-        <DebugEnabled>True</DebugEnabled>
+        <VMWareEdition>Player</VMWareEdition>
+        <DebugEnabled>False</DebugEnabled>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
         <StackCorruptionDetectionEnabled>False</StackCorruptionDetectionEnabled>
         <BinFormat>Elf</BinFormat>
+        <CompressionType>Gzip</CompressionType>
+        <QemuHWAccelWHPX>True</QemuHWAccelWHPX>
+        <QemuUseSerial>True</QemuUseSerial>
+        <QemuUseCustomLocation>True</QemuUseCustomLocation>
+        <QemuLocationParameters>C:\Program Files\qemu\qemu-system-i386.exe</QemuLocationParameters>
+        <QemuVideoDriver>VBE</QemuVideoDriver>
+        <QemuAudioDriver>AC97</QemuAudioDriver>
+        <QemuMemory>256</QemuMemory>
+        <QemuUseCustomParameters>False</QemuUseCustomParameters>
+        <QemuNetworkDevice>PCNet</QemuNetworkDevice>
     </PropertyGroup>
 
     <ItemGroup>
@@ -32,7 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
-		<PlugsReference Include="$(MSBuildProjectDirectory)\..\wdOS\wdOS.Plugs\bin\Debug\net6.0\wdOS.Plugs.dll" />
+		<PlugsReference Include="$(MSBuildProjectDirectory)\..\wdOS.Plugs\bin\Debug\net6.0\wdOS.Plugs.dll" />
     </ItemGroup>
 
     <ItemGroup>
