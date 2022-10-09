@@ -1,25 +1,26 @@
-﻿using Cosmos.System.FileSystem.VFS;
+﻿using Cosmos.Core;
+using Cosmos.System.FileSystem.VFS;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using wdOS.Core.Shells;
 
-namespace wdOS.Core.Commands
+namespace wdOS.Core.Shells.Commands
 {
     internal class ChangePathCommand : ConsoleCommand
     {
-        internal override string Name => "cd";
-        internal override string ShortDescription => "changes directory";
+        public override string Name => "cd";
+        public override string Description => "changes directory";
         internal override int Execute(string[] args)
         {
-            var path = PathUtils.CanonicalPath(true, TShell.GetFullPath(), ArrayUtils.ConnectArgs(args));
+            var path = Kernel.CanonicalPath(true, TShell.GetFullPath(), Utilities.ConnectArgs(args));
             Console.WriteLine(path);
-            if (ArrayUtils.ConnectArgs(args).Contains(':')) 
-            { 
+            if (Utilities.ConnectArgs(args).Contains(':'))
+            {
                 //TShell.Path = 
                 Console.WriteLine(path.Substring(3));
                 //TShell.Volume = 
                 Console.WriteLine(Convert.ToByte(args[0][0]));
-                return 0; 
+                return 0;
             }
             if (!VFSManager.FileExists(path) && VFSManager.DirectoryExists(path))
                 //TShell.Path =
@@ -29,8 +30,8 @@ namespace wdOS.Core.Commands
     }
     internal class ChangeVolumeCommand : ConsoleCommand
     {
-        internal override string Name => "chgvol";
-        internal override string ShortDescription => "changes current volume";
+        public override string Name => "chgvol";
+        public override string Description => "changes current volume";
         internal override int Execute(string[] args)
         {
             if (args.Length == 1)
@@ -41,28 +42,20 @@ namespace wdOS.Core.Commands
     }
     internal class MkdirCommand : ConsoleCommand
     {
-        internal override string Name => "mkdir";
-        internal override string ShortDescription => "creates a directory in cd";
-        internal override int Execute(string[] args)
-        {
-            FSUtils.CreateDirectory(Path.Combine(TShell.GetFullPath(), ArrayUtils.ConnectArgs(args)));
-            return 0;
-        }
+        public override string Name => "mkdir";
+        public override string Description => "creates a directory in cd";
+        internal override int Execute(string[] args)  { FileSystemManager.CreateDirectory(Path.Combine(TShell.GetFullPath(), Utilities.ConnectArgs(args))); return 0; }
     }
     internal class TouchCommand : ConsoleCommand
     {
-        internal override string Name => "touch";
-        internal override string ShortDescription => "creates a file in cd"/*and changes access time"*/;
-        internal override int Execute(string[] args)
-        {
-            FSUtils.WriteStringFile(Path.Combine(TShell.GetFullPath(), ArrayUtils.ConnectArgs(args)), "");
-            return 0;
-        }
+        public override string Name => "touch";
+        public override string Description => "creates a file in cd"/*and changes access time"*/;
+        internal override int Execute(string[] args) { FileSystemManager.WriteStringFile(Path.Combine(TShell.GetFullPath(), Utilities.ConnectArgs(args)), ""); return 0; }
     }
     internal class FunCommand : ConsoleCommand
     {
         internal static string Alphabet = "qwertyuiopasdfghjklzxcvbnm";
-        internal override string Name
+        public override string Name
         {
             get
             {
@@ -73,58 +66,31 @@ namespace wdOS.Core.Commands
                 return name;
             }
         }
-        internal override string ShortDescription => "i bet you can't execute this cmd";
-        internal override int Execute(string[] args)
-        {
-            Console.WriteLine("WHAT?? You did execute this program? It may be very hard");
-            return 0;
-        }
+        public override string Description => "i bet you can't execute this cmd";
+        internal override int Execute(string[] args) { Console.WriteLine("WHAT?? You did execute this program? It may be very hard"); return 0; }
     }
     internal class HelpCommand : ConsoleCommand
     {
-        internal override string Name => "help";
-        internal override string ShortDescription => "shows this help list";
-        internal override int Execute(string[] args)
-        {
-            int maxlength = 0;
-            foreach (var cmd in TShell.AllCommands)
-            {
-                if (cmd.Name.Length > maxlength)
-                { maxlength = cmd.Name.Length; }
-            }
-            foreach (var cmd in TShell.AllCommands)
-            {
-                int numberSpaces = maxlength - cmd.Name.Length;
-                Console.WriteLine($"{cmd.Name}{new string(' ', numberSpaces + 1)}- {cmd.ShortDescription}");
-            }
-            Console.WriteLine($"Total number of commands: {TShell.AllCommands.Count}");
-            return 0;
-        }
+        public override string Name => "help";
+        public override string Description => "shows this help list";
+        internal override int Execute(string[] args) { IHelpEntry.ShowHelpMenu(TShell.AllCommands); return 0; }
     }
     internal class EchoCommand : ConsoleCommand
     {
-        internal override string Name => "echo";
-        internal override string ShortDescription => "echoes any arguments";
-        internal override int Execute(string[] args)
-        {
-            Console.WriteLine(ArrayUtils.ConnectArgs(args));
-            return 0;
-        }
+        public override string Name => "echo";
+        public override string Description => "echoes any arguments";
+        internal override int Execute(string[] args) { Console.WriteLine(Utilities.ConnectArgs(args)); return 0; }
     }
     internal class ClearCommand : ConsoleCommand
     {
-        internal override string Name => "clear";
-        internal override string ShortDescription => "clears console";
-        internal override int Execute(string[] args)
-        {
-            Console.Clear();
-            return 0;
-        }
+        public override string Name => "clear";
+        public override string Description => "clears console";
+        internal override int Execute(string[] args) { Console.Clear(); return 0; }
     }
     internal class ListPartCommand : ConsoleCommand
     {
-        internal override string Name => "lspart";
-        internal override string ShortDescription => "lists all partitions";
+        public override string Name => "lspart";
+        public override string Description => "lists all partitions";
         internal override int Execute(string[] args)
         {
             int index = 0;
@@ -144,8 +110,8 @@ namespace wdOS.Core.Commands
     }
     internal class ListCommand : ConsoleCommand
     {
-        internal override string Name => "ls";
-        internal override string ShortDescription => "lists all etries in directory";
+        public override string Name => "ls";
+        public override string Description => "lists all etries in directory";
         internal override int Execute(string[] args)
         {
             var list = VFSManager.GetDirectoryListing(TShell.GetFullPath());
@@ -168,28 +134,20 @@ namespace wdOS.Core.Commands
     }
     internal class RestartCommand : ConsoleCommand
     {
-        internal override string Name => "restart";
-        internal override string ShortDescription => "restarts this computer";
-        internal override int Execute(string[] args)
-        {
-            Kernel.ShutdownPC(true);
-            return 0;
-        }
+        public override string Name => "restart";
+        public override string Description => "restarts this computer";
+        internal override int Execute(string[] args) { Kernel.ShutdownPC(true); return 0; }
     }
     internal class ShutdownCommand : ConsoleCommand
     {
-        internal override string Name => "shutdown";
-        internal override string ShortDescription => "shutdowns this computer";
-        internal override int Execute(string[] args)
-        {
-            Kernel.ShutdownPC(false);
-            return 0;
-        }
+        public override string Name => "shutdown";
+        public override string Description => "shutdowns this computer";
+        internal override int Execute(string[] args) { Kernel.ShutdownPC(false); return 0; }
     }
     internal class WelcomeCommand : ConsoleCommand
     {
-        internal override string Name => "welcome";
-        internal override string ShortDescription => "shows logon welcome text";
+        public override string Name => "welcome";
+        public override string Description => "shows logon welcome text";
         internal override int Execute(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -200,11 +158,67 @@ namespace wdOS.Core.Commands
     }
     internal class ExecuteSWCommand : ConsoleCommand
     {
-        internal override string Name => "execsw";
-        internal override string ShortDescription => "executes internal shareware(?)";
+        public override string Name => "execsw";
+        public override string Description => "executes internal shareware(?)";
         internal override int Execute(string[] args)
         {
-
+            Console.WriteLine("Not implemented yet!");
+            return 0;
+        }
+    }
+    internal class SystemUtilsCommand : ConsoleCommand
+    {
+        public override string Name => "systemutils";
+        public override string Description => "tests and gathering info about system";
+        internal override int Execute(string[] args)
+        {
+            Console.WriteLine("SystemUtils - definitely not bug free program");
+            if (args.Length > 0)
+            {
+                switch (args[0])
+                {
+                    case "cpuid":
+                        Console.WriteLine($"CPUID: {CPU.GetCPUVendorName()}");
+                        break;
+                    case "cpuname":
+                        Console.WriteLine($"CPU Name: {CPU.GetCPUBrandString()}");
+                        break;
+                    case "cpufreq":
+                        Console.WriteLine($"CPU Frequncy: {CPU.GetCPUCycleSpeed()}");
+                        break;
+                    case "uptime":
+                        Console.WriteLine($"System uptime: {CPU.GetCPUUptime}");
+                        break;
+                    case "lspci":
+                        List<IHelpEntry> entries = new();
+                        int index = 0;
+                        foreach (var device in Cosmos.HAL.PCI.Devices)
+                        {
+                            entries.Add(new GeneralHelpEntry($"Device #{index}", $"DeviceID: {device.DeviceID}, VendorID: {device.VendorID}, Slot: {device.slot}"));
+                            index++;
+                        }
+                        IHelpEntry.ShowHelpMenu(entries);
+                        break;
+                    case "enablemenu":
+                        break;
+                    case "help":
+                        List<IHelpEntry> entries1 = new()
+                        {
+                            new GeneralHelpEntry("cpuid", "shows your cpuid"),
+                            new GeneralHelpEntry("cpuname", "shows your cpu name"),
+                            new GeneralHelpEntry("cpufreq", "shows your cpu frequency"),
+                            new GeneralHelpEntry("uptime", "shows your system uptime"),
+                            new GeneralHelpEntry("lspci", "shows your PCI devices"),
+                            new GeneralHelpEntry("enablemenu", "shows your system menu"),
+                            new GeneralHelpEntry("help", "shows your system utilities")
+                        };
+                        IHelpEntry.ShowHelpMenu(entries1);
+                        break;
+                    default:
+                        Console.WriteLine("This action is not supported!");
+                        return 1;
+                }
+            }
             return 0;
         }
     }

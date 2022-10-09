@@ -1,19 +1,21 @@
-﻿using Cosmos.System.FileSystem.VFS;
-using System;
-using System.Collections.Generic;
+﻿using Cosmos.System.FileSystem;
+using Cosmos.System.FileSystem.VFS;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace wdOS.Core
 {
-    internal static class FSUtils
+    internal static class FileSystemManager
     {
+        internal static CosmosVFS VFS = new();
+        internal static void Initialize()
+        {
+            // todo: more things
+            VFSManager.RegisterVFS(VFS, false);
+        }
         internal static byte[] StreamFullRead(Stream stream)
         {
             byte[] buffer = new byte[stream.Length];
-            stream.Read(buffer, 0, (int)stream.Length);
+            _ = stream.Read(buffer, 0, (int)stream.Length);
             return buffer;
         }
         internal static void StreamFullWrite(Stream stream, byte[] data)
@@ -24,31 +26,31 @@ namespace wdOS.Core
         internal static string ReadStringFile(string filepath)
         {
             if (DirectoryExists(filepath)) return null;
-            if (!FileExists(filepath)) { VFSManager.CreateFile(filepath); }
+            if (!FileExists(filepath)) { _ = VFSManager.CreateFile(filepath); }
             return new StreamReader(VFSManager.GetFileStream(filepath)).ReadToEnd();
         }
         internal static void WriteStringFile(string filepath, string data)
         {
             if (DirectoryExists(filepath)) return;
-            if (!FileExists(filepath)) { VFSManager.CreateFile(filepath); }
+            if (!FileExists(filepath)) { _ = VFSManager.CreateFile(filepath); }
             new StreamWriter(VFSManager.GetFileStream(filepath)).WriteLine(data);
         }
         internal static byte[] ReadBytesFile(string filepath)
         {
             if (DirectoryExists(filepath)) return null;
-            if (!FileExists(filepath)) { VFSManager.CreateFile(filepath); }
+            if (!FileExists(filepath)) { _ = VFSManager.CreateFile(filepath); }
             return StreamFullRead(VFSManager.GetFileStream(filepath));
         }
         internal static void WriteBytesFile(string filepath, byte[] data)
         {
             if (DirectoryExists(filepath)) return;
-            if (!FileExists(filepath)) { VFSManager.CreateFile(filepath); }
+            if (!FileExists(filepath)) { _ = VFSManager.CreateFile(filepath); }
             StreamFullWrite(VFSManager.GetFileStream(filepath), data);
         }
         internal static void CreateDirectory(string dirpath)
         {
             if (DirectoryExists(dirpath)) return;
-            if (!FileExists(dirpath)) { VFSManager.CreateDirectory(dirpath); }
+            if (!FileExists(dirpath)) { _ = VFSManager.CreateDirectory(dirpath); }
         }
         internal static void DeleteDirectory(string dirpath)
         {

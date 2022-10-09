@@ -19,30 +19,27 @@
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
         <VMWareEdition>Player</VMWareEdition>
-        <DebugEnabled>False</DebugEnabled>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-        <StackCorruptionDetectionEnabled>False</StackCorruptionDetectionEnabled>
         <BinFormat>Elf</BinFormat>
-        <CompressionType>Gzip</CompressionType>
-        <QemuHWAccelWHPX>True</QemuHWAccelWHPX>
-        <QemuUseSerial>True</QemuUseSerial>
-        <QemuUseCustomLocation>True</QemuUseCustomLocation>
-        <QemuLocationParameters>C:\Program Files\qemu\qemu-system-i386.exe</QemuLocationParameters>
-        <QemuVideoDriver>VBE</QemuVideoDriver>
-        <QemuAudioDriver>AC97</QemuAudioDriver>
-        <QemuMemory>256</QemuMemory>
-        <QemuUseCustomParameters>False</QemuUseCustomParameters>
-        <QemuNetworkDevice>PCNet</QemuNetworkDevice>
+        <CompressionType>None</CompressionType>
+        <IgnoreDebugStubAttribute>True</IgnoreDebugStubAttribute>
+        <StackCorruptionDetectionLevel>MethodFooters</StackCorruptionDetectionLevel>
+        <DebugEnabled>False</DebugEnabled>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DebugType>embedded</DebugType>
+      <Optimize>True</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DebugType>embedded</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
-    </ItemGroup>
-
-    <ItemGroup>
-		<PlugsReference Include="$(MSBuildProjectDirectory)\..\wdOS.Plugs\bin\Debug\net6.0\wdOS.Plugs.dll" />
     </ItemGroup>
 
     <ItemGroup>

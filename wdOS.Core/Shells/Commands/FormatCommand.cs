@@ -1,17 +1,12 @@
 ﻿using Cosmos.System.FileSystem.VFS;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using wdOS.Core.Shells;
 
-namespace wdOS.Core.Commands
+namespace wdOS.Core.Shells.Commands
 {
     internal class FormatCommand : ConsoleCommand
     {
-        internal override string Name => "format";
-        internal override string ShortDescription => "format specific drive entirely";
+        public override string Name => "format";
+        public override string Description => "format specific drive entirely";
         internal override int Execute(string[] args)
         {
             Console.Clear();
@@ -29,11 +24,12 @@ namespace wdOS.Core.Commands
             Console.ForegroundColor = ConsoleColor.White;
             if (Console.ReadKey().Key == ConsoleKey.Y)
             {
+                string filesystem = "FAT32";
                 Console.Clear();
-                Console.WriteLine("Formatting drive as \"FAT32\"...");
+                Console.WriteLine($"Formatting drive as \"{filesystem}\"...");
                 var disk = VFSManager.GetDisks()[0];
                 disk.CreatePartition((int)(disk.Host.BlockSize * disk.Host.BlockCount / 1024 / 1024));
-                disk.FormatPartition(0, "FAT32");
+                disk.FormatPartition(0, filesystem);
                 disk.MountPartition(0);
                 VFSManager.SetFileSystemLabel("0:", Kernel.SystemDriveLabel);
                 Console.ForegroundColor = ConsoleColor.Green;

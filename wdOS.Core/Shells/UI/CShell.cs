@@ -3,7 +3,6 @@ using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Xml.Serialization;
 
 namespace wdOS.Core.Shells.UI
 {
@@ -11,14 +10,13 @@ namespace wdOS.Core.Shells.UI
     {
         internal static PCScreenFont Font;
         internal static Canvas FSC;
-        internal static class Pens
+        internal static class DefaultColors
         {
-            internal static Color WhiteColor;
-            internal static Color Background;
             internal static Pen WhitePen;
             internal static Pen BlackPen;
             internal static Pen Dock0;
             internal static Pen Dock1;
+            internal static Pen Background;
         }
         internal static int Framecount;
         internal static int ScreenWidth;
@@ -33,7 +31,6 @@ namespace wdOS.Core.Shells.UI
         internal const int CursorBorderSize = 2;
         internal const int DockBorderSize = 2;
         internal const int DockSize = 35;
-        internal const int MaxWindowCount = 3;
         internal override string Name => "CShell";
         internal override int MajorVersion => Kernel.BuildConstants.VersionMajor;
         internal override int MinorVersion => Kernel.BuildConstants.VersionMinor;
@@ -44,7 +41,7 @@ namespace wdOS.Core.Shells.UI
             {
                 SetMode(800, 600);
                 UpdateUICache();
-                Kernel.Log("Starting rendering");
+                Kernel.Log("Ready to render! Starting...");
             }
             catch { }
         }
@@ -56,54 +53,50 @@ namespace wdOS.Core.Shells.UI
             FSC.Disable();
             Kernel.ShutdownPC(false);
         }
-        internal static void UpdateUICache()
+        internal void UpdateUICache()
         {
             Running = true;
             AllWindows = new();
             Font = PCScreenFont.Default;
             WindowTitleBarHeight = Font.Height + 10;
             DockYPos = ScreenHeight - DockSize;
-            Pens.Dock0 = new(Color.Gray, 1);
-            Pens.Dock1 = new(Color.DarkGray, 1);
-            Pens.WhitePen = new(Color.White, 1);
-            Pens.BlackPen = new(Color.Black, 1);
-            Pens.WhiteColor = Color.White;
-            Pens.Background = Color.Wheat;
+            DefaultColors.Dock0 = new(Color.Gray);
+            DefaultColors.Dock1 = new(Color.DarkGray);
+            DefaultColors.WhitePen = new(Color.White);
+            DefaultColors.BlackPen = new(Color.Black);
+            DefaultColors.Background = new(Color.Wheat);
         }
-        internal static void SetMode(int width, int height)
+        internal void SetMode(int width, int height)
         {
-            FSC = FullScreenCanvas.GetFullScreenCanvas(
-                new Mode(ScreenWidth, ScreenHeight, ColorDepth.ColorDepth32));
-            Kernel.Log("Canvas created!");
-            Kernel.Log($"Mode {ScreenWidth}x{ScreenHeight}x32 created!");
-            ScreenWidth = FSC.Mode.Columns;
-            ScreenHeight = FSC.Mode.Rows;
+            ScreenWidth = width;
+            ScreenHeight = height;
             MouseManager.ScreenWidth = (uint)ScreenWidth;
             MouseManager.ScreenHeight = (uint)ScreenHeight;
+            FSC = FullScreenCanvas.GetFullScreenCanvas(new Mode(ScreenWidth, ScreenHeight, ColorDepth.ColorDepth32));
+            Kernel.Log($"Mode {ScreenWidth}x{ScreenHeight}x32 created!");
         }
-        internal static void RenderScreen()
+        internal void RenderScreen()
         {
             while (Running)
             {
-                HandleSCL($"Time: {Kernel.GetStrTime()}, Framecount: {Framecount}"); // Screen Content Layer
-                HandleSIL((int)MouseManager.X, (int)MouseManager.X, MouseManager.MouseState); // Screen Interaction Layer
+                HandleSCL(); // Screen Content Layer
+                HandleSIL(); // Screen Interaction Layer
                 FSC.Display(); // display canvas
                 if (Framecount % 150 == 0) { CleanUp(); }
                 Framecount++; // clean up scheduling
             }
         }
-        internal static void HandleSCL(string waterwark)
+        internal void HandleSCL()
         {
-            if (WindowCount == 0) FSC.Clear();
-            else FSC.DrawFilledRectangle(Pens.Dock1, 0, 0, ScreenWidth, WindowTitleBarHeight);
+            if (WindowCount == 0) FSC.DrawFilledRectangle(DefaultColors.Background, 0, 0, ScreenWidth, ScreenHeight);
+            else FSC.DrawFilledRectangle(DefaultColors.BlackPen, 0, 0, ScreenWidth, WindowTitleBarHeight);
             for (int i = 0; i < WindowCount; i++) AllWindows[i].RenderWindow();
-            FSC.DrawString(waterwark, Font, Pens.WhitePen, WindowWidth - Font.Height * 2, 0);
-            FSC.DrawFilledRectangle(Pens.Dock0, 0, DockYPos, ScreenWidth, DockSize);
+            FSC.DrawFilledRectangle(DefaultColors.Dock0, 0, DockYPos, ScreenWidth, DockSize);
         }
-        internal static void HandleSIL(int x, int y, MouseState state)
+        internal void HandleSIL()
         {
             // handle mouse
-            HandleSILMouse(x, y, state);
+            HandleSILMouse((int)MouseManager.X, (int)MouseManager.Y, MouseManager.MouseState);
             if (KeyboardManager.KeyAvailable)
             {
                 var key = KeyboardManager.ReadKey();
@@ -121,22 +114,22 @@ namespace wdOS.Core.Shells.UI
                 }
             }
         }
-        internal static void HandleSILMouse(int x, int y, MouseState state)
+        internal void HandleSILMouse(int x, int y, MouseState state)
         {
-            FSC.DrawFilledRectangle(Pens.BlackPen, x, y, CursorSize, CursorSize);
+            FSC.DrawFilledRectangle(DefaultColors.BlackPen, x, y, CursorSize, CursorSize);
             if (state == MouseState.None)
-                FSC.DrawFilledRectangle(Pens.WhitePen, x + 1, y + 1,
+                FSC.DrawFilledRectangle(DefaultColors.WhitePen, x + 1, y + 1,
                     CursorSize - CursorBorderSize, CursorSize - CursorBorderSize);
-            else FSC.DrawFilledRectangle(Pens.BlackPen, x, y, CursorSize, CursorSize);
+            else FSC.DrawFilledRectangle(DefaultColors.BlackPen, x, y, CursorSize, CursorSize);
             // select focused window
             if (state == MouseState.Left)
             {
                 Kernel.Log($"Mouse clicked at {x} {y}");
             }
         }
-        internal static void CreateWindow(Window win)
+        internal void CreateWindow(Window win)
         {
-            if (AllWindows.Count != MaxWindowCount)
+            if (WindowCount < 2)
             {
                 Kernel.Log($"Creating new window...");
                 AllWindows.Add(win);
@@ -155,7 +148,7 @@ namespace wdOS.Core.Shells.UI
                 Kernel.Log($"Done!");
             }
         }
-        internal static void CloseWindow(int win)
+        internal void CloseWindow(int win)
         {
             if (win < WindowCount)
             {
@@ -164,8 +157,8 @@ namespace wdOS.Core.Shells.UI
                 Kernel.Log($"Closed window number #{win}");
             }
         }
-        internal static void CleanUp() => Kernel.Log($"Objects collected and sweeped: {Cosmos.Core.Memory.Heap.Collect()}");
-        internal static bool Collide(int x1, int y1, int x2, int y2)
+        internal void CleanUp() => Kernel.Log($"Objects collected and sweeped: {Cosmos.Core.Memory.Heap.Collect()}");
+        internal bool Collide(int x1, int y1, int x2, int y2)
         {
             int mx = (int)MouseManager.X, my = (int)MouseManager.Y;
             return mx > x1 && mx < x2 && my > y1 && my < y2;
