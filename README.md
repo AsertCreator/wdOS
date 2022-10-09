@@ -6,7 +6,7 @@
 - GUI Shell "CShell" (not working)
 - File System Utils (not working)
 ### Currently under development
-- Executables Parsing and executing
+- Executables Parsing and executing (partially)
 - Multithreading
 - Application API
 ### What will be implemented
