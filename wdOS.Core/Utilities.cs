@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace wdOS.Core
@@ -20,5 +21,11 @@ namespace wdOS.Core
             { text += str + sep; }
             return text;
         }
+        internal static string CanonicalPath(bool doubleup, params string[] xpath)
+        {
+            if (doubleup) return Path.GetFullPath(Path.Combine(xpath).Replace("..", "..\\.."));
+            return Path.GetFullPath(Path.Combine(xpath));
+        }
+        internal static bool HasFlag(int value, int match) => (value & match) != 0;
     }
 }

@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using wdOS.Core.Shells.Commands;
 
-namespace wdOS.Core.Shells
+namespace wdOS.Core.Shells.TShell
 {
     internal class TShell : Shell
     {
-        internal static List<IHelpEntry> AllCommands = new()
+        internal static List<HelpEntry> AllCommands = new()
         {
             new HelpCommand(), new EchoCommand(), new ClearCommand(),
             new ChangePathCommand(), new ListCommand(), new FormatCommand(),
-            new ListPartCommand(), new ChangeVolumeCommand(), new ExecuteSWCommand(),
+            new ListPartCommand(), new ChangeVolumeCommand(), new LogCatCommand(),
             new MkdirCommand(), new ShutdownCommand(), new RestartCommand(),
-            new WelcomeCommand(), new SystemUtilsCommand(), new FunCommand()
+            new WelcomeCommand(), new SUtilsCommand(), new FunCommand()
         };
         internal static List<string> CommandHistory = new(128);
         internal static int LastErrorCode;
@@ -27,7 +26,7 @@ namespace wdOS.Core.Shells
         {
             _ = ((ConsoleCommand)AllCommands[12]).Execute(new string[] { });
             Console.ForegroundColor = ConsoleColor.White;
-            if (FileSystemManager.VFS.GetVolumes().Count == 0)
+            if (FileSystem.VFS.GetVolumes().Count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("It looks like you have no volumes that we can detect, " +
@@ -72,7 +71,7 @@ namespace wdOS.Core.Shells
         internal static void GoLowerPath(string nextdir)
         {
             string path = Path + '\\' + nextdir;
-            if (path.Length < 255) { Path = Kernel.CanonicalPath(true, path); }
+            if (path.Length < 255) { Path = Utilities.CanonicalPath(true, path); }
         }
         internal static ConsoleCommand FindCommandByName(string name)
         {
@@ -81,10 +80,8 @@ namespace wdOS.Core.Shells
             return null;
         }
     }
-    internal abstract class ConsoleCommand : IHelpEntry
+    internal abstract class ConsoleCommand : HelpEntry
     {
-        public abstract string Name { get; }
-        public abstract string Description { get; }
         internal string[] CurrentCmdArgs;
         internal abstract int Execute(string[] args);
     }

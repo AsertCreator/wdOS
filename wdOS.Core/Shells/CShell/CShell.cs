@@ -4,7 +4,7 @@ using Cosmos.System.Graphics.Fonts;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace wdOS.Core.Shells.UI
+namespace wdOS.Core.Shells.CShell
 {
     internal class CShell : Shell
     {

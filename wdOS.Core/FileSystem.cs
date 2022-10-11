@@ -4,7 +4,7 @@ using System.IO;
 
 namespace wdOS.Core
 {
-    internal static class FileSystemManager
+    internal static class FileSystem
     {
         internal static CosmosVFS VFS = new();
         internal static void Initialize()

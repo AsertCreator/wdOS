@@ -1,6 +1,6 @@
 ﻿using Cosmos.System.Graphics;
 
-namespace wdOS.Core.Shells.UI
+namespace wdOS.Core.Shells.CShell
 {
     internal class Window
     {

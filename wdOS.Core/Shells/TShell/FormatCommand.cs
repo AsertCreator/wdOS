@@ -1,12 +1,12 @@
 ﻿using Cosmos.System.FileSystem.VFS;
 using System;
 
-namespace wdOS.Core.Shells.Commands
+namespace wdOS.Core.Shells.TShell
 {
     internal class FormatCommand : ConsoleCommand
     {
-        public override string Name => "format";
-        public override string Description => "format specific drive entirely";
+        internal override string Name => "format";
+        internal override string Description => "format specific drive entirely";
         internal override int Execute(string[] args)
         {
             Console.Clear();
@@ -15,7 +15,7 @@ namespace wdOS.Core.Shells.Commands
             Console.WriteLine("You must to have drive backup, because this util can corrupt drive!");
             Console.WriteLine("Also this utility will turn connected drive to system drive");
             Console.WriteLine("\nIf you have read this discalimer, press any key to format...");
-            Console.ReadKey(true);
+            _ = Console.ReadKey(true);
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Clear();
             Console.WriteLine("!!! LAST WARNING !!!");

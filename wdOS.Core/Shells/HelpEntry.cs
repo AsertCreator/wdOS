@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace wdOS.Core
+namespace wdOS.Core.Shells
 {
-    internal interface IHelpEntry
+    internal abstract class HelpEntry
     {
-        internal string Name { get; }
-        internal string Description { get; }
-        internal static void ShowHelpMenu(List<IHelpEntry> entries)
+        internal abstract string Name { get; }
+        internal abstract string Description { get; }
+        internal static void ShowHelpMenu(List<HelpEntry> entries)
         {
             int maxlength = 0;
             foreach (var entry in entries)

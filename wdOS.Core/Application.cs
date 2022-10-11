@@ -15,10 +15,10 @@ namespace wdOS.Core
         internal Application(byte[] data, string path) { FullPath = Path.GetFullPath(path); CommonConstructor(data); }
         internal Application(string path)
         {
-            if (FileSystemManager.FileExists(path))
+            if (FileSystem.FileExists(path))
             {
                 FullPath = Path.GetFullPath(path);
-                CommonConstructor(FileSystemManager.ReadBytesFile(path));
+                CommonConstructor(FileSystem.ReadBytesFile(path));
             }
         }
         private void CommonConstructor(byte[] data)

@@ -2,6 +2,7 @@
 {
     internal abstract class Shell
     {
+        internal bool IsRunning = true;
         internal abstract string Name { get; }
         internal abstract int MajorVersion { get; }
         internal abstract int MinorVersion { get; }
