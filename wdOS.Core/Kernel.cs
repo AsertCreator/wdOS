@@ -30,7 +30,7 @@ namespace wdOS.Core
         {
             internal const int VersionMajor = 0;
             internal const int VersionMinor = 2;
-            internal const int VersionPatch = 1;
+            internal const int VersionPatch = 2;
         }
         internal static class SystemSettings
         {
