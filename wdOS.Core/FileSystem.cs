@@ -7,6 +7,11 @@ namespace wdOS.Core
     internal static class FileSystem
     {
         internal static CosmosVFS VFS = new();
+        internal const string PrivateDir = "0:\\.Private";
+        internal const string SystemTrash = PrivateDir + "\\SystemTrash";
+        internal const string UserTrashes = PrivateDir + "\\UserTrashes";
+        internal const string SystemDir = PrivateDir + "\\wdOS";
+        internal const string UserDataDir = "0:\\Users";
         internal static void Initialize()
         {
             // todo: more things

@@ -30,7 +30,7 @@ namespace wdOS.Core
         {
             internal const int VersionMajor = 0;
             internal const int VersionMinor = 2;
-            internal const int VersionPatch = 2;
+            internal const int VersionPatch = 3;
         }
         internal static class SystemSettings
         {
@@ -96,7 +96,7 @@ namespace wdOS.Core
             Log($"Sweeped {result} objects! Sweet!");
             return result;
         }
-        internal static void Log(string text) { KernelDebugger.Send($"[{AssemblyName}][{StringTime}] {text}"); _ = SystemLog.Append(text + '\n'); }
+        internal static void Log(string text) { string data = $"[{AssemblyName}][{StringTime}] {text}"; KernelDebugger.Send(data); _ = SystemLog.Append(data + '\n'); }
         internal static void Panic(uint message) => ErrorHandler.Panic(message);
         internal static void WaitForShutdown(bool restart, int timeout)
         {

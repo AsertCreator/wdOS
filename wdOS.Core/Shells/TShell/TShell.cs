@@ -9,14 +9,15 @@ namespace wdOS.Core.Shells.TShell
         {
             new HelpCommand(), new EchoCommand(), new ClearCommand(),
             new ChangePathCommand(), new ListCommand(), new FormatCommand(),
-            new ListPartCommand(), new ChangeVolumeCommand(), new LogCatCommand(),
-            new MkdirCommand(), new ShutdownCommand(), new RestartCommand(),
-            new WelcomeCommand(), new SUtilsCommand(), new FunCommand()
+            new ListPartCommand(), new LogCatCommand(), new MkdirCommand(), 
+            new ShutdownCommand(), new RestartCommand(), new WelcomeCommand(), 
+            new SUtilsCommand(), new FunCommand(), new MIVCommand(),
+            new CatCommand()
         };
         internal static List<string> CommandHistory = new(128);
         internal static int LastErrorCode;
-        internal static byte Volume;
-        internal static string Path = "";
+        internal static string Path = "0:\\";
+        //internal static User CurrentUser = "root";
         internal static bool Running = true;
         internal override string Name => "TShell";
         internal override int MajorVersion => Kernel.BuildConstants.VersionMajor;
@@ -24,7 +25,7 @@ namespace wdOS.Core.Shells.TShell
         internal override int PatchVersion => Kernel.BuildConstants.VersionPatch;
         internal override void BeforeRun()
         {
-            _ = ((ConsoleCommand)AllCommands[12]).Execute(new string[] { });
+            _ = ((ConsoleCommand)AllCommands[11]).Execute(new string[] { });
             Console.ForegroundColor = ConsoleColor.White;
             if (FileSystem.VFS.GetVolumes().Count == 0)
             {
@@ -47,9 +48,12 @@ namespace wdOS.Core.Shells.TShell
             try
             {
                 Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Blue;
+                //Console.Write($"{CurrentUser.Name} ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($"{GetFullPath()} > ");
+                Console.Write($"{GetFullPath()}");
                 Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(" $ ");
                 {
                     var words = Console.ReadLine().Split(' ');
                     var cmd = FindCommandByName(words[0]);
@@ -59,7 +63,6 @@ namespace wdOS.Core.Shells.TShell
                     else
                     { Console.WriteLine("This command doesn't exist!"); LastErrorCode = 1; return; }
                 }
-                Console.WriteLine();
             }
             catch (Exception e)
             {
@@ -67,12 +70,7 @@ namespace wdOS.Core.Shells.TShell
                 LastErrorCode = int.MinValue;
             }
         }
-        internal static string GetFullPath() => $"{Volume}:\\{Path}";
-        internal static void GoLowerPath(string nextdir)
-        {
-            string path = Path + '\\' + nextdir;
-            if (path.Length < 255) { Path = Utilities.CanonicalPath(true, path); }
-        }
+        internal static string GetFullPath() => Path;
         internal static ConsoleCommand FindCommandByName(string name)
         {
             foreach (ConsoleCommand command in AllCommands)

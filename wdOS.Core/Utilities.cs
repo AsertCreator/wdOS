@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace wdOS.Core
@@ -14,18 +13,7 @@ namespace wdOS.Core
             return values.ToArray();
         }
         internal static string ConnectArgs(string[] args) => ConnectArgs(args, ' ');
-        internal static string ConnectArgs(string[] args, char sep)
-        {
-            string text = "";
-            foreach (string str in args)
-            { text += str + sep; }
-            return text;
-        }
-        internal static string CanonicalPath(bool doubleup, params string[] xpath)
-        {
-            if (doubleup) return Path.GetFullPath(Path.Combine(xpath).Replace("..", "..\\.."));
-            return Path.GetFullPath(Path.Combine(xpath));
-        }
+        internal static string ConnectArgs(string[] args, char sep) => string.Join(sep, args);
         internal static bool HasFlag(int value, int match) => (value & match) != 0;
     }
 }

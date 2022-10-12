@@ -3,6 +3,8 @@ using Cosmos.System.FileSystem.VFS;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using wdOS.Core.Shells.ThirdParty;
 
 namespace wdOS.Core.Shells.TShell
 {
@@ -12,32 +14,21 @@ namespace wdOS.Core.Shells.TShell
         internal override string Description => "changes directory";
         internal override int Execute(string[] args)
         {
-            var path = Utilities.CanonicalPath(true, TShell.GetFullPath(), Utilities.ConnectArgs(args));
-            Console.WriteLine(path);
-            if (Utilities.ConnectArgs(args).Contains(':'))
+            string path = Utilities.ConnectArgs(args, '\\');
+            if (args.Length == 0) return 0;
+            if (TShell.Path.Split('\\').Length == 1 && path.StartsWith("..")) return 0;
+            else if (path.StartsWith(".."))
             {
-                //TShell.Path = 
-                Console.WriteLine(path.Substring(3));
-                //TShell.Volume = 
-                Console.WriteLine(Convert.ToByte(args[0][0]));
-                return 0;
+                string[] var0 = TShell.Path.Split("\\").Reverse().ToArray();
+                TShell.Path = string.Join('\\', Utilities.SkipArray(var0, 1).Reverse().ToArray());
             }
-            if (!VFSManager.FileExists(path) && VFSManager.DirectoryExists(path))
-                //TShell.Path =
-                Console.WriteLine(path);
-            return 0;
-        }
-    }
-    internal class ChangeVolumeCommand : ConsoleCommand
-    {
-        internal override string Name => "chgvol";
-        internal override string Description => "changes current volume";
-        internal override int Execute(string[] args)
-        {
-            if (args.Length == 1)
-            { TShell.Volume = Convert.ToByte(args[0][0]); return 0; }
             else
-            { Console.WriteLine("Too many or too few arguments"); return 1; }
+            {
+                if (FileSystem.DirectoryExists(TShell.Path + path))
+                    TShell.Path = TShell.Path + path + '\\';
+                else Console.WriteLine(path + " does not exist!");
+            }
+            return 0;
         }
     }
     internal class MkdirCommand : ConsoleCommand
@@ -165,6 +156,31 @@ namespace wdOS.Core.Shells.TShell
             Console.WriteLine("LogCat - definitely not bug free program, hold on...");
             Console.WriteLine(Kernel.SystemLog.ToString());
             Console.WriteLine("Have a great day!");
+            return 0;
+        }
+    }
+    internal class MIVCommand : ConsoleCommand
+    {
+        internal override string Name => "miv";
+        internal override string Description => "minimalistic text editor";
+        internal override int Execute(string[] args)
+        {
+            Console.WriteLine("MIV is not my program, its written by bartashevich and modified by me");
+            Console.WriteLine("Opening in 4 seconds");
+            Kernel.WaitFor(4000);
+            MIV.StartMIV();
+            return 0;
+        }
+    }
+    internal class CatCommand : ConsoleCommand
+    {
+        internal override string Name => "cat";
+        internal override string Description => "concats contents of the file";
+        internal override int Execute(string[] args)
+        {
+            string path = TShell.GetFullPath() + Utilities.ConnectArgs(args, '\\');
+            if (!FileSystem.FileExists(path)) { Console.WriteLine("This file does not exist!"); return 1; }
+            Console.WriteLine(FileSystem.ReadStringFile(path));
             return 0;
         }
     }
