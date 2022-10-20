@@ -1,7 +1,6 @@
 image: Previous Visual Studio 2022
-before_build:
-  - nuget restore
 nuget:
   account_feed: true
   project_feed: true
-  
+before_build: 
+- cmd: nuget restore 
