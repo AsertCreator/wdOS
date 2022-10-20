@@ -21,10 +21,11 @@
         <VMWareEdition>Player</VMWareEdition>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
         <BinFormat>Elf</BinFormat>
-        <CompressionType>None</CompressionType>
+        <CompressionType>Gzip</CompressionType>
         <IgnoreDebugStubAttribute>True</IgnoreDebugStubAttribute>
         <StackCorruptionDetectionLevel>MethodFooters</StackCorruptionDetectionLevel>
         <DebugEnabled>False</DebugEnabled>
+        <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -35,6 +36,14 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
       <DebugType>embedded</DebugType>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\bootChime.wav" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\bootChime.wav" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />

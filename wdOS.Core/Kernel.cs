@@ -2,7 +2,10 @@
 using Cosmos.Core.Memory;
 using Cosmos.Debug.Kernel;
 using Cosmos.HAL;
+using Cosmos.System.Audio;
+using Cosmos.System.Audio.IO;
 using Cosmos.System.Graphics;
+using IL2CPU.API.Attribs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,12 +72,13 @@ namespace wdOS.Core
         {
             for (int i = 0; i < 20; i++) INTs.SetIntHandler((byte)i, ErrorHandler.HandleException);
             Log($"wdOS is booting, running on {CPU.GetCPUBrandString()}");
-            Log($"Current kernel version: {KernelVersion}");
+            Log($"Current kernel version: {KernelVersion}"); 
             Log("Done early initialization!");
         }
         internal static void LateInitialization()
         {
             Log("Starting late initialization...");
+            AudioPlayer.Setup();
             Console.WriteLine("Starting components...");
             var font = Sys.Graphics.Fonts.PCScreenFont.Default;
             VGAScreen.SetFont(font.CreateVGAFont(), font.Height);
@@ -116,8 +120,8 @@ namespace wdOS.Core
                 Log("Starting shutdown process...");
                 // TODO: Shutdown something
                 Log("Done shutdown process!");
-                if (!restart) { Sys.Power.QemuShutdown(); Sys.Power.Shutdown(); }
-                else { Sys.Power.QemuReboot(); Sys.Power.Reboot(); }
+                if (!restart) { Sys.Power.Shutdown(); }
+                else { Sys.Power.Reboot(); }
             }
             catch { if (!restart) { Panic(6); } else { Panic(6); } }
         }

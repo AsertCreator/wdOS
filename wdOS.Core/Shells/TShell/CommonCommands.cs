@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using wdOS.Core.Shells.CShell;
 using wdOS.Core.Shells.ThirdParty;
 
 namespace wdOS.Core.Shells.TShell
@@ -181,6 +182,18 @@ namespace wdOS.Core.Shells.TShell
             string path = TShell.GetFullPath() + Utilities.ConnectArgs(args, '\\');
             if (!FileSystem.FileExists(path)) { Console.WriteLine("This file does not exist!"); return 1; }
             Console.WriteLine(FileSystem.ReadStringFile(path));
+            return 0;
+        }
+    }
+    internal class CShellCommand : ConsoleCommand
+    {
+        internal override string Name => "cshell";
+        internal override string Description => "opens CShell GUI shell";
+        internal override int Execute(string[] args)
+        {
+            CShell.CShell shell = new();
+            shell.BeforeRun();
+            while(shell.IsRunning) shell.Run();
             return 0;
         }
     }

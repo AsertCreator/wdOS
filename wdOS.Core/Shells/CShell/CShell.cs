@@ -1,8 +1,11 @@
-﻿using Cosmos.System;
+﻿using Cosmos.HAL;
+using Cosmos.System;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using wdOS.Core.Shells.Users;
 
 namespace wdOS.Core.Shells.CShell
 {
@@ -26,6 +29,7 @@ namespace wdOS.Core.Shells.CShell
         internal static int WindowTitleBarHeight;
         internal static bool Running;
         internal static List<Window> AllWindows;
+        internal static string DockText;
         internal static int DockYPos;
         internal const int CursorSize = 10;
         internal const int CursorBorderSize = 2;
@@ -42,6 +46,8 @@ namespace wdOS.Core.Shells.CShell
                 SetMode(800, 600);
                 UpdateUICache();
                 Kernel.Log("Ready to render! Starting...");
+                PIT.PITTimer timer = new(() => { }, 1000000000, true);
+                Cosmos.HAL.Global.PIT.RegisterTimer(timer);
             }
             catch { }
         }
@@ -82,7 +88,10 @@ namespace wdOS.Core.Shells.CShell
                 HandleSCL(); // Screen Content Layer
                 HandleSIL(); // Screen Interaction Layer
                 FSC.Display(); // display canvas
-                if (Framecount % 150 == 0) { CleanUp(); }
+                if (Framecount % 10 == 0) { CleanUp(); DockText = 
+                        $"{Kernel.StringTime}, " +
+                        $"memory used: {Kernel.UsedRAM} ({Math.Round((Kernel.UsedRAM + 0.0) / (Kernel.TotalRAM + 0.0) * 100)}), " +
+                        $"total memory: {Kernel.TotalRAM}"; }
                 Framecount++; // clean up scheduling
             }
         }
@@ -92,6 +101,7 @@ namespace wdOS.Core.Shells.CShell
             else FSC.DrawFilledRectangle(DefaultColors.BlackPen, 0, 0, ScreenWidth, WindowTitleBarHeight);
             for (int i = 0; i < WindowCount; i++) AllWindows[i].RenderWindow();
             FSC.DrawFilledRectangle(DefaultColors.Dock0, 0, DockYPos, ScreenWidth, DockSize);
+            FSC.DrawString(DockText, Font, DefaultColors.WhitePen, 10, ScreenHeight - 15);
         }
         internal void HandleSIL()
         {
@@ -110,6 +120,9 @@ namespace wdOS.Core.Shells.CShell
                             Title = $"Window {random.Next()}",
                             Back = new Pen(Color.FromArgb(random.Next(255), random.Next(255), random.Next(255)))
                         });
+                        break;
+                    case 'q':
+                        IsRunning = false;
                         break;
                 }
             }

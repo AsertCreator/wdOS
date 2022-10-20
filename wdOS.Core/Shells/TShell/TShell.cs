@@ -11,8 +11,8 @@ namespace wdOS.Core.Shells.TShell
             new ChangePathCommand(), new ListCommand(), new FormatCommand(),
             new ListPartCommand(), new LogCatCommand(), new MkdirCommand(), 
             new ShutdownCommand(), new RestartCommand(), new WelcomeCommand(), 
-            new SUtilsCommand(), new FunCommand(), new MIVCommand(),
-            new CatCommand()
+            new SUtilsCommand(), new MIVCommand(), new CatCommand(), 
+            new CShellCommand(), new FunCommand()
         };
         internal static List<string> CommandHistory = new(128);
         internal static int LastErrorCode;
