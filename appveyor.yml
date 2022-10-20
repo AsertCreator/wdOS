@@ -1,6 +1,8 @@
-image: Previous Visual Studio 2022
+version: 1.0.{build}
+image: Visual Studio 2022
 nuget:
   account_feed: true
-  project_feed: true
+build:
+  verbosity: minimal
 before_build: 
 - cmd: nuget restore 
