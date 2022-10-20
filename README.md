@@ -7,14 +7,14 @@ Look at projects. Currently im at version 0.2.2 which i made in less han 1 hour
 **A**: This OS uses [Cosmos](https://github.com/CosmosOS/Cosmos) which allows to write OSes on almost any .NET language
 
 **Q**: Minimum system requirements?
-| RAM           | Disk | CD-ROM | Video           | CPU                         |
-|---------------|------|--------|-----------------|-----------------------------|
-| 64 MiB, maybe | any  | any    | legacy pci ones | any starting from pentium 3 |
+| RAM           | Disk | CD-ROM | Video        | CPU                         |
+|---------------|------|--------|--------------|-----------------------------|
+| 64 MiB, maybe | any  | any    | internal gpu | any starting from core solo |
 
 **Q**: Recomended system requirements?
-| RAM     | Disk | CD-ROM | Video           | CPU                         |
-|---------|------|--------|-----------------|-----------------------------|
-| 128 MiB | any  | any    | legacy pci ones | any starting from core solo |
+| RAM     | Disk | CD-ROM | Video        | CPU                          |
+|---------|------|--------|--------------|------------------------------|
+| 128 MiB | any  | any    | internal gpu | any starting from core 2 duo |
 
 **Q**: Can I make apps or drivers for this OS
 **A**: No, im too lazy to write an SDK and force computer to execute my snippet nightmare
