@@ -38,11 +38,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Resources\bootChime.wav" />
+      <None Remove="OS\Resources\bootChime.wav" />
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="Resources\bootChime.wav" />
+      <EmbeddedResource Include="OS\Resources\bootChime.wav" />
     </ItemGroup>
 
     <ItemGroup>

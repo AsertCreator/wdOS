@@ -5,6 +5,12 @@ VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Core", "wdOS.Core\wdOS.Core.csproj", "{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Some Solution Items", "Some Solution Items", "{38B45CDF-3F9A-4AA0-B4BD-680C7D5D4747}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
