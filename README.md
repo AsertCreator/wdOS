@@ -1,7 +1,7 @@
 # wdOS
 [Cosmos](https://github.com/CosmosOS/Cosmos)-based operating system for x86 PCs. Don't even try to ask me about name, its basically means wednesday. Just an idea to create an OS came at wednesday
 ### Development process
-~Look at projects~. Currently im at version 0.2.4
+~Look at projects~. Currently im at version 0.3.0, where i made internal overhaul(?)
 ### Not Asked Questions
 **Q**: How?
 **A**: This OS uses [Cosmos](https://github.com/CosmosOS/Cosmos) which allows to write OSes on almost any .NET language
