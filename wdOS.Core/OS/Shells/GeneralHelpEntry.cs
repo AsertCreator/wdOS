@@ -1,9 +1,9 @@
 ﻿namespace wdOS.Core.OS.Shells
 {
-    internal class GeneralHelpEntry : HelpEntry
+    internal class GeneralHelpEntry : IHelpEntry
     {
-        internal override string Name => CurrentName;
-        internal override string Description => CurrentDesc;
+        string IHelpEntry.EntryName => CurrentName;
+        string IHelpEntry.EntryDescription => CurrentDesc;
         internal string CurrentName;
         internal string CurrentDesc;
         internal GeneralHelpEntry(string name, string desc)

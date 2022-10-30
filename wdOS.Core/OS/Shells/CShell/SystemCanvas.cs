@@ -1,60 +1,75 @@
-﻿using Cosmos.Core;
+﻿using Cosmos.HAL.Drivers;
 using Cosmos.System.Graphics;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
+using wdOS.Core.OS.Foundation;
 
 namespace wdOS.Core.OS.Shells.CShell
 {
     internal class SystemCanvas : Canvas
     {
         internal static List<Mode> Modes = new() { CurrentMode };
-        internal static Mode CurrentMode = new Mode(ModeSizeX, ModeSizeY, ColorDepth.ColorDepth32);
-        internal static Color[] Buffer = new Color[ModeSize];
-        internal static uint Nothing;
-        internal static int ModeSize = ModeSizeX * ModeSizeY;
-        internal static int ModeSizeX = 800;
-        internal static int ModeSizeY = 600;
+        internal static Mode CurrentMode;
+        internal static VBEDriver Driver;
+        internal static ushort ModeSizeX = 0;
+        internal static ushort ModeSizeY = 0;
         public override List<Mode> AvailableModes => Modes;
-        public override Mode DefaultGraphicMode => Modes[0];
-        public override Mode Mode { get => CurrentMode; set => Nothing = 0; }
-        public SystemCanvas()
+        public override Mode DefaultGraphicMode => CurrentMode;
+        public override Mode Mode { get => CurrentMode; set => Kernel.Log($"Canvas mode access violation: {value}"); }
+        private SystemCanvas() { }
+        public SystemCanvas(ushort sizex, ushort sizey)
         {
-            if (!VBE.IsAvailable())
-            {
-                Console.WriteLine("No compatible display adapters are found!");
-                return;
-            }
+            Driver = new(sizex, sizey, 32);
+            ModeSizeX = sizex;
+            ModeSizeY = sizey;
+            CurrentMode = new(ModeSizeX, ModeSizeY, ColorDepth.ColorDepth32);
+            Driver.VBESet(sizex, sizey, 32, true);
         }
-        public override void Clear(int color)
-        {
-            Color clearColor = Color.FromArgb(color);
-            for (int i = 0; i < ModeSize; i++) Buffer[i] = clearColor;
-        }
-        public override void Disable() { /* nope */ }
-        public override void Display()
-        {
-
-        }
+        public override void Clear(int color) => Driver.ClearVRAM((uint)color);
+        public override void Clear(Color color) => Clear(color.ToArgb());
+        public override void Disable() => Driver.DisableDisplay();
+        public override void Display() => Driver.Swap();
         public override void DrawArray(Color[] colors, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            int index = 0;
+            for (int u = x; u < y + height; u++)
+            {
+                for (int c = y; c < x + width; c++)
+                {
+                    var off = (uint)(u * ModeSizeY * 4 + c * 4);
+                    Driver.SetVRAM(off, colors[index].B);
+                    Driver.SetVRAM(off + 1, colors[index].G);
+                    Driver.SetVRAM(off + 2, colors[index].R);
+                    Driver.SetVRAM(off + 3, 255);
+                    index++;
+                }
+                index++;
+            }
         }
         public override void DrawPoint(Pen pen, int x, int y)
         {
-            throw new NotImplementedException();
+            var off = (uint)y * ModeSizeY * 4 + (uint)x * 4;
+            Driver.SetVRAM(off, pen.Color.B);
+            Driver.SetVRAM(off + 1, pen.Color.G);
+            Driver.SetVRAM(off + 2, pen.Color.R);
+            Driver.SetVRAM(off + 3, 255);
         }
         public override void DrawPoint(Pen pen, float x, float y)
         {
-            throw new NotImplementedException();
+            var off = (uint)y * ModeSizeY * 4 + (uint)x * 4;
+            Driver.SetVRAM(off, pen.Color.B);
+            Driver.SetVRAM(off + 1, pen.Color.G);
+            Driver.SetVRAM(off + 2, pen.Color.R);
+            Driver.SetVRAM(off + 3, 255);
         }
-        public override Color GetPointColor(int x, int y)
+        public override void DrawFilledRectangle(Pen pen, int x, int y, int width, int height)
         {
-            throw new NotImplementedException();
+            var argb = pen.Color.ToArgb();
+            var off = y * ModeSizeY * 4 + x * 4;
+            for (int u = x; u < y + height; u++) Driver.ClearVRAM(off, width, argb);
         }
-        public override string Name()
-        {
-            throw new NotImplementedException();
-        }
+        public override void DrawSquare(Pen pen, int x, int y, int size) => DrawFilledRectangle(pen, x, y, size, size);
+        public override Color GetPointColor(int x, int y) => Color.FromArgb((int)Driver.GetVRAM((uint)y * ModeSizeY * 4 + (uint)x * 4));
+        public override string Name() => nameof(SystemCanvas) + " VBE";
     }
 }

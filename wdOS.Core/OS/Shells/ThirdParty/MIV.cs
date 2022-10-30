@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace wdOS.Core.OS.ThirdParty
+namespace wdOS.Core.OS.Shells.ThirdParty
 {
     // Originally written by Bartashevich (https://github.com/bartashevich)
     // Modified by CaveSponge (possibly, https://github.com/Arawn-Davies)

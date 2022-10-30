@@ -2,15 +2,15 @@
 using Cosmos.System.FileSystem.VFS;
 using System.IO;
 
-namespace wdOS.Core.OS.LowLevel
+namespace wdOS.Core.OS.Foundation
 {
     internal static class FileSystem
     {
         internal static CosmosVFS VFS = new();
-        internal const string PrivateDir = "0:\\.Private";
+        internal const string PrivateDir = "0:\\.private";
         internal const string SystemTrash = PrivateDir + "\\SystemTrash";
         internal const string UserTrashes = PrivateDir + "\\UserTrashes";
-        internal const string SystemDir = PrivateDir + "\\wdOS";
+        internal const string SystemDir = PrivateDir + "\\System";
         internal const string UserDataDir = "0:\\Users";
         internal static void Initialize()
         {

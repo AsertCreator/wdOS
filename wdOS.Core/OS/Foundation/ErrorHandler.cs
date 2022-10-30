@@ -1,8 +1,8 @@
 ﻿using Cosmos.Core;
 using System;
-using static wdOS.Core.OS.LowLevel.Kernel;
+using static wdOS.Core.OS.Foundation.Kernel;
 
-namespace wdOS.Core.OS.LowLevel
+namespace wdOS.Core.OS.Foundation
 {
     internal static class ErrorHandler
     {
@@ -14,7 +14,7 @@ namespace wdOS.Core.OS.LowLevel
             Log($"Current kernel version: {KernelVersion}");
             Console.WriteLine($"!!! panic !!! {SystemSettings.PanicStrings[message]}");
             Console.WriteLine($"Current kernel version: {KernelVersion}");
-            WaitForShutdown(true, SystemSettings.CrashRestartTimeout);
+            WaitForShutdown(true, SystemSettings.CrashPowerOffTimeout);
         }
         internal static void HandleException(ref INTs.IRQContext context)
         {
@@ -47,7 +47,7 @@ namespace wdOS.Core.OS.LowLevel
             else
             {
                 Console.Write("You cannot continue using system!");
-                WaitForShutdown(true, SystemSettings.CrashRestartTimeout);
+                WaitForShutdown(true, SystemSettings.CrashPowerOffTimeout);
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using Cosmos.Core;
 using System;
 using System.Collections.Generic;
-using wdOS.Core.OS.LowLevel;
+using wdOS.Core.OS.Foundation;
 
 namespace wdOS.Core.OS.Shells.TShell
 {
@@ -20,7 +20,7 @@ namespace wdOS.Core.OS.Shells.TShell
                         Console.WriteLine($"CPUID: {CPU.GetCPUVendorName()}");
                         break;
                     case "cpuname":
-                        Console.WriteLine($"CPU Name: {CPU.GetCPUBrandString()}");
+                        Console.WriteLine($"CPU EntryName: {CPU.GetCPUBrandString()}");
                         break;
                     case "cpufreq":
                         Console.WriteLine($"CPU Frequncy: {CPU.GetCPUCycleSpeed()}");
@@ -29,14 +29,14 @@ namespace wdOS.Core.OS.Shells.TShell
                         Console.WriteLine($"System uptime: {CPU.GetCPUUptime}");
                         break;
                     case "lspci":
-                        List<HelpEntry> entries = new();
+                        List<IHelpEntry> entries = new();
                         int index = 0;
                         foreach (var device in Cosmos.HAL.PCI.Devices)
                         {
                             entries.Add(new GeneralHelpEntry($"Device #{index}", $"DeviceID: {device.DeviceID}, VendorID: {device.VendorID}, Slot: {device.slot}"));
                             index++;
                         }
-                        ShowHelpMenu(entries);
+                        IHelpEntry.ShowHelpMenu(entries);
                         break;
                     case "sweep":
                         Console.WriteLine("Sweeping...");
@@ -51,7 +51,7 @@ namespace wdOS.Core.OS.Shells.TShell
                     case "showmenu":
                         break;
                     case "help":
-                        List<HelpEntry> entries1 = new()
+                        List<IHelpEntry> entries1 = new()
                         {
                             new GeneralHelpEntry("cpuid", "shows your cpuid"),
                             new GeneralHelpEntry("cpuname", "shows your cpu name"),
@@ -63,7 +63,7 @@ namespace wdOS.Core.OS.Shells.TShell
                             new GeneralHelpEntry("memory", "shows your system memory"),
                             new GeneralHelpEntry("help", "shows your system utilities")
                         };
-                        ShowHelpMenu(entries1);
+                        IHelpEntry.ShowHelpMenu(entries1);
                         break;
                     default:
                         Console.WriteLine("This action is not supported!");

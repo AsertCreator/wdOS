@@ -11,25 +11,50 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Some Solution Items", "Some
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wdOS.SDK", "wdOS.SDK", "{077306E7-D3D3-4410-A69D-789EB93AB5C3}"
+	ProjectSection(SolutionItems) = preProject
+		wdOS.SDK\companion.c = wdOS.SDK\companion.c
+		wdOS.SDK\SDK.md = wdOS.SDK\SDK.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{8334AF2D-488E-4CD2-86A7-FDD5FD05B4A1}"
+	ProjectSection(SolutionItems) = preProject
+		wdOS.SDK\include\errno.h = wdOS.SDK\include\errno.h
+		wdOS.SDK\include\limits.h = wdOS.SDK\include\limits.h
+		wdOS.SDK\include\stdbool.h = wdOS.SDK\include\stdbool.h
+		wdOS.SDK\include\stddef.h = wdOS.SDK\include\stddef.h
+		wdOS.SDK\include\stdint.h = wdOS.SDK\include\stdint.h
+		wdOS.SDK\include\wdos.h = wdOS.SDK\include\wdos.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Debug|x64.Build.0 = Debug|Any CPU
+		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Debug|x86.Build.0 = Debug|Any CPU
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Release|x64.ActiveCfg = Release|Any CPU
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Release|x64.Build.0 = Release|Any CPU
+		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Release|x86.ActiveCfg = Release|Any CPU
+		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8334AF2D-488E-4CD2-86A7-FDD5FD05B4A1} = {077306E7-D3D3-4410-A69D-789EB93AB5C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {96A31AB2-D4ED-4A57-8310-1C0E08B8C02A}

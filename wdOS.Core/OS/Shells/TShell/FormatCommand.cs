@@ -1,6 +1,6 @@
 ﻿using Cosmos.System.FileSystem.VFS;
 using System;
-using wdOS.Core.OS.LowLevel;
+using wdOS.Core.OS.Foundation;
 
 namespace wdOS.Core.OS.Shells.TShell
 {

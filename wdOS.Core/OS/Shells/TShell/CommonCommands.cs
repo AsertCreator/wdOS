@@ -1,10 +1,10 @@
-﻿using Cosmos.System.FileSystem.VFS;
+﻿using Cosmos.Core;
+using Cosmos.System.FileSystem.VFS;
 using System;
 using System.IO;
 using System.Linq;
-using wdOS.Core.OS.LowLevel;
-using wdOS.Core.OS.Shells;
-using wdOS.Core.OS.ThirdParty;
+using wdOS.Core.OS.Foundation;
+using wdOS.Core.OS.Shells.ThirdParty;
 
 namespace wdOS.Core.OS.Shells.TShell
 {
@@ -17,10 +17,15 @@ namespace wdOS.Core.OS.Shells.TShell
             string path = Utilities.ConnectArgs(args, '\\');
             if (args.Length == 0) return 0;
             if (TShellManager.Path.Split('\\').Length == 1 && path.StartsWith("..")) return 0;
+            else if (path.Contains(':'))
+            {
+                TShellManager.Path = path[..2];
+            }
             else if (path.StartsWith(".."))
             {
                 string[] var0 = TShellManager.Path.Split("\\").Reverse().ToArray();
-                TShellManager.Path = string.Join('\\', Utilities.SkipArray(var0, 1).Reverse().ToArray());
+                TShellManager.Path = string.Join('\\', Utilities.SkipArray(var0, 2).Reverse().ToArray());
+                GCImplementation.Free(var0);
             }
             else
             {
@@ -35,13 +40,13 @@ namespace wdOS.Core.OS.Shells.TShell
     {
         internal override string Name => "mkdir";
         internal override string Description => "creates a directory in cd";
-        internal override int Execute(string[] args) { FileSystem.CreateDirectory(Path.Combine(TShellManager.GetFullPath(), Utilities.ConnectArgs(args))); return 0; }
+        internal override int Execute(string[] args) { FileSystem.CreateDirectory(Path.Combine(TShellManager.Path, Utilities.ConnectArgs(args))); return 0; }
     }
     internal class TouchCommand : ConsoleCommand
     {
         internal override string Name => "touch";
         internal override string Description => "creates a file in cd"/*and changes access time"*/;
-        internal override int Execute(string[] args) { FileSystem.WriteStringFile(Path.Combine(TShellManager.GetFullPath(), Utilities.ConnectArgs(args)), ""); return 0; }
+        internal override int Execute(string[] args) { FileSystem.WriteStringFile(Path.Combine(TShellManager.Path, Utilities.ConnectArgs(args)), ""); return 0; }
     }
     internal class FunCommand : ConsoleCommand
     {
@@ -64,7 +69,7 @@ namespace wdOS.Core.OS.Shells.TShell
     {
         internal override string Name => "help";
         internal override string Description => "shows this help list";
-        internal override int Execute(string[] args) { ShowHelpMenu(TShellManager.AllCommands); return 0; }
+        internal override int Execute(string[] args) { IHelpEntry.ShowHelpMenu(TShellManager.AllCommands); return 0; }
     }
     internal class EchoCommand : ConsoleCommand
     {
@@ -105,7 +110,7 @@ namespace wdOS.Core.OS.Shells.TShell
         internal override string Description => "lists all etries in directory";
         internal override int Execute(string[] args)
         {
-            var list = VFSManager.GetDirectoryListing(TShellManager.GetFullPath());
+            var list = VFSManager.GetDirectoryListing(TShellManager.Path);
             int maxlength = 0;
             foreach (var entry in list)
             {
@@ -178,7 +183,7 @@ namespace wdOS.Core.OS.Shells.TShell
         internal override string Description => "concats contents of the file";
         internal override int Execute(string[] args)
         {
-            string path = TShellManager.GetFullPath() + Utilities.ConnectArgs(args, '\\');
+            string path = TShellManager.Path + Utilities.ConnectArgs(args, '\\');
             if (!FileSystem.FileExists(path)) { Console.WriteLine("This file does not exist!"); return 1; }
             Console.WriteLine(FileSystem.ReadStringFile(path));
             return 0;

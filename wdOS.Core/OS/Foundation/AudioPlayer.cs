@@ -4,7 +4,7 @@ using Cosmos.System.Audio.IO;
 using IL2CPU.API.Attribs;
 using System;
 
-namespace wdOS.Core.OS.LowLevel
+namespace wdOS.Core.OS.Foundation
 {
     internal static class AudioPlayer
     {
