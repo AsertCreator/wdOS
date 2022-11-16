@@ -38,6 +38,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="OS\FileSystems\**" />
+      <EmbeddedResource Remove="OS\FileSystems\**" />
+      <None Remove="OS\FileSystems\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <None Remove="OS\Resources\bootChime.wav" />
     </ItemGroup>
 
