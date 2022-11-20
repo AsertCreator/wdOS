@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace wdOS.Core.OS.Application
+namespace wdOS.Core.OS.Threading
 {
     internal class Mutex
     {
