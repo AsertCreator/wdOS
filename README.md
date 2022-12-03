@@ -1,46 +1,32 @@
-# wdOS
+# wdOS/USB
 [Cosmos](https://github.com/CosmosOS/Cosmos)-based operating system for x86 PCs. 
-Don't even try to ask me about name, its basically means wednesday. Just an idea 
-to create an OS came at wednesday
+POV: when you have half-working OS and you trying to make usb work on this thing
 
 ### Development process
-~Look at projects~. Currently system is at version 0.4.0. I think its an alpha. 
-Almost implemented features:
-- TShell, basically optimized terminal
-- CShell, basically unoptimized graphical shell
-- Some nix commands
-Will be implemented:
-- Networking
-- Audio Playing
-- Error Handling
-- Normal Interaction
-- System Installer
-Third-pary features:
-- MIV ([author](https://github.com/bartashevich))
+~Everything is done!~ Nothing is done!
 
 ### Not Asked Questions
 **Q**: How?
 
-**A**: This OS uses [Cosmos](https://github.com/CosmosOS/Cosmos) which allows to write OSes on C#/F#/VB.NET
+**A**: Somehow
 
 
 **Q**: Minimum system requirements?
-| RAM           | Disk | CD-ROM | Video        | CPU                         |
-|---------------|------|--------|--------------|-----------------------------|
-| 64 MiB, maybe | any  | any    | internal gpu | any starting from core solo |
+| RAM           | Disk | CD-ROM | Video | CPU                   |
+|---------------|------|--------|-------|-----------------------|
+| 64 MiB, maybe | any  | any    | any   | any that supports usb |
 
 
 **Q**: Recomended system requirements?
-| RAM     | Disk | CD-ROM | Video        | CPU                          |
-|---------|------|--------|--------------|------------------------------|
-| 128 MiB | any  | any    | internal gpu | any starting from core 2 duo |
+
+**A**: Same as minimum
 
 
 **Q**: Can I make apps or drivers for this OS?
 
-**A**: No, currently SDK is in development
+**A**: No, and you will never able to write anything for this branch
 
 
-**Q**: Can I install system to drive?
+**Q**: Can I install system to a hard disk/ssd?
 
-**A**: Well...
+**A**: ✨ 𝑛 𝑜 ,  𝑜 𝑓   𝑐 𝑜 𝑢 𝑟 𝑠 𝑒 ✨
