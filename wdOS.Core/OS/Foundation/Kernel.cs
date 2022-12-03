@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using wdOS.Core.OS.Network;
 using wdOS.Core.OS.Shells;
 using wdOS.Core.OS.Shells.CShell;
 using wdOS.Core.OS.Shells.TShell;
@@ -23,11 +24,11 @@ namespace wdOS.Core.OS.Foundation
         internal const string AssemblyName = nameof(Core);
         internal static Debugger KernelDebugger;
         internal static Shell CurrentShell;
-        internal static List<KeyboardBase> Keyboards = new();
-        internal static List<MouseBase> Mice = new();
+        internal static KeyboardBase[] Keyboards;
+        internal static MouseBase[] Mice;
         internal static StringBuilder SystemLog = new();
-        internal static string StringTime => $"{RTC.Hour}:{RTC.Minute}:{RTC.Second}";
-        internal static string KernelVersion => $"{BuildConstants.VersionMajor}.{BuildConstants.VersionMinor}.{BuildConstants.VersionPatch}";
+        internal static string StringTime => RTC.Hour + ":" + RTC.Minute + ":" + RTC.Second;
+        internal static string KernelVersion => BuildConstants.VersionMajor + "." + BuildConstants.VersionMinor + "." + BuildConstants.VersionPatch;
         internal static uint TotalRAM => CPU.GetAmountOfRAM() * 1024 * 1024;
         internal static uint UsedRAM => GCImplementation.GetUsedRAM();
         string IPackage.Name => "wdOS";
@@ -42,10 +43,6 @@ namespace wdOS.Core.OS.Foundation
             internal const int VersionMajor = 0;
             internal const int VersionMinor = 4;
             internal const int VersionPatch = 0;
-            internal const string CosmosCosmosHash = "???????";
-            internal const string CosmosXSharpHash = "???????";
-            internal const string CosmosIL2CPUHash = "???????";
-            internal const string CosmosCommonHash = "???????";
         }
         internal static class SystemSettings
         {
@@ -85,25 +82,25 @@ namespace wdOS.Core.OS.Foundation
                 Log("Shell is exited!");
                 ShutdownPC(false);
             }
-            catch (Exception e) { Log($"Execution crash! Message: {e.Message}"); Panic(5); }
+            catch (Exception e) { Log("System crash! Message: " + e.Message); ErrorHandler.Panic(5); }
         }
         internal void EarlyInitialization()
         {
             try 
             {
                 for (int i = 0; i < 20; i++) INTs.SetIntHandler((byte)i, ErrorHandler.HandleException);
-                Log($"wdOS is booting, running on {CPU.GetCPUBrandString()}");
-                Log($"Current kernel version: {KernelVersion}");
+                Log("wdOS is booting, running on " + CPU.GetCPUBrandString());
+                Log("Current kernel version: " + KernelVersion);
                 Console.WriteLine("Starting early components...");
 
                 FileSystem.Initialize();
-                if (FileSystem.VFS.Disks.Count == 0) Panic(2);
-                Keyboards = Cosmos.HAL.Global.GetKeyboardDevices().ToList();
-                Mice = Cosmos.HAL.Global.GetMouseDevices().ToList();
-                if (Keyboards.Count == 0)
+                if (FileSystem.VFS.Disks.Count == 0) ErrorHandler.Panic(2);
+                Keyboards = Cosmos.HAL.Global.GetKeyboardDevices().ToArray();
+                Mice = Cosmos.HAL.Global.GetMouseDevices().ToArray();
+                if (Keyboards.Length == 0)
                 {
                     Console.WriteLine("Error! Your PC has no attahced keyboards. Without any keyboards you can't use system");
-                    Panic(3);
+                    ErrorHandler.Panic(3);
                 }
                 NetworkInitialization();
 
@@ -113,7 +110,7 @@ namespace wdOS.Core.OS.Foundation
             {
                 Log("Unable to perform early initialization!");
                 Console.WriteLine("Unable to perform early initialization!");
-                Panic(5);
+                ErrorHandler.Panic(5);
             }
         }
         internal void LateInitialization()
@@ -137,7 +134,7 @@ namespace wdOS.Core.OS.Foundation
             {
                 Log("Unable to perform late initialization!");
                 Console.WriteLine("Unable to perform late initialization!");
-                Panic(5);
+                ErrorHandler.Panic(5);
             }
         }
         internal static void NetworkInitialization()
@@ -146,8 +143,11 @@ namespace wdOS.Core.OS.Foundation
             {
                 Log("Starting network initialization...");
 
-                using var dchp = new DHCPClient();
-                int time = dchp.SendDiscoverPacket();
+                NetworkManager.MainClient = new(80);
+                NetworkManager.PingClient = new(80);
+                NetworkManager.LANClient = new();
+                int time = NetworkManager.LANClient.SendDiscoverPacket();
+                Log("Got an IP Adrress in " + time + " seconds");
 
                 Log("Done network initialization!");
             }
@@ -161,21 +161,19 @@ namespace wdOS.Core.OS.Foundation
         {
             Log("Performing garbage cleaning...");
             int result = Heap.Collect();
-            Log($"Sweeped {result} objects! Sweet!");
+            Log("Sweeped" + result + " objects! Sweet!");
             return result;
         }
-        internal static void Log(string text) { string data = $"[{AssemblyName}][{StringTime}] {text}"; KernelDebugger.Send(data); _ = SystemLog.Append(data + '\n'); }
-        internal static void Panic(uint message) => ErrorHandler.Panic(message);
+        internal static void Log(string text) 
+        { 
+            string data = "[" + AssemblyName + "][" + StringTime + "] " + text; 
+            KernelDebugger.Send(data); SystemLog.Append(data + '\n'); 
+        }
         internal static void WaitForShutdown(bool restart, int timeout)
         {
-            Console.WriteLine($"{(restart ? "Restarting" : "Shutting down")} in {timeout}");
-            WaitFor(timeout * 1000);
+            Console.WriteLine((restart ? "Restarting" : "Shutting down") + " in " + timeout);
+            Utilities.WaitFor((uint)(timeout * 1000));
             ShutdownPC(restart);
-        }
-        internal static void WaitFor(long timeout)
-        {
-            DateTime target = DateTime.Now.AddMilliseconds(timeout);
-            while (DateTime.Now < target) { }
         }
         internal static void ShutdownPC(bool restart)
         {
@@ -187,7 +185,7 @@ namespace wdOS.Core.OS.Foundation
                 if (!restart) { Sys.Power.Shutdown(); }
                 else { Sys.Power.Reboot(); }
             }
-            catch { if (!restart) { Panic(6); } else { Panic(6); } }
+            catch { if (!restart) { ErrorHandler.Panic(6); } else { ErrorHandler.Panic(6); } }
         }
         protected override void Run() { }
     }

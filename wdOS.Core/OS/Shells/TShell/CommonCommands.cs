@@ -172,7 +172,7 @@ namespace wdOS.Core.OS.Shells.TShell
         {
             Console.WriteLine("MIV is not my program, its written by bartashevich and modified by me");
             Console.WriteLine("Opening in 4 seconds");
-            Kernel.WaitFor(4000);
+            Utilities.WaitFor(4000);
             MIV.StartMIV();
             return 0;
         }

@@ -21,7 +21,7 @@
         <VMWareEdition>Workstation</VMWareEdition>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
         <BinFormat>Elf</BinFormat>
-        <CompressionType>Gzip</CompressionType>
+        <CompressionType>None</CompressionType>
         <IgnoreDebugStubAttribute>True</IgnoreDebugStubAttribute>
         <StackCorruptionDetectionLevel>MethodFooters</StackCorruptionDetectionLevel>
         <DebugEnabled>False</DebugEnabled>

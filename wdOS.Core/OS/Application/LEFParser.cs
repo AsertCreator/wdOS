@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace wdOS.Core.OS.Application
 {
-    internal class Mutex
+    internal static class LEFParser
     {
-        private bool Locked;
-        internal void Lock() { while (Locked) { } Locked = true; }
-        internal void Unlock() => Locked = false;
     }
 }

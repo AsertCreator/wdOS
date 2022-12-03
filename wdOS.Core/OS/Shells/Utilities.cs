@@ -1,4 +1,6 @@
 ﻿using Cosmos.Core;
+using Cosmos.HAL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using wdOS.Core.OS.Foundation;
@@ -29,7 +31,10 @@ namespace wdOS.Core.OS.Shells
             for (int i = 0; i < 512; i++) bytes[i] = point[i];
             return bytes;
         }
-        internal static 
+        internal static void WaitFor(uint timeout)
+        {
+            Cosmos.HAL.Global.PIT.Wait(timeout);
+        }
         internal static string ConnectArgs(string[] args) => ConnectArgs(args, ' ');
         internal static string ConnectArgs(string[] args, char sep) => string.Join(sep, args);
         internal static bool HasFlag(int value, int match) => (value & match) != 0;

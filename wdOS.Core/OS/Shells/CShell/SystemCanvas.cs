@@ -15,7 +15,7 @@ namespace wdOS.Core.OS.Shells.CShell
         internal static ushort ModeSizeY = 0;
         public override List<Mode> AvailableModes => Modes;
         public override Mode DefaultGraphicMode => CurrentMode;
-        public override Mode Mode { get => CurrentMode; set => Kernel.Log($"Canvas mode access violation: {value}"); }
+        public override Mode Mode { get => CurrentMode; set => Kernel.Log("Canvas mode access violation: " + value); }
         private SystemCanvas() { }
         public SystemCanvas(ushort sizex, ushort sizey)
         {
