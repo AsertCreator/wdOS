@@ -1,5 +1,6 @@
 ﻿using Cosmos.System.Network.IPv4;
 using Cosmos.System.Network.IPv4.TCP;
+using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
 using System.Text;
 using wdOS.Core.OS.Shells;
@@ -8,8 +9,9 @@ namespace wdOS.Core.OS.Network
 {
     internal static class NetworkManager
     {
-        internal static TcpClient MainClient = new(80);
-        internal static TcpClient PingClient = new(80);
+        internal static TcpClient MainClient;
+        internal static TcpClient PingClient;
+        internal static DHCPClient LANClient;
         internal static string UserAgent = "curl/1.00.0";
         internal static Encoding Encoding = Encoding.ASCII;
         internal static HTTPResponse SendHTTPRequest(HTTPRequest req)

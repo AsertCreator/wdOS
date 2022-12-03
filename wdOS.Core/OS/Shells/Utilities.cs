@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Cosmos.Core;
+using Cosmos.HAL;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using wdOS.Core.OS.Foundation;
 
 namespace wdOS.Core.OS.Shells
 {
-    internal static class Utilities
+    internal static unsafe class Utilities
     {
         internal static T[] SkipArray<T>(T[] array, int count)
         {
@@ -21,6 +24,17 @@ namespace wdOS.Core.OS.Shells
             LogType.Error => "ERRO",
             _ => "UNKW",
         };
+        internal static byte[] FromStructure<T>(T struc) where T : struct
+        {
+            byte[] bytes = new byte[512];
+            byte* point = (byte*)GCImplementation.GetSafePointer(struc);
+            for (int i = 0; i < 512; i++) bytes[i] = point[i];
+            return bytes;
+        }
+        internal static void WaitFor(uint timeout)
+        {
+            Cosmos.HAL.Global.PIT.Wait(timeout);
+        }
         internal static string ConnectArgs(string[] args) => ConnectArgs(args, ' ');
         internal static string ConnectArgs(string[] args, char sep) => string.Join(sep, args);
         internal static bool HasFlag(int value, int match) => (value & match) != 0;

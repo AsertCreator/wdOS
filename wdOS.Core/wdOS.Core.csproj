@@ -21,7 +21,7 @@
         <VMWareEdition>Workstation</VMWareEdition>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
         <BinFormat>Elf</BinFormat>
-        <CompressionType>Gzip</CompressionType>
+        <CompressionType>None</CompressionType>
         <IgnoreDebugStubAttribute>True</IgnoreDebugStubAttribute>
         <StackCorruptionDetectionLevel>MethodFooters</StackCorruptionDetectionLevel>
         <DebugEnabled>False</DebugEnabled>
@@ -36,6 +36,12 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
       <DebugType>embedded</DebugType>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="OS\FileSystems\**" />
+      <EmbeddedResource Remove="OS\FileSystems\**" />
+      <None Remove="OS\FileSystems\**" />
+    </ItemGroup>
 
     <ItemGroup>
       <None Remove="OS\Resources\bootChime.wav" />

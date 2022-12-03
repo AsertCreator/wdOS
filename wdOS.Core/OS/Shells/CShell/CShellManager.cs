@@ -15,7 +15,7 @@ namespace wdOS.Core.OS.Shells.CShell
         internal static CShellManager Instance;
         internal static PCScreenFont Font;
         internal static Canvas FSC;
-        internal static class DefaultColors
+        internal static class DefaultTheme
         {
             internal static Pen WhitePen;
             internal static Pen BlackPen;
@@ -34,7 +34,7 @@ namespace wdOS.Core.OS.Shells.CShell
         internal static int DockYPos;
         internal static ulong Framecount;
         internal static ulong FPS;
-        internal static PIT Timer = new();
+        internal static PIT Timer;
         internal const int CursorSize = 10;
         internal const int CursorBorderSize = 2;
         internal const int DockBorderSize = 2;
@@ -55,26 +55,27 @@ namespace wdOS.Core.OS.Shells.CShell
             try
             {
                 Instance = this;
+                Timer = Cosmos.HAL.Global.PIT;
                 SetMode(800, 600);
                 Running = true;
                 AllWindows = new();
                 Font = PCScreenFont.Default;
                 WindowTitleBarHeight = Font.Height + 10;
                 DockYPos = ScreenHeight - DockSize;
-                DefaultColors.Dock0 = new(Color.Gray);
-                DefaultColors.Dock1 = new(Color.DarkGray);
-                DefaultColors.WhitePen = new(Color.White);
-                DefaultColors.BlackPen = new(Color.Black);
-                DefaultColors.Background = new(Color.Wheat);
+                DefaultTheme.Dock0 = new(Color.Gray);
+                DefaultTheme.Dock1 = new(Color.DarkGray);
+                DefaultTheme.WhitePen = new(Color.White);
+                DefaultTheme.BlackPen = new(Color.Black);
+                DefaultTheme.Background = new(Color.Wheat);
                 Kernel.Log("Ready to render! Starting...");
                 PIT.PITTimer timer = new(() =>
                 {
                     Kernel.SweepTrash();
                     DockText =
-                        $"{Kernel.StringTime}, " +
-                        $"memory used: {Kernel.UsedRAM} ({Math.Round((Kernel.UsedRAM + 0.0) / (Kernel.TotalRAM + 0.0) * 100)}), " +
-                        $"total memory: {Kernel.TotalRAM}, " +
-                        $"fps: {FPS}, framecount: {Framecount}";
+                        Kernel.StringTime + ", " +
+                        "memory used: " + Kernel.UsedRAM + " (" + Math.Round((Kernel.UsedRAM + 0.0) / (Kernel.TotalRAM + 0.0) * 100) + "), " +
+                        "total memory: " + Kernel.TotalRAM + ", " +
+                        "fps: " + FPS;
                     FPS = Framecount;
                     Framecount = 0;
                 }, 1000000000, true);
@@ -99,12 +100,11 @@ namespace wdOS.Core.OS.Shells.CShell
                 Sys.MouseManager.ScreenWidth = (uint)ScreenWidth;
                 Sys.MouseManager.ScreenHeight = (uint)ScreenHeight;
                 FSC = FullScreenCanvas.GetFullScreenCanvas(new Mode(ScreenWidth, ScreenHeight, (ColorDepth)32));
-                Kernel.Log($"SystemCanvas with res of {ScreenWidth}x{ScreenHeight}x32 created!");
+                Kernel.Log("SystemCanvas with res of " + ScreenWidth + "x" + ScreenHeight + "x32 created!");
             }
             catch
             {
-                Kernel.Log($"Unable to create SystemCanvas!");
-                Console.Clear();
+                Kernel.Log("Unable to create SystemCanvas!");
                 Console.WriteLine("Can't set SystemCanvas to new mode!");
                 while (true) { }
             }
@@ -116,20 +116,21 @@ namespace wdOS.Core.OS.Shells.CShell
                 Framecount++;
                 // Screen Content Layer
                 {
-                    if (WindowCount == 0) FSC.DrawFilledRectangle(DefaultColors.Background, 0, 0, ScreenWidth, ScreenHeight);
-                    else FSC.DrawFilledRectangle(DefaultColors.BlackPen, 0, 0, ScreenWidth, WindowTitleBarHeight);
+                    if (WindowCount == 0) FSC.DrawFilledRectangle(DefaultTheme.Background, 0, 0, ScreenWidth, ScreenHeight);
+                    else FSC.DrawFilledRectangle(DefaultTheme.BlackPen, 0, 0, ScreenWidth, WindowTitleBarHeight);
                     for (int i = 0; i < WindowCount; i++) AllWindows[i].RenderWindow();
-                    FSC.DrawFilledRectangle(DefaultColors.Dock0, 0, DockYPos, ScreenWidth, DockSize);
-                    FSC.DrawString(DockText, Font, DefaultColors.WhitePen, 10, ScreenHeight - 15);
-                }
-                // Screen Interaction Layer
-                {
+                    FSC.DrawFilledRectangle(DefaultTheme.Dock0, 0, DockYPos, ScreenWidth, DockSize);
+                    FSC.DrawString(DockText, Font, DefaultTheme.WhitePen, 10, ScreenHeight - 15);
                     // handle mouse
                     if (Sys.MouseManager.MouseState == Sys.MouseState.None)
-                        FSC.DrawFilledRectangle(DefaultColors.WhitePen, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y,
+                        FSC.DrawFilledRectangle(DefaultTheme.WhitePen, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y,
                             CursorSize, CursorSize);
-                    else FSC.DrawFilledRectangle(DefaultColors.BlackPen, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y,
+                    else FSC.DrawFilledRectangle(DefaultTheme.BlackPen, (int)Sys.MouseManager.X, (int)Sys.MouseManager.Y,
                         CursorSize, CursorSize);
+                }
+                FSC.Display(); // display canvas
+                // Screen Interaction Layer
+                {
                     // handle keyboard
                     if (Sys.KeyboardManager.KeyAvailable)
                     {
@@ -150,7 +151,6 @@ namespace wdOS.Core.OS.Shells.CShell
                         }
                     }
                 }
-                FSC.Display(); // display canvas
             }
         }
         internal static void CreateWindow(Window win)

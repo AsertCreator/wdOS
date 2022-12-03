@@ -49,7 +49,7 @@ namespace wdOS.Core.OS.Shells.TShell
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("wdOS cannot run without disk volumes, you must have at least one");
-                        Kernel.Panic(3);
+                        ErrorHandler.Panic(3);
                     }
                 }
                 Running = true;

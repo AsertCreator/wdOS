@@ -6,7 +6,7 @@ namespace wdOS.Core.OS.Shells.CShell
     internal class Window
     {
         internal string Title = "Empty Window";
-        internal Pen Back = CShellManager.DefaultColors.WhitePen;
+        internal Pen Back = CShellManager.DefaultTheme.WhitePen;
         internal int SizeX;
         internal int SizeY;
         internal int SizeY2;
@@ -17,7 +17,7 @@ namespace wdOS.Core.OS.Shells.CShell
         internal void RenderWindow()
         {
             CShellManager.FSC.DrawFilledRectangle(Back, LocationX, CShellManager.WindowTitleBarHeight, SizeX, SizeY2);
-            CShellManager.FSC.DrawString(Title, CShellManager.Font, CShellManager.DefaultColors.WhitePen, TextLocationX0, 5);
+            CShellManager.FSC.DrawString(Title, CShellManager.Font, CShellManager.DefaultTheme.WhitePen, TextLocationX0, 5);
         }
         internal void RebuildLocationCache(int tile, int tilecount)
         {
@@ -29,7 +29,7 @@ namespace wdOS.Core.OS.Shells.CShell
             TextLocationX0 = LocationX + 5;
             TextLocationX1 = LocationX + SizeX - 5 - (CShellManager.Font.Width + 5) * 5 + 10;
             SizeY2 = SizeY - CShellManager.WindowTitleBarHeight;
-            Kernel.Log($"Cache rebuilt!");
+            Kernel.Log("Cache rebuilt!");
         }
     }
 }
