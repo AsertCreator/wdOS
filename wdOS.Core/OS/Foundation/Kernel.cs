@@ -5,20 +5,17 @@ using Cosmos.HAL;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 using Cosmos.System.Network.IPv4;
-using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using wdOS.Core.OS.Network;
 using wdOS.Core.OS.Shells;
 using wdOS.Core.OS.Shells.CShell;
-using wdOS.Core.OS.Shells.TShell;
 using Sys = Cosmos.System;
 
 namespace wdOS.Core.OS.Foundation
 {
-    public class Kernel : Sys.Kernel, IPackage
+    public class Kernel : Sys.Kernel
     {
         internal const string SystemDriveLabel = "wdOSDisk";
         internal const string AssemblyName = nameof(Core);
@@ -31,13 +28,6 @@ namespace wdOS.Core.OS.Foundation
         internal static string KernelVersion => BuildConstants.VersionMajor + "." + BuildConstants.VersionMinor + "." + BuildConstants.VersionPatch;
         internal static uint TotalRAM => CPU.GetAmountOfRAM() * 1024 * 1024;
         internal static uint UsedRAM => GCImplementation.GetUsedRAM();
-        string IPackage.Name => "wdOS";
-        string IPackage.Description => "System core - controls OS";
-        string[] IPackage.Files => new string[] { "wdOS.Core.bin" };
-        int IPackage.MajorVersion => BuildConstants.VersionMajor;
-        int IPackage.MinorVersion => BuildConstants.VersionMinor;
-        int IPackage.PatchVersion => BuildConstants.VersionPatch;
-        PackageDatabase.PackageType IPackage.Type => PackageDatabase.PackageType.SystemShell;
         internal static class BuildConstants
         {
             internal const int VersionMajor = 0;
@@ -48,8 +38,6 @@ namespace wdOS.Core.OS.Foundation
         {
             internal static int CrashPowerOffTimeout = 5;
             internal static int SystemTerminalFont = 0;
-            internal static Address CustomAddress = null;
-            internal static Address RouterAddress = null;
             internal static Dictionary<uint, string> PanicStrings = new()
             {
                 [0] = "MANUALLY_INITIATED_CRASH",
@@ -102,7 +90,6 @@ namespace wdOS.Core.OS.Foundation
                     Console.WriteLine("Error! Your PC has no attahced keyboards. Without any keyboards you can't use system");
                     ErrorHandler.Panic(3);
                 }
-                NetworkInitialization();
 
                 Log("Done early initialization!");
             }
@@ -122,11 +109,7 @@ namespace wdOS.Core.OS.Foundation
 
                 var font = PCScreenFont.Default;
                 VGAScreen.SetFont(font.CreateVGAFont(), font.Height);
-                PackageDatabase.Packages.Add(this);
-                PackageDatabase.Packages.Add(new TShellManager());
-                PackageDatabase.Packages.Add(new CShellManager());
-                CurrentShell = (Shell)PackageDatabase.Packages[1];
-                AudioPlayer.Setup();
+                CurrentShell = (Shell)(new UShellManager());
 
                 Log("Done late initialization!");
             }
@@ -135,26 +118,6 @@ namespace wdOS.Core.OS.Foundation
                 Log("Unable to perform late initialization!");
                 Console.WriteLine("Unable to perform late initialization!");
                 ErrorHandler.Panic(5);
-            }
-        }
-        internal static void NetworkInitialization()
-        {
-            try
-            {
-                Log("Starting network initialization...");
-
-                NetworkManager.MainClient = new(80);
-                NetworkManager.PingClient = new(80);
-                NetworkManager.LANClient = new();
-                int time = NetworkManager.LANClient.SendDiscoverPacket();
-                Log("Got an IP Adrress in " + time + " seconds");
-
-                Log("Done network initialization!");
-            }
-            catch
-            {
-                Log("Unable to perform network initialization!");
-                Console.WriteLine("Unable to perform network initialization!");
             }
         }
         internal static int SweepTrash()
