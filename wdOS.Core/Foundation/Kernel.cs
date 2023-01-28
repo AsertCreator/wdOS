@@ -52,7 +52,7 @@ namespace wdOS.Core.Foundation
         internal static class BuildConstants
         {
             internal const int VersionMajor = 0;
-            internal const int VersionMinor = 6;
+            internal const int VersionMinor = 5;
             internal const int VersionPatch = 0;
         }
         internal static class SystemSettings
