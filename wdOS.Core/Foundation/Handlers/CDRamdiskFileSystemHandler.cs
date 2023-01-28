@@ -10,8 +10,8 @@ namespace wdOS.Core.Foundation.FSHandlers
     {
         internal override string Name => "CDBoot RAMDisk";
         internal override string Desc => "Used when wdOS is booted from CD";
-        internal override int Version => 0x0050;
-
+        internal override int Version => 50;
+        internal static List<RamdiskEntry> Entries;
         internal override void CreateDirectory(string dirpath) { throw new NotSupportedException(); }
         internal override void DeleteDirectory(string dirpath) { throw new NotSupportedException(); }
         internal override void DeleteFile(string filepath) { throw new NotSupportedException(); }
@@ -44,4 +44,5 @@ namespace wdOS.Core.Foundation.FSHandlers
             throw new NotImplementedException();
         }
     }
+    internal class Entry
 }
