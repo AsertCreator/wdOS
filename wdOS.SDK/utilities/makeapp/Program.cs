@@ -7,7 +7,7 @@ namespace makeapp
 {
     internal static class Program
     {
-        internal static void Main(string[] args)
+        internal static void Main()
         {
             Console.WriteLine("makeapp - wdOS app maker");
             var file = Create32BitFile();
@@ -44,7 +44,7 @@ namespace makeapp
                         Marshal.StructureToPtr(field.GetValue(struc), (nint)ptr, false);
                     }
                     var fstr = DumpArrayAsString(fbyte);
-                    Console.WriteLine($"\t{field.Name.PadRight(20)} ({ftyp.Name.PadLeft(10)}) : {fstr} ");
+                    Console.WriteLine($"\t{field.Name,-20} ({ftyp.Name,10}) : {fstr} ");
                 }
             }
         }

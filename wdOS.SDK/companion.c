@@ -9,6 +9,7 @@
 static uint32_t SendMessage(uint16_t msg, uint32_t arg0, uint32_t arg1, uint32_t arg2) {
 #ifdef __GNUC__
 	int result = 0;
+	asm volatile ("pusha");
 	register int eax asm("eax");
 	register int ebx asm("ebx");
 	register int ecx asm("ecx");
@@ -17,11 +18,12 @@ static uint32_t SendMessage(uint16_t msg, uint32_t arg0, uint32_t arg1, uint32_t
 	ebx = arg0;
 	ecx = arg1;
 	edx = arg2;
-	// interrupt
+	asm volatile ("int $0xF0");
 	result = eax;
+	asm volatile ("popa");
 	return result;
 #else
-	return INT_MIN; //You must use GCC to compile
+#error You must use GCC to compile
 #endif
 }
 

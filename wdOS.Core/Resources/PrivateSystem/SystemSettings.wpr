@@ -1,0 +1,8 @@
+; wdOS System Settings, do not touch this!
+system.computername::true minimal environment
+system.enablefilesystem::1
+system.enableperiodicgc::1
+system.enablelogging::1
+system.enableaudio::1
+system.terminalfont::0
+system.version::0.4.0

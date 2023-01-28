@@ -10,7 +10,6 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <EnableGDB>False</EnableGDB>
         <StartCosmosGDB>False</StartCosmosGDB>
         <VisualStudioDebugPort>Pipe: Cosmos\Serial</VisualStudioDebugPort>
         <CosmosDebugPort>Serial: COM1</CosmosDebugPort>
@@ -20,12 +19,8 @@
         <PxeInterface>192.168.0.8</PxeInterface>
         <VMWareEdition>Workstation</VMWareEdition>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-        <BinFormat>Elf</BinFormat>
-        <CompressionType>None</CompressionType>
-        <IgnoreDebugStubAttribute>True</IgnoreDebugStubAttribute>
         <StackCorruptionDetectionLevel>MethodFooters</StackCorruptionDetectionLevel>
-        <DebugEnabled>False</DebugEnabled>
-        <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
+        <DebugEnabled>True</DebugEnabled>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -38,17 +33,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="OS\FileSystems\**" />
-      <EmbeddedResource Remove="OS\FileSystems\**" />
-      <None Remove="OS\FileSystems\**" />
+      <None Remove="Resources\bootChime.wav" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="OS\Resources\bootChime.wav" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Include="OS\Resources\bootChime.wav" />
+      <EmbeddedResource Include="Resources\bootChime.wav" />
     </ItemGroup>
 
     <ItemGroup>

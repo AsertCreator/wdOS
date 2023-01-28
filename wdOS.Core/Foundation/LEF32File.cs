@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace makeapp
+namespace wdOS.Core.Foundation
 {
     [StructLayout(LayoutKind.Explicit)]
     public unsafe struct LEF32File
@@ -61,4 +57,3 @@ namespace makeapp
         [FieldOffset(12)] internal uint lef_DataLength;
     }
 }
-
