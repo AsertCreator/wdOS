@@ -4,18 +4,21 @@ Don't even try to ask me about name, its basically means wednesday. Just an idea
 to create an OS came at wednesday
 
 ### Development process
-~Look at projects~. Currently system is at version 0.4.0. I think its an alpha. 
+~Look at projects~. Currently system is at version 0.5.0. I think its an alpha. 
+
 Almost implemented features:
 - TShell, basically optimized terminal
 - CShell, basically unoptimized graphical shell
 - Some nix commands
+
 Will be implemented:
 - Networking
 - Audio Playing
 - Error Handling
 - Normal Interaction
 - System Installer
-Third-pary features:
+
+Third-party features:
 - MIV ([author](https://github.com/bartashevich))
 
 ### Not Asked Questions
