@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Some Solution Items", "Some Solution Items", "{38B45CDF-3F9A-4AA0-B4BD-680C7D5D4747}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.github\workflows\dotnet-desktop.yml = .github\workflows\dotnet-desktop.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -29,7 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{8334
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utilities", "utilities", "{FC28C094-7807-42E4-B2D4-DF41F386D681}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "makeapp", "wdOS.SDK\utilities\makeapp\makeapp.csproj", "{8490EAE7-4FB2-48B8-8E95-C45A71668358}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeapp", "wdOS.SDK\utilities\makeapp\makeapp.csproj", "{8490EAE7-4FB2-48B8-8E95-C45A71668358}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
