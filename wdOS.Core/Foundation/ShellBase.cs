@@ -1,4 +1,4 @@
-﻿namespace wdOS.Core.Shell
+﻿namespace wdOS.Core.Foundation
 {
     internal abstract class ShellBase
     {

@@ -1,88 +1,107 @@
 ﻿using Cosmos.Core;
 using Cosmos.HAL;
+using Cosmos.System.FileSystem.VFS;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using wdOS.Core.Foundation.Threading;
 
 namespace wdOS.Core.Foundation
 {
     internal static class SystemInteraction
     {
-        internal const byte BoxRightUp = 0xB7;
-        internal const byte BoxLeftUp = 0xDA;
-        internal const byte BoxRightDown = 0xD9;
-        internal const byte BoxLeftDown = 0xC0;
-        internal const byte BoxVerticalLine = 0xB3;
-        internal const byte BoxHorizontalLine = 0xC4;
+        internal static SystemState State;
         internal static void Shutdown(int panic = -1, bool restart = false)
         {
             try
             {
-                ShowMessageBox("Shutting down...");
-                Kernel.EnableServices(false);
-                Kernel.SSDShells.Clear();
-                Kernel.SSDService.Clear();
-                if (panic != -1) ErrorHandler.Panic((uint)panic);
-                if (Kernel.CurrentShell != null) Kernel.CurrentShell.IsRunning = false;
-                foreach (var app in Runtime.CurrentApplications)
+                State = SystemState.ShuttingDown;
+                if (!restart)
+                    ShowScreenMessage("Shutting down...");
+                else
+                    ShowScreenMessage("Restarting...");
+                Thread.IsInitialized = false;
+
+                ShowScreenMessage("Disabling services...", true);
                 {
-                    app.IsRunning = false;
-                    app.IsRunningElevated = false;
+                    Kernel.EnableServices(false);
+                    Kernel.SSDShells.Clear();
+                    Kernel.SSDService.Clear();
                 }
-                Runtime.CurrentApplications.Clear();
-                if (!Kernel.SystemSettings.CDROMBoot) SaveSystemSettingsAsFile();
-                Kernel.SweepTrash();
+
+                ShowScreenMessage("Disabling apps and shells...", true);
+                {
+                    if (panic != -1) ErrorHandler.Panic((uint)panic);
+                    if (Kernel.CurrentShell != null) Kernel.CurrentShell.IsRunning = false;
+                    foreach (var app in Kernel.CurrentApplications)
+                    {
+                        app.IsRunning = false;
+                        app.IsRunningElevated = false;
+                    }
+                    Kernel.CurrentApplications.Clear();
+                }
+
+                ShowScreenMessage("Saving system settings...", true);
+                {
+                    SaveSystemSettings();
+                    Kernel.SweepTrash();
+                    State = SystemState.AfterLife;
+                }
+
+                if (!restart)
+                    ShowScreenMessage("Shutting down CPU...", true);
+                else
+                    ShowScreenMessage("Restarting CPU...", true);
+
                 if (!restart) Power.ACPIReboot();
                 else Power.ACPIShutdown();
             }
             catch
             {
+                State = SystemState.AfterLife;
                 ErrorHandler.Panic(6);
             }
         }
-        internal static void SaveSystemSettingsAsFile()
+        internal static void ShowScreenMessage(string msg, bool verbose = false)
         {
-
+            if (verbose == true && Kernel.SystemSettings.EnableVerbose == false) return;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();
+            Console.CursorLeft = 2;
+            Console.CursorTop = 1;
+            Console.WriteLine(msg);
         }
-        internal static void ShowMessageBox(string text)
+        internal static void SaveSystemSettings()
         {
-            var console = Cosmos.System.Global.Console.mText;
-            var height = 5;
-            var width = text.Length + 4;
-            console[1, 1] = BoxLeftUp;
-            console[1, 1 + height] = BoxLeftDown;
-            console[1 + width, 1] = BoxRightUp;
-            console[1 + width, 1 + height] = BoxRightDown;
-            for (int x = 2; x < width - 1; x++)
+            try
             {
-                console[x, 1] = BoxHorizontalLine;
-                console[x, 1 + height] = BoxHorizontalLine;
+                if (!Kernel.SystemSettings.CDROMBoot)
+                {
+                    StringBuilder sb = new();
+                    sb.AppendLine($"; wdOS System Settings, do not touch this!");
+                    sb.AppendLine($"system.computername::{Kernel.ComputerName}");
+                    sb.AppendLine($"system.enablefilesystem::{(Kernel.SystemSettings.EnableFileSystem ? 1 : 0)}");
+                    sb.AppendLine($"system.enableperiodicgc::{(Kernel.SystemSettings.EnablePeriodicGC ? 1 : 0)}");
+                    sb.AppendLine($"system.enablelogging::{(Kernel.SystemSettings.EnableLogging ? 1 : 0)}");
+                    sb.AppendLine($"system.enableaudio::{(Kernel.SystemSettings.EnableAudio ? 1 : 0)}");
+                    sb.AppendLine($"system.terminalfont::{Kernel.SystemSettings.SystemTerminalFont}");
+                    sb.AppendLine($"system.verbosemode::{Kernel.SystemSettings.EnableVerbose}");
+                    if (!FileSystem.DirectoryExists(FileSystem.SystemDir)) FileSystem.CreateDirectory(FileSystem.SystemDir);
+                    FileSystem.WriteStringFile(FileSystem.SystemSettingsFile, sb.ToString());
+                }
             }
-            for (int y = 2; y < height - 1; y++)
+            catch
             {
-                console[1, y] = BoxVerticalLine;
-                console[1 + width, y + height] = BoxVerticalLine;
+                Console.WriteLine("Couldn't save system settings. Your settings will not be saved");
             }
         }
-        internal static string SaveSystemSettings()
-        {
-            StringBuilder sb = new();
-            sb.AppendLine($"; wdOS System Settings, do not touch this!");
-            sb.AppendLine($"system.computername::{Kernel.ComputerName}");
-            sb.AppendLine($"system.enablefilesystem::{(Kernel.SystemSettings.EnableFileSystem ? 1 : 0)}");
-            sb.AppendLine($"system.enableperiodicgc::{(Kernel.SystemSettings.EnablePeriodicGC ? 1 : 0)}");
-            sb.AppendLine($"system.enablelogging::{(Kernel.SystemSettings.EnableLogging ? 1 : 0)}");
-            sb.AppendLine($"system.enableaudio::{(Kernel.SystemSettings.EnableAudio ? 1 : 0)}");
-            sb.AppendLine($"system.terminalfont::{Kernel.SystemSettings.SystemTerminalFont}");
-            sb.AppendLine($"system.cdromboot::{Kernel.SystemSettings.CDROMBoot}");
-            sb.AppendLine($"system.version::{Kernel.KernelVersion}");
-            return sb.ToString();
-        }
-        internal static void LoadSystemSettings()
-        {
-
-        }
+    }
+    internal enum SystemState
+    {
+        BeforeLife, Starting, Running, ShuttingDown, AfterLife
     }
 }

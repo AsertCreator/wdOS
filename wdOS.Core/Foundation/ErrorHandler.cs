@@ -22,10 +22,18 @@ namespace wdOS.Core.Foundation
                 [6] = "SYSTEM_SHUTDOWN",
                 [7] = "INVALID_CPUID"
             };
-            for (int i = 0; i < 20; i++) INTs.SetIntHandler((byte)i, HandleException);
+            INTs.GeneralProtectionFault = delegate(ref INTs.IRQContext ctx)
+            {
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Current application tried to execute forbidden instruction");
+                Console.WriteLine("This application will be terminated");
+                Panic(4);
+            };
         }
         internal static void Panic(uint message)
         {
+            SystemInteraction.State = SystemState.AfterLife;
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.BackgroundColor = ConsoleColor.Black;
             string text0 = $"!!! panic !!! {ErrorTexts[message]}";
@@ -36,41 +44,18 @@ namespace wdOS.Core.Foundation
             Console.WriteLine(text1);
             WaitForShutdown(true, SystemSettings.CrashPowerOffTimeout);
         }
-        internal static void HandleException(ref INTs.IRQContext context)
+        internal static void Panic(string msg)
         {
-            // apparently this is never called
-
-            // bool cancontinue = false;
-            // string meaning = "program you just started tried to incorrectly interact with your system!\nunfortunately, its impossible to evaluate what problem is.";
-            // string reason = $"cpu exception {context.Interrupt}";
-            // switch (context.Interrupt)
-            // {
-            //     case 0x00: cancontinue = true; reason = "division by zero"; meaning = "program you just started tried to divide by zero!"; break;
-            //     case 0x04: cancontinue = false; reason = "stack overlow"; meaning = "program you just started used too much memory!"; break;
-            //     case 0x06: cancontinue = true; reason = "invalid opcode"; meaning = "program you just started is not compatible with your CPU!"; break;
-            //     case 0x0D: cancontinue = true; reason = "general protection fault"; meaning = "program you just started tried to access system memory!"; break;
-            //     case 0x10: cancontinue = true; reason = "x87 fpu exception"; meaning = "program you just started tried to incorrectly calculate numbers!"; break;
-            //     case 0x13: cancontinue = false; reason = "SSE fpu exception!"; meaning = "program you just started tried to incorrectly calculate numbers!"; break;
-            // }
-            // Console.ForegroundColor = ConsoleColor.Red;
-            // Log($"!!! error !!! {reason}!");
-            // Log($"at address: {context.EIP}, esp: {context.ESP}, ebp: {context.EBP}");
-            // Log($"Meaning: {meaning}");
-            // Console.WriteLine($"!!! error !!! {reason}!");
-            // Console.WriteLine($"at address: {context.EIP}, esp: {context.ESP}, ebp: {context.EBP}");
-            // Console.WriteLine($"Meaning: {meaning}");
-            // if (cancontinue)
-            // {
-            //     Console.Write("Do you want to continue? [y/n]: ");
-            //     if (Console.ReadKey().Key == ConsoleKey.Y) Console.WriteLine();
-            //     else ShutdownPC(false);
-            //     Console.ForegroundColor = ConsoleColor.White;
-            // }
-            // else
-            // {
-            //     Console.Write("You cannot continue using system!");
-            //     WaitForShutdown(true, SystemSettings.CrashPowerOffTimeout);
-            // }
+            SystemInteraction.State = SystemState.AfterLife;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.BackgroundColor = ConsoleColor.Black;
+            string text0 = $"!!! panic !!! custom: {msg}";
+            string text1 = $"Current kernel version: {KernelVersion}";
+            Log(text0);
+            Log(text1);
+            Console.WriteLine(text0);
+            Console.WriteLine(text1);
+            WaitForShutdown(true, SystemSettings.CrashPowerOffTimeout);
         }
     }
 }

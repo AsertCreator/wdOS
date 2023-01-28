@@ -16,7 +16,6 @@ namespace wdOS.Core.Shell.TShell
             new SUtilsCommand(), new MIVCommand(), new CatCommand(),
             new CShellCommand(), new RepeatCommand(), new FunCommand()
         };
-        internal static CircularList<string> CommandHistory = new(128);
         internal static int LastErrorCode;
         internal static string Path = "0:\\";
         //internal static User CurrentUser = "root";
@@ -103,7 +102,7 @@ namespace wdOS.Core.Shell.TShell
                         cmd.CurrentCmdArgs = Utilities.SkipArray(words, 1);
                         Console.ForegroundColor = ConsoleColor.Gray;
                         LastErrorCode = cmd.Execute(cmd.CurrentCmdArgs);
-                        if (addtihistory) { CommandHistory.Add(cmdline); }
+                        //if (addtihistory) { CommandHistory.Add(cmdline); }
                         return true;
                     }
                     else
@@ -113,13 +112,13 @@ namespace wdOS.Core.Shell.TShell
                         if (path.EndsWith(".tss"))
                         {
                             LastErrorCode = ExecuteScriptFile(path);
-                            if (addtihistory) { CommandHistory.Add(cmdline); }
+                            //if (addtihistory) { CommandHistory.Add(cmdline); }
                             return true;
                         }
                         else if (path.EndsWith(".tse"))
                         {
                             LastErrorCode = ExecuteBinaryFile(path);
-                            if (addtihistory) { CommandHistory.Add(cmdline); }
+                            //if (addtihistory) { CommandHistory.Add(cmdline); }
                             return true;
                         }
                         else return false;

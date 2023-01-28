@@ -15,10 +15,13 @@ using Sys = Cosmos.System;
 using wdOS.Core.Shell.Services;
 using wdOS.Core.Shell;
 using wdOS.Core.Foundation.Network;
+using IL2CPU.API.Attribs;
+using XSharp.Assembler;
+using XSharp;
 
 namespace wdOS.Core.Foundation
 {
-    public class Kernel : Sys.Kernel
+    public unsafe class Kernel : Sys.Kernel
     {
         internal const string SystemDriveLabel = "wdOSDisk";
         internal const string AssemblyName = nameof(Core);
@@ -27,9 +30,10 @@ namespace wdOS.Core.Foundation
         internal static ShellBase CurrentShell;
         internal static List<KeyboardBase> Keyboards;
         internal static List<MouseBase> Mice;
-        internal static StringBuilder SystemLog = new();
         internal static List<ShellBase> SSDShells = new();
         internal static List<ServiceBase> SSDService = new();
+        internal static List<Application> CurrentApplications = new();
+        internal static StringBuilder SystemLog = new();
         internal static PIT.PITTimer ServiceTimer;
         internal static string ComputerName = "minimal environment";
         internal static string StringTime => RTC.Hour + ":" + RTC.Minute + ":" + RTC.Second;
@@ -61,7 +65,8 @@ namespace wdOS.Core.Foundation
             internal static bool EnableAudio = false;
             internal static bool EnableLogging = true;
             internal static bool EnableNetwork = false;
-            internal static bool EnableServices = true;
+            internal static bool EnableVerbose = false;
+            internal static bool EnableServices = false;
             internal static bool EnableFileSystem = true;
             internal static bool EnablePeriodicGC = true;
             internal static bool EnableBinaryRuntime = true;
@@ -76,6 +81,7 @@ namespace wdOS.Core.Foundation
             try
             {
                 Instance = this;
+                SystemInteraction.State = SystemState.BeforeLife;
                 KernelDebugger = mDebugger;
                 EarlyInitialization();
                 LateInitialization();
@@ -83,6 +89,7 @@ namespace wdOS.Core.Foundation
                 {
                     try
                     {
+                        SystemInteraction.State = SystemState.Running;
                         Cosmos.HAL.Global.EnableInterrupts();
                         Console.WriteLine($"Starting {CurrentShell.Name}...");
                         CurrentShell.BeforeRun();
@@ -94,7 +101,7 @@ namespace wdOS.Core.Foundation
                         ErrorHandler.Panic(5);
                     }
                 }
-                Log("ShellBase is exited!");
+                Log("Shell is exited!");
                 ShutdownPC(false);
             }
             catch (Exception e) { Log("System crash! Message: " + e.Message); ErrorHandler.Panic(5); }
@@ -108,6 +115,7 @@ namespace wdOS.Core.Foundation
                 Log("Current kernel version: " + KernelVersion);
                 Log("Current memory amount: " + CPU.GetAmountOfRAM());
                 Console.WriteLine("Starting early components...");
+                SystemInteraction.State = SystemState.Starting;
                 if (!SystemSettings.EnableLogging)
                 {
                     Console.WriteLine("Logging is disabled, you wont be able to use logcat utility");
@@ -115,12 +123,11 @@ namespace wdOS.Core.Foundation
                 }
                 if (SystemSettings.EnableBinaryRuntime)
                 {
-                    Runtime.Setup();
+                    SetupRuntime();
                     Log($"Enabled Binary Runtime");
                 }
                 if (SystemSettings.EnableFileSystem)
                 {
-                    if (HeapSmall.SMT == null) GCImplementation.Init();
                     FileSystem.Initialize();
                     if (FileSystem.VFS.Disks.Count == 0) ErrorHandler.Panic(2);
                     Log($"Enabled File System: created {FileSystem.VFS.GetVolumes().Count} volumes");
@@ -255,5 +262,99 @@ namespace wdOS.Core.Foundation
             catch { ErrorHandler.Panic(6); }
         }
         protected override void Run() { }
+        internal static void SetupRuntime()
+        {
+            INTs.SetIntHandler(0xF0, HandleAPI);
+            INTs.GeneralProtectionFault = HandleAPI;
+            CPU.UpdateIDT(true);
+        }
+        internal static void HandleAPI(ref INTs.IRQContext context)
+        {
+            switch (context.EAX)
+            {
+                case 0x00: // Write char to next free position in terminal.
+                    Console.Write((char)context.EBX);
+                    break;
+                case 0x01: // Write line without line terminator to next free position in terminal.
+                    int index = 0;
+                    char* str = (char*)context.EBX;
+                    while (str[index] != 0) Console.Write(str[index++]);
+                    break;
+                case 0x02: // Read char from terminal and returns it.
+                    context.EAX = Console.ReadKey().KeyChar;
+                    break;
+                case 0x03: // Read line from terminal and returns it.                              
+                    string line = Console.ReadLine();
+                    char* buffer = (char*)Heap.Alloc((uint)(line.Length + 1));
+                    for (int i = 0; i < line.Length; i++) buffer[i] = line[i];
+                    context.EAX = (uint)buffer;
+                    break;
+                case 0x04: // Put char at specified position in terminal.                          
+                    Console.WriteLine("This runtime function (0x04) is not implemented!");
+                    context.EAX = uint.MaxValue;
+                    break;
+                case 0x05: // Clear terminal a.k.a. puts space in every terminal char.             
+                    Console.Clear();
+                    break;
+                case 0x06: // Set foreground color in terminal.   
+                    Console.ForegroundColor = (ConsoleColor)context.EBX;
+                    break;
+                case 0x07: // Set background color in terminal.   
+                    Console.BackgroundColor = (ConsoleColor)context.EBX;
+                    break;
+                case 0x08: // Get foreground color in terminal.   
+                    context.EAX = (uint)Console.ForegroundColor;
+                    break;
+                case 0x09: // Get background color in terminal.    
+                    context.EAX = (uint)Console.BackgroundColor;
+                    break;
+                case 0x10: // Allocate area in RAM.               
+                    context.EAX = Heap.SafeAlloc(context.EBX);
+                    break;
+                case 0x11: // Free allocated area in RAM.
+                    Heap.Free((void*)context.EBX);
+                    break;
+                case 0x20: // Terminate this program.             
+                    Console.WriteLine("This runtime function (0x20) is not implemented!");
+                    context.EAX = uint.MaxValue;
+                    break;
+                case 0x21: // Control a PIT chip on motherboard.  
+                    Console.WriteLine("This runtime function (0x21) is not implemented!");
+                    context.EAX = uint.MaxValue;
+                    break;
+                case 0x22: // Set interrupt in IDT.               
+                    Console.WriteLine("This runtime function (0x22) is not implemented!");
+                    context.EAX = uint.MaxValue;
+                    break;
+                case 0x23: // Get interrupt in IDT.               
+                    Console.WriteLine("This runtime function (0x23) is not implemented!");
+                    context.EAX = uint.MaxValue;
+                    break;
+                case 0x24: // Set UNIX timestamp.                 
+                    Console.WriteLine("This runtime function (0x24) is not implemented!");
+                    context.EAX = uint.MaxValue;
+                    break;
+                case 0x25: // Get UNIX timestamp.                 
+                    Console.WriteLine("This runtime function (0x25) is not implemented!");
+                    context.EAX = uint.MaxValue;
+                    break;
+            }
+        }
+        internal static void StartRaw(void* file)
+        {
+            TShellManager.LastErrorCode = InternalRun(file);
+        }
+        [PlugMethod(Assembler = typeof(KernelImpl))]
+        public static int InternalRun(void* ptr) { return 0; }
+        [Plug(Target = typeof(Kernel))]
+        public class KernelImpl : AssemblerMethod
+        {
+            public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
+            {
+                XS.Set(XSRegisters.EAX, XSRegisters.ESP, destinationDisplacement: 4);
+                XS.Call(XSRegisters.EAX);
+                XS.Return();
+            }
+        }
     }
 }

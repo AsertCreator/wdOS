@@ -1,12 +1,10 @@
 ﻿using Cosmos.Core;
-using Cosmos.HAL;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using wdOS.Core.Foundation;
-using wdOS.Core.Shell;
 using Sys = Cosmos.System;
 
 namespace wdOS.Core.Shell.CShell

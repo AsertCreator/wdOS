@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace wdOS.Core.Shell
+namespace wdOS.Core.Foundation
 {
     internal abstract class ServiceBase
     {
