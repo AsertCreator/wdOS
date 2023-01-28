@@ -29,7 +29,6 @@ namespace wdOS.Core.Foundation.Threading
             var timer = new PIT.PITTimer(SwitchTask, 1000000, true);
             pit.RegisterTimer(timer);
             CreateIdleThread();
-            IsInitialized = true;
         }
         internal static unsafe void CreateIdleThread()
         {
@@ -67,6 +66,7 @@ namespace wdOS.Core.Foundation.Threading
             }
             thread.Entry = act;
             ThreadCount++;
+            IsInitialized = true;
             return thread;
         }
         internal static void SwitchTask(INTs.IRQContext context)

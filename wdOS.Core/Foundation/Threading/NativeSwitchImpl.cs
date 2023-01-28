@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using IL2CPU.API;
 using IL2CPU.API.Attribs;
@@ -9,13 +10,17 @@ using XSharp.Assembler.x86;
 namespace wdOS.Core.Foundation.Threading
 {
     [Plug(Target = typeof(Thread))]
-    internal class NativeSwitchImpl : AssemblerMethod
+    public class NativeSwitchImpl : AssemblerMethod
     {
-        internal static uint SwitcherESP;
+        public static uint SwitcherESP;
+        public static uint SwitcheeEIP;
         public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
         {
-            string label = LabelName.GetStaticFieldName(typeof(NativeSwitchImpl).GetRuntimeField("SwitcherESP"));
+            string label = LabelName.GetStaticFieldName(typeof(NativeSwitchImpl).GetFields().Where(x => x.Name == "SwitcherESP").First());
+            string desti = LabelName.GetStaticFieldName(typeof(NativeSwitchImpl).GetFields().Where(x => x.Name == "SwitcheeEIP").First());
             XS.Set(label, XSRegisters.ESP, destinationIsIndirect: true);
+            XS.Set(XSRegisters.EAX, label, sourceIsIndirect: true, sourceDisplacement: 4);
+            XS.Set(desti, XSRegisters.EAX, destinationIsIndirect: true);
             XS.Set(XSRegisters.EAX, label, sourceIsIndirect: true, sourceDisplacement: 40);
             XS.Set(XSRegisters.EBX, label, sourceIsIndirect: true, sourceDisplacement: 36);
             XS.Set(XSRegisters.ECX, label, sourceIsIndirect: true, sourceDisplacement: 32);
@@ -26,9 +31,8 @@ namespace wdOS.Core.Foundation.Threading
             XS.Set(XSRegisters.EDI, label, sourceIsIndirect: true, sourceDisplacement: 12);
             new Jump()
             {
-                DestinationReg = XSRegisters.ESP,
-                DestinationIsIndirect = true,
-                DestinationDisplacement = 4
+                DestinationLabel = desti,
+                DestinationIsIndirect = true
             };
         }
     }

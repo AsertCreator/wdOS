@@ -18,6 +18,7 @@ using wdOS.Core.Foundation.Network;
 using IL2CPU.API.Attribs;
 using XSharp.Assembler;
 using XSharp;
+using wdOS.Core.Foundation.Threading;
 
 namespace wdOS.Core.Foundation
 {
@@ -83,26 +84,31 @@ namespace wdOS.Core.Foundation
                 Instance = this;
                 SystemInteraction.State = SystemState.BeforeLife;
                 KernelDebugger = mDebugger;
-                EarlyInitialization();
-                LateInitialization();
-                Log("Starting user stage...");
+                Thread.Initialize();
+                Thread.CreateThread("Kernel Initialization", () => 
                 {
-                    try
+                    EarlyInitialization();
+                    LateInitialization();
+                    Log("Starting user stage...");
                     {
-                        SystemInteraction.State = SystemState.Running;
-                        Cosmos.HAL.Global.EnableInterrupts();
-                        Console.WriteLine($"Starting {CurrentShell.Name}...");
-                        CurrentShell.BeforeRun();
-                        while (CurrentShell.IsRunning) CurrentShell.Run();
+                        try
+                        {
+                            SystemInteraction.State = SystemState.Running;
+                            Cosmos.HAL.Global.EnableInterrupts();
+                            Console.WriteLine($"Starting {CurrentShell.Name}...");
+                            CurrentShell.BeforeRun();
+                            while (CurrentShell.IsRunning) CurrentShell.Run();
+                        }
+                        catch (Exception e)
+                        {
+                            Log("User stage crash! Message: " + e.Message);
+                            ErrorHandler.Panic(5);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        Log("User stage crash! Message: " + e.Message); 
-                        ErrorHandler.Panic(5);
-                    }
-                }
-                Log("Shell is exited!");
-                ShutdownPC(false);
+                    Log("Shell is exited!");
+                    ShutdownPC(false);
+                });
+                while (true) { }
             }
             catch (Exception e) { Log("System crash! Message: " + e.Message); ErrorHandler.Panic(5); }
         }
