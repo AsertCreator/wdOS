@@ -1,4 +1,5 @@
-﻿using static wdOS.Core.Foundation.Kernel;
+﻿using wdOS.Core.Foundation;
+using static wdOS.Core.Foundation.Kernel;
 
 namespace wdOS.Core.Shell.Services
 {

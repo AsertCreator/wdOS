@@ -8,11 +8,10 @@ namespace wdOS.Core.Foundation
     internal static class FileSystem
     {
         internal static CosmosVFS VFS = new();
-        internal const string PrivateDir = "/.private";
-        internal const string SystemTrash = PrivateDir + "/SystemTrash";
-        internal const string UserTrashes = PrivateDir + "/UserTrashes";
-        internal const string SystemDir = PrivateDir + "/System";
-        internal const string UserDataDir = "/Users";
+        internal static string RootDir = "/";
+        internal static string SystemDir = RootDir + "System/";
+        internal static string SystemSettingsFile = RootDir + "System/SystemSettings.wpr";
+        internal static string UsersDir = RootDir + "Users/";
         internal static void Initialize()
         {
             VFSManager.RegisterVFS(VFS, false);
