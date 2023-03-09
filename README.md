@@ -1,7 +1,7 @@
 # wdOS
 [Cosmos](https://github.com/CosmosOS/Cosmos)-based operating system for x86 PCs. 
-Don't even try to ask me about name, its basically means wednesday. Just an idea 
-to create an OS came at wednesday
+Don't even try to ask me about name, its basically means wednesday (wow, i predicted
+world trend). Just an idea to create an OS came at wednesday XD
 
 ### Development process
 ~Look at projects~. Currently system is at version 0.5.0. I think its an alpha. 
