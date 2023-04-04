@@ -3,24 +3,22 @@ using static wdOS.Core.Foundation.Kernel;
 
 namespace wdOS.Core.Shell.Services
 {
-    internal class PeriodicGC : ServiceBase
+    public class PeriodicGC : ShellBase
     {
-        internal override string Name => "PeriodicGC";
-        internal override string Desc => "ServiceBase for automatic memory cleaning";
-        internal override int MajorVersion => BuildConstants.VersionMajor;
-        internal override int MinorVersion => BuildConstants.VersionMinor;
-        internal override int PatchVersion => BuildConstants.VersionPatch;
-        internal override void BeforeRun()
+        public override string ShellName => "PeriodicGC";
+        public override string ShellDesc => "service for automatic memory cleaning";
+        public override int ShellMajorVersion => SystemDatabase.BuildConstants.VersionMajor;
+        public override int ShellMinorVersion => SystemDatabase.BuildConstants.VersionMinor;
+        public override int ShellPatchVersion => SystemDatabase.BuildConstants.VersionPatch;
+        public override void ShellBeforeRun()
         {
-            if (SystemSettings.EnablePeriodicGC)
-                Log($"Enabled Periodic GC: period {SystemSettings.ServicePeriod} ms");
+            if (SystemDatabase.SystemSettings.EnablePeriodicGC)
+                KernelLogger.Log($"Enabled Periodic GC: period {SystemDatabase.SystemSettings.ServicePeriod} ms");
         }
-        internal override void Run()
+        public override void ShellRun()
         {
-            if (SystemSettings.EnablePeriodicGC)
-            {
-                SweepTrash();
-            }
+            if (SystemDatabase.SystemSettings.EnablePeriodicGC) SweepTrash();
         }
+        public override void ShellAfterRun() { }
     }
 }

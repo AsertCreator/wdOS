@@ -1,72 +1,94 @@
 ﻿using Cosmos.System.FileSystem;
 using Cosmos.System.FileSystem.VFS;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace wdOS.Core.Foundation
 {
-    internal static class FileSystem
+    public static class FileSystem
     {
-        internal static CosmosVFS VFS = new();
-        internal static string RootDir = "/";
-        internal static string SystemDir = RootDir + "System/";
-        internal static string SystemSettingsFile = RootDir + "System/SystemSettings.wpr";
-        internal static string UsersDir = RootDir + "Users/";
-        internal static void Initialize()
+        public static CosmosVFS VFS = new();
+        public static List<FileDevice> Devices = new();
+        public static void Initialize()
         {
-            VFSManager.RegisterVFS(VFS, false);
+            VFSManager.RegisterVFS(VFS);
         }
-        internal static byte[] StreamFullRead(Stream stream)
+        public static string Normalize(string path) 
+        {
+            string result = path.Replace('/', '\\').Replace("\\\\", "\\");
+            if (result.EndsWith("\\")) result.Remove(result.Length - 2);
+            return result;
+        } 
+        public static byte[] StreamFullRead(Stream stream)
         {
             byte[] buffer = new byte[stream.Length];
-            _ = stream.Read(buffer, 0, (int)stream.Length);
+            stream.Read(buffer);
             return buffer;
         }
-        internal static void StreamFullWrite(Stream stream, byte[] data)
+        public static void StreamFullWrite(Stream stream, byte[] data)
         {
-            stream.Flush();
-            stream.Write(data, 0, data.Length);
+            stream.Flush(); stream.Write(data);
         }
-        internal static string ReadStringFile(string filepath)
+        public static string ReadStringFile(string filepath)
         {
-            if (DirectoryExists(filepath)) return null;
-            if (!FileExists(filepath)) { _ = VFSManager.CreateFile(filepath); }
-            return new StreamReader(VFSManager.GetFileStream(filepath)).ReadToEnd();
+            if (!FileExists(filepath)) return null;
+            var stream = VFSManager.GetFileStream(filepath);
+            var result = Encoding.ASCII.GetString(StreamFullRead(stream));
+            stream.Close();
+            return result;
         }
-        internal static void WriteStringFile(string filepath, string data)
+        public static void WriteStringFile(string filepath, string data)
         {
-            if (DirectoryExists(filepath)) return;
-            if (!FileExists(filepath)) { _ = VFSManager.CreateFile(filepath); }
-            new StreamWriter(VFSManager.GetFileStream(filepath)).WriteLine(data);
+            if (!FileExists(filepath)) { VFSManager.CreateFile(filepath); }
+            var stream = VFSManager.GetFileStream(filepath);
+            StreamFullWrite(stream, Encoding.ASCII.GetBytes(data));
+            stream.Close();
         }
-        internal static byte[] ReadBytesFile(string filepath)
+        public static byte[] ReadBytesFile(string filepath)
         {
-            if (DirectoryExists(filepath)) return null;
-            if (!FileExists(filepath)) { _ = VFSManager.CreateFile(filepath); }
-            return StreamFullRead(VFSManager.GetFileStream(filepath));
+            if (!FileExists(filepath)) return null;
+            var stream = VFSManager.GetFileStream(filepath);
+            var result = StreamFullRead(stream);
+            stream.Close();
+            return result;
         }
-        internal static void WriteBytesFile(string filepath, byte[] data)
+        public static void WriteBytesFile(string filepath, byte[] data)
         {
-            if (DirectoryExists(filepath)) return;
-            if (!FileExists(filepath)) { _ = VFSManager.CreateFile(filepath); }
-            StreamFullWrite(VFSManager.GetFileStream(filepath), data);
+            if (!FileExists(filepath)) { VFSManager.CreateFile(filepath); }
+            var stream = VFSManager.GetFileStream(filepath);
+            StreamFullWrite(stream, data);
+            stream.Close();
         }
-        internal static void CreateDirectory(string dirpath)
+        public static void CreateDevice(FileDevice device)
         {
-            if (DirectoryExists(dirpath)) return;
-            if (!FileExists(dirpath)) { _ = VFSManager.CreateDirectory(dirpath); }
+            if (device != null) { Devices.Add(device); return; }
+            throw new ArgumentNullException(nameof(device));
         }
-        internal static void DeleteDirectory(string dirpath)
+        public static void CreateDirectory(string dirpath)
         {
-            if (FileExists(dirpath)) return;
-            if (DirectoryExists(dirpath)) { VFSManager.DeleteDirectory(dirpath, true); }
+            if (!DirectoryExists(dirpath) && !FileExists(dirpath)) 
+                VFSManager.CreateDirectory(dirpath);
         }
-        internal static void DeleteFile(string filepath)
+        public static void DeleteDirectory(string dirpath)
         {
-            if (DirectoryExists(filepath)) return;
-            if (FileExists(filepath)) { VFSManager.DeleteFile(filepath); }
+            if (DirectoryExists(dirpath) && !FileExists(dirpath)) 
+                VFSManager.DeleteDirectory(dirpath, true);
         }
-        internal static bool FileExists(string filepath) => VFSManager.FileExists(filepath);
-        internal static bool DirectoryExists(string dirpath) => VFSManager.DirectoryExists(dirpath);
+        public static void DeleteFile(string filepath)
+        {
+            if (FileExists(filepath) && !DirectoryExists(filepath)) 
+                VFSManager.DeleteFile(filepath);
+        }
+        public static bool FileExists(string filepath) => VFSManager.FileExists(filepath);
+        public static bool DirectoryExists(string dirpath) => VFSManager.DirectoryExists(dirpath);
+    }
+    public abstract class FileDevice
+    {
+        public string FriendlyName;
+        public string DevicePath;
+        public Func<int, byte[]> Read;
+        public Action<byte[]> Write;
     }
 }

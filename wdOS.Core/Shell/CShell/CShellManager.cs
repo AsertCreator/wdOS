@@ -9,68 +9,71 @@ using Sys = Cosmos.System;
 
 namespace wdOS.Core.Shell.CShell
 {
-    internal class CShellManager : ShellBase
+    public class CShellManager : ShellBase
     {
-        internal static CShellManager Instance;
-        internal static PCScreenFont Font;
-        internal static Canvas FSC;
-        internal static class DefaultTheme
+        public static CShellManager Instance;
+        public static PCScreenFont Font;
+        public static Canvas FSC;
+        public static class DefaultTheme
         {
-            internal static Color WhiteColor;
-            internal static Color BlackColor;
-            internal static Color Dock0;
-            internal static Color Dock1;
-            internal static Color Background;
+            public static Pen WhiteColor;
+            public static Pen BlackColor;
+            public static Pen Dock0;
+            public static Pen Dock1;
+            public static Pen Background;
         }
-        internal static int ScreenWidth;
-        internal static int ScreenHeight;
-        internal static int WindowCount;
-        internal static int WindowWidth;
-        internal static int WindowTitleBarHeight;
-        internal static bool Running;
-        internal static List<Window> AllWindows;
-        internal static string DockText;
-        internal static int DockYPos;
-        internal static ulong Framecount;
-        internal static ulong FPS;
-        internal bool RunInTerminalMode;
-        internal const int CursorSize = 10;
-        internal const int CursorBorderSize = 2;
-        internal const int DockBorderSize = 2;
-        internal const int DockSize = 35;
-        internal override string Name => "CShell";
-        internal override int MajorVersion => Kernel.BuildConstants.VersionMajor;
-        internal override int MinorVersion => Kernel.BuildConstants.VersionMinor;
-        internal override int PatchVersion => Kernel.BuildConstants.VersionPatch;
-        internal override void BeforeRun()
+        public static int ScreenWidth;
+        public static int ScreenHeight;
+        public static int WindowCount;
+        public static int WindowWidth;
+        public static int WindowTitleBarHeight;
+        public static bool Running;
+        public static List<Window> AllWindows;
+        public static string DockText;
+        public static int DockYPos;
+        public static ulong Framecount;
+        public static ulong FPS;
+        public const int CursorSize = 10;
+        public const int CursorBorderSize = 2;
+        public const int DockBorderSize = 2;
+        public const int DockSize = 35;
+        public override string ShellName => "CShell";
+        public override string ShellDesc => "basically unoptimized shell";
+        public override int ShellMajorVersion => SystemDatabase.BuildConstants.VersionMajor;
+        public override int ShellMinorVersion => SystemDatabase.BuildConstants.VersionMinor;
+        public override int ShellPatchVersion => SystemDatabase.BuildConstants.VersionPatch;
+        public override void ShellBeforeRun()
         {
             try
             {
                 Instance = this;
+
+                Console.WriteLine("CShell is currently in process of being deprecated");
+
                 SetMode(800, 600);
                 Running = true;
                 AllWindows = new();
                 Font = PCScreenFont.Default;
                 WindowTitleBarHeight = Font.Height + 10;
                 DockYPos = ScreenHeight - DockSize;
-                DefaultTheme.Dock0 = Color.Gray;
-                DefaultTheme.Dock1 = Color.DarkGray;
-                DefaultTheme.WhiteColor = Color.White;
-                DefaultTheme.BlackColor = Color.Black;
-                DefaultTheme.Background = Color.Wheat;
-                Kernel.Log("Ready to render! Starting...");
+                DefaultTheme.Dock0 = new(Color.Gray);
+                DefaultTheme.Dock1 = new(Color.DarkGray);
+                DefaultTheme.WhiteColor = new(Color.White);
+                DefaultTheme.BlackColor = new(Color.Black);
+                DefaultTheme.Background = new(Color.Wheat);
+                KernelLogger.Log("Ready to render! Starting...");
                 Kernel.SweepTrash();
             }
             catch { }
         }
-        internal override void Run()
+        public override void ShellRun()
         {
             HandleInterface();
-            Kernel.Log("Shutting down...");
+            KernelLogger.Log("Shutting down...");
             FSC.Disable();
             Kernel.ShutdownPC(false);
         }
-        internal static void SetMode(int width, int height)
+        public static void SetMode(int width, int height)
         {
             try
             {
@@ -79,16 +82,16 @@ namespace wdOS.Core.Shell.CShell
                 Sys.MouseManager.ScreenWidth = (uint)ScreenWidth;
                 Sys.MouseManager.ScreenHeight = (uint)ScreenHeight;
                 FSC = FullScreenCanvas.GetFullScreenCanvas(new Mode(ScreenWidth, ScreenHeight, (ColorDepth)32));
-                Kernel.Log("SystemCanvas with res of " + ScreenWidth + "x" + ScreenHeight + "x32 created!");
+                KernelLogger.Log("SystemCanvas with res of " + ScreenWidth + "x" + ScreenHeight + "x32 created!");
             }
             catch
             {
-                Kernel.Log("Unable to create SystemCanvas!");
+                KernelLogger.Log("Unable to create SystemCanvas!");
                 Console.WriteLine("Can't set SystemCanvas to new mode!");
                 while (true) { }
             }
         }
-        internal static void HandleInterface()
+        public static void HandleInterface()
         {
             while (Running)
             {
@@ -121,7 +124,7 @@ namespace wdOS.Core.Shell.CShell
                                 CreateWindow(new Window()
                                 {
                                     Title = $"Window {random.Next()}",
-                                    Back = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255))
+                                    Back = new Pen(Color.FromArgb(random.Next(255), random.Next(255), random.Next(255)))
                                 });
                                 break;
                             case 'q':
@@ -132,7 +135,7 @@ namespace wdOS.Core.Shell.CShell
                 }
             }
         }
-        internal static void CreateWindow(Window win)
+        public static void CreateWindow(Window win)
         {
             if (WindowCount < 2)
             {
@@ -144,7 +147,7 @@ namespace wdOS.Core.Shell.CShell
                 Kernel.SweepTrash();
             }
         }
-        internal static void CloseWindow(int win)
+        public static void CloseWindow(int win)
         {
             if (win < WindowCount)
             {
@@ -154,5 +157,7 @@ namespace wdOS.Core.Shell.CShell
                 WindowCount--;
             }
         }
+
+        public override void ShellAfterRun() { }
     }
 }

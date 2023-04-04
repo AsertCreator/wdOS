@@ -6,10 +6,10 @@ using static wdOS.Core.Foundation.Kernel;
 namespace wdOS.Core.Foundation
 {
     // not working lol
-    internal static class ErrorHandler
+    public static class ErrorHandler
     {
-        internal static Dictionary<uint, string> ErrorTexts;
-        internal static void Initialize()
+        public static Dictionary<uint, string> ErrorTexts;
+        public static void Initialize()
         {
             ErrorTexts = new()
             {
@@ -31,31 +31,31 @@ namespace wdOS.Core.Foundation
                 Panic(4);
             };
         }
-        internal static void Panic(uint message)
+        public static void Panic(uint message)
         {
             SystemInteraction.State = SystemState.AfterLife;
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.BackgroundColor = ConsoleColor.Black;
             string text0 = $"!!! panic !!! {ErrorTexts[message]}";
-            string text1 = $"Current kernel version: {KernelVersion}";
-            Log(text0);
-            Log(text1);
+            string text1 = $"Current kernel version: {GetKernelVersion()}";
+            KernelLogger.Log(text0);
+            KernelLogger.Log(text1);
             Console.WriteLine(text0);
             Console.WriteLine(text1);
-            WaitForShutdown(true, SystemSettings.CrashPowerOffTimeout);
+            WaitForShutdown(true, SystemDatabase.SystemSettings.CrashPowerOffTimeout);
         }
-        internal static void Panic(string msg)
+        public static void Panic(string msg)
         {
             SystemInteraction.State = SystemState.AfterLife;
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.BackgroundColor = ConsoleColor.Black;
-            string text0 = $"!!! panic !!! custom: {msg}";
-            string text1 = $"Current kernel version: {KernelVersion}";
-            Log(text0);
-            Log(text1);
+            string text0 = $"!!! panic !!! message: {msg}";
+            string text1 = $"Current kernel version: {GetKernelVersion()}";
+            KernelLogger.Log(text0);
+            KernelLogger.Log(text1);
             Console.WriteLine(text0);
             Console.WriteLine(text1);
-            WaitForShutdown(true, SystemSettings.CrashPowerOffTimeout);
+            WaitForShutdown(true, SystemDatabase.SystemSettings.CrashPowerOffTimeout);
         }
     }
 }

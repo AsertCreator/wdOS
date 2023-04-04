@@ -4,19 +4,20 @@ Don't even try to ask me about name, its basically means wednesday. Just an idea
 to create an OS came at wednesday
 
 ### Development process
-~Look at projects~. Currently system is at version 0.5.0. I think its an alpha. 
+~Look at projects~. Currently system is at version 0.6.0 I think its a post-alpha. 
 
 Almost implemented features:
+- User System
 - TShell, basically optimized terminal
 - CShell, basically unoptimized graphical shell
 - Some nix commands
+- System Installer
 
 Will be implemented:
 - Networking
 - Audio Playing
 - Error Handling
 - Normal Interaction
-- System Installer
 
 Third-party features:
 - MIV ([author](https://github.com/bartashevich))
@@ -28,15 +29,15 @@ Third-party features:
 
 
 **Q**: Minimum system requirements?
-| RAM           | Disk | CD-ROM | Video        | CPU                         |
-|---------------|------|--------|--------------|-----------------------------|
-| 64 MiB, maybe | any  | any    | internal gpu | any starting from core solo |
+| RAM            | Disk | CD-ROM | Video        | CPU                         |
+|----------------|------|--------|--------------|-----------------------------|
+| 256 MiB, maybe | any  | any    | internal gpu | any starting from core solo |
 
 
 **Q**: Recomended system requirements?
 | RAM     | Disk | CD-ROM | Video        | CPU                          |
 |---------|------|--------|--------------|------------------------------|
-| 128 MiB | any  | any    | internal gpu | any starting from core 2 duo |
+| 512 MiB | any  | any    | internal gpu | any starting from core 2 duo |
 
 
 **Q**: Can I make apps or drivers for this OS?
@@ -46,4 +47,5 @@ Third-party features:
 
 **Q**: Can I install system to drive?
 
-**A**: Well...
+**A**: Somewhat. Kernel itself currently is not installable, beacuse Cosmos's implementation of CDFS is
+broken and systems based on it aren't able to read CDROM

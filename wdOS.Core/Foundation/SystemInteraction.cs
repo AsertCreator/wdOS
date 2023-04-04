@@ -7,35 +7,94 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using wdOS.Core.Foundation.Threading;
+using wdOS.Core.Shell;
 
 namespace wdOS.Core.Foundation
 {
-    internal static class SystemInteraction
+    public static class SystemInteraction
     {
-        internal static SystemState State;
-        internal static void Shutdown(int panic = -1, bool restart = false)
+        public static SystemState State;
+        public static DateTime LastLoginTime;
+        public static TimeSpan NoLoginMaxTime;
+        public static ShellBase CurrentShell;
+        public static List<KeyboardBase> Keyboards;
+        public static List<MouseBase> Mice;
+        public static string[] SystemFolders = 
+            { "PrivateSystem", "PrivateUsers", "Applications", "bin", "lib", "proc", "dev" };
+        public static void InitializeInteraction()
+        {
+            LastLoginTime = DateTime.Now - new TimeSpan(10, 0, 0);
+            NoLoginMaxTime = new TimeSpan(0, 10, 0);
+        }
+        public static void ShowLoginScreen()
+        {
+            if (SystemDatabase.AvailableUsers.Count == 1)
+            {
+                var user = SystemDatabase.AvailableUsers[0];
+                if (user.UserLockType != 0)
+                {
+                    retry:
+                    Console.Write($"login: {user.UserName}");
+                    Console.Write("password: ");
+                    string password = Console.ReadLine();
+                    if (SystemDatabase.Login(user.UserName, password) != SystemDatabase.UserLoginResultLoggedInto)
+                    {
+                        Console.WriteLine("invalid credentials\n");
+                        goto retry;
+                    }
+                }
+                else
+                {
+                    if (SystemDatabase.Login(user.UserName, "", true) != SystemDatabase.UserLoginResultLoggedInto)
+                    {
+                        Console.WriteLine("corrupted user database\n");
+                    }
+                }
+            }
+            else
+            {
+                retry:
+                Console.Write("login: ");
+                string username = Console.ReadLine();
+                Console.Write("password: ");
+                string password = Console.ReadLine();
+                if (SystemDatabase.Login(username, password) != SystemDatabase.UserLoginResultLoggedInto)
+                {
+                    Console.WriteLine("invalid credentials\n");
+                    goto retry;
+                }
+            }
+            Console.WriteLine($"logged in as {SystemDatabase.CurrentUser.UserName}");
+        }
+        public static void SetupSystem()
+        {
+            KernelLogger.Log("Setting up system folders...");
+            for (int i = 0; i < SystemFolders.Length; i++)
+                FileSystem.CreateDirectory("0:\\" + SystemFolders[i]);
+            KernelLogger.Log("Set up system folders!");
+        }
+        public static void Shutdown(int panic = -1, bool restart = false)
         {
             try
             {
+                if (panic != -1) ErrorHandler.Panic((uint)panic);
+
                 State = SystemState.ShuttingDown;
                 if (!restart)
                     ShowScreenMessage("Shutting down...");
                 else
                     ShowScreenMessage("Restarting...");
-                Thread.IsInitialized = false;
 
                 ShowScreenMessage("Disabling services...", true);
                 {
                     Kernel.EnableServices(false);
-                    Kernel.SSDShells.Clear();
-                    Kernel.SSDService.Clear();
+                    SystemDatabase.SSDShells.Clear();
+                    SystemDatabase.SSDService.Clear();
                 }
 
                 ShowScreenMessage("Disabling apps and shells...", true);
                 {
-                    if (panic != -1) ErrorHandler.Panic((uint)panic);
-                    if (Kernel.CurrentShell != null) Kernel.CurrentShell.IsRunning = false;
+                    if (CurrentShell != null) CurrentShell.IsRunning = false;
                     foreach (var app in Kernel.CurrentApplications)
                     {
                         app.IsRunning = false;
@@ -65,34 +124,16 @@ namespace wdOS.Core.Foundation
                 ErrorHandler.Panic(6);
             }
         }
-        internal static void ShowScreenMessage(string msg, bool verbose = false)
+        public static void ShowScreenMessage(string msg, bool verbose = false)
         {
-            if (verbose == true && Kernel.SystemSettings.EnableVerbose == false) return;
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Clear();
-            Console.CursorLeft = 2;
-            Console.CursorTop = 1;
+            if (verbose == true && SystemDatabase.SystemSettings.EnableVerbose == false) return;
             Console.WriteLine(msg);
         }
-        internal static void SaveSystemSettings()
+        public static void SaveSystemSettings()
         {
             try
             {
-                if (!Kernel.SystemSettings.CDROMBoot)
-                {
-                    StringBuilder sb = new();
-                    sb.AppendLine($"; wdOS System Settings, do not touch this!");
-                    sb.AppendLine($"system.computername::{Kernel.ComputerName}");
-                    sb.AppendLine($"system.enablefilesystem::{(Kernel.SystemSettings.EnableFileSystem ? 1 : 0)}");
-                    sb.AppendLine($"system.enableperiodicgc::{(Kernel.SystemSettings.EnablePeriodicGC ? 1 : 0)}");
-                    sb.AppendLine($"system.enablelogging::{(Kernel.SystemSettings.EnableLogging ? 1 : 0)}");
-                    sb.AppendLine($"system.enableaudio::{(Kernel.SystemSettings.EnableAudio ? 1 : 0)}");
-                    sb.AppendLine($"system.terminalfont::{Kernel.SystemSettings.SystemTerminalFont}");
-                    sb.AppendLine($"system.verbosemode::{Kernel.SystemSettings.EnableVerbose}");
-                    if (!FileSystem.DirectoryExists(FileSystem.SystemDir)) FileSystem.CreateDirectory(FileSystem.SystemDir);
-                    FileSystem.WriteStringFile(FileSystem.SystemSettingsFile, sb.ToString());
-                }
+                // not implemented
             }
             catch
             {
@@ -100,7 +141,7 @@ namespace wdOS.Core.Foundation
             }
         }
     }
-    internal enum SystemState
+    public enum SystemState
     {
         BeforeLife, Starting, Running, ShuttingDown, AfterLife
     }

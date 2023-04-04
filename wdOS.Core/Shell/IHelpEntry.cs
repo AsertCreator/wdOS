@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace wdOS.Core.Shell
 {
-    internal interface IHelpEntry
+    public interface IHelpEntry
     {
-        internal string EntryName { get; }
-        internal string EntryDescription { get; }
-        internal static void ShowHelpMenu(List<IHelpEntry> entries)
+        public string EntryName { get; }
+        public string EntryDescription { get; }
+        public static void ShowHelpMenu(List<IHelpEntry> entries)
         {
             int maxlength = 0;
             foreach (var entry in entries)
@@ -20,7 +20,7 @@ namespace wdOS.Core.Shell
                 int numberSpaces = maxlength - entry.EntryName.Length;
                 Console.WriteLine($"{entry.EntryName}{new string(' ', numberSpaces + 1)}- {entry.EntryDescription}");
             }
-            Console.WriteLine($"Total number of entries: {entries.Count}");
+            Console.WriteLine($"total number of entries: {entries.Count}");
         }
     }
 }

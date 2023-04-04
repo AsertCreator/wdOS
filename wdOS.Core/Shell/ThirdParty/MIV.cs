@@ -6,7 +6,7 @@ namespace wdOS.Core.Shell.ThirdParty
     // Originally written by Bartashevich (https://github.com/bartashevich)
     // Modified by CaveSponge (possibly, https://github.com/Arawn-Davies)
     // And finally modifed by AsertCreator (https://github.com/AsertCreator) to make it a bit more readble and compatible with wdOS
-    internal static class MIV
+    public static class MIV
     {
         public static string CurrentFile;
         public static void PrintStartScreen()
@@ -222,8 +222,7 @@ namespace wdOS.Core.Shell.ThirdParty
                 Console.WriteLine(ex.Message);
             }
 
-            string text = string.Empty;
-            text = MIVMain(File.ReadAllText(@"0:\" + CurrentFile));
+            string text = MIVMain(File.ReadAllText(@"0:\" + CurrentFile));
 
             Console.Clear();
 

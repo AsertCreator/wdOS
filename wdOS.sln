@@ -36,6 +36,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wdOS.Playground", "wdOS.Pla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wdOS.Windows", "wdOS.Playground\wdOS.Windows\wdOS.Windows.csproj", "{E33F4E97-7DEB-4989-A568-240C04502710}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{CB7CE3CA-A12C-40F0-BAA4-A0578C2160A6}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\Some Internals.md = Docs\Some Internals.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +96,7 @@ Global
 		{FC28C094-7807-42E4-B2D4-DF41F386D681} = {077306E7-D3D3-4410-A69D-789EB93AB5C3}
 		{8490EAE7-4FB2-48B8-8E95-C45A71668358} = {FC28C094-7807-42E4-B2D4-DF41F386D681}
 		{E33F4E97-7DEB-4989-A568-240C04502710} = {420C162E-4DA8-46FF-B974-7B90FE323F72}
+		{CB7CE3CA-A12C-40F0-BAA4-A0578C2160A6} = {38B45CDF-3F9A-4AA0-B4BD-680C7D5D4747}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {96A31AB2-D4ED-4A57-8310-1C0E08B8C02A}

@@ -1,34 +1,35 @@
 ﻿using System.Drawing;
+using Cosmos.System.Graphics;
 using wdOS.Core.Foundation;
 
 namespace wdOS.Core.Shell.CShell
 {
-    internal class Window
+    public class Window
     {
-        internal string Title = "Empty Window";
-        internal Color Back = CShellManager.DefaultTheme.WhiteColor;
-        internal int SizeX;
-        internal int SizeY;
-        internal int SizeY2;
-        internal int LocationX;
-        internal int LocationY;
-        internal int TextLocationX0;
-        internal int TextLocationX1;
-        internal void RenderWindow()
+        public string Title = "Empty Window";
+        public Pen Back = CShellManager.DefaultTheme.WhiteColor;
+        public int SizeX;
+        public int SizeY;
+        public int SizeY2;
+        public int LocationX;
+        public int LocationY;
+        public int TextLocationX0;
+        public int TextLocationX1;
+        public void RenderWindow()
         {
             CShellManager.FSC.DrawFilledRectangle(Back, LocationX, CShellManager.WindowTitleBarHeight, SizeX, SizeY2);
             CShellManager.FSC.DrawString(Title, CShellManager.Font, CShellManager.DefaultTheme.WhiteColor, TextLocationX0, 5);
         }
-        internal void RebuildLocationCache(int tile, int tilecount)
+        public void RebuildLocationCache(int tile, int tilecount)
         {
-            SizeX = CShellManager.WindowWidth;
+            SizeX = CShellManager.WindowWidth / tilecount;
             SizeY = CShellManager.ScreenHeight;
             LocationY = 0;
             LocationX = tile * SizeX;
             TextLocationX0 = LocationX + 5;
             TextLocationX1 = LocationX + SizeX - 5 - (CShellManager.Font.Width + 5) * 5 + 10;
             SizeY2 = SizeY - CShellManager.WindowTitleBarHeight;
-            Kernel.Log("Cache rebuilt!");
+            KernelLogger.Log("Cache rebuilt!");
         }
     }
 }

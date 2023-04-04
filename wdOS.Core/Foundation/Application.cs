@@ -6,11 +6,36 @@ using System.Threading.Tasks;
 
 namespace wdOS.Core.Foundation
 {
-    internal class Application
+    public class Application
     {
-        internal static uint NextPID = 0;
-        internal uint PID = NextPID++;
-        internal bool IsRunning;
-        internal bool IsRunningElevated;
+        public static uint NextPID = 0;
+        public uint PID = NextPID++;
+        public bool IsRunning;
+        public bool IsRunningElevated;
+        public bool EnableNXProtection;
+        public bool EnableUserMode;
+        public BinarySection[] Sections;
+        public uint Entrypoint;
+    }
+    public struct Context
+    {
+        public uint EAX;
+        public uint EBX;
+        public uint ECX;
+        public uint EDX;
+        public uint ESI;
+        public uint EDI;
+        public uint ESP;
+        public uint EBP;
+        public uint EFL;
+    }
+    public unsafe struct BinarySection
+    {
+        public uint PhysicalAddress;
+        public uint VirtualAddress;
+        public uint Size;
+        public bool IsCode;
+        public bool IsData;
+        public byte* Data;
     }
 }

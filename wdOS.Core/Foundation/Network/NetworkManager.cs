@@ -2,19 +2,20 @@
 using Cosmos.System.Network.IPv4.TCP;
 using Cosmos.System.Network.IPv4.UDP.DHCP;
 using System;
+using System.Linq;
 using System.Text;
 using wdOS.Core.Shell;
 
 namespace wdOS.Core.Foundation.Network
 {
-    internal static class NetworkManager
+    public static class NetworkManager
     {
-        internal static TcpClient MainClient;
-        internal static TcpClient PingClient;
-        internal static DHCPClient LANClient;
-        internal static string UserAgent = "curl/1.00.0";
-        internal static Encoding Encoding = Encoding.ASCII;
-        internal static HTTPResponse SendHTTPRequest(HTTPRequest req)
+        public static TcpClient MainClient;
+        public static TcpClient PingClient;
+        public static DHCPClient LANClient;
+        public static string UserAgent = "curl/1.00.0";
+        public static Encoding Encoding = Encoding.ASCII;
+        public static HTTPResponse SendHTTPRequest(HTTPRequest req)
         {
             try
             {
@@ -34,7 +35,7 @@ namespace wdOS.Core.Foundation.Network
                     response.httpcode = (ushort)int.Parse(toplevel[1]);
                     response.httpvermajor = 1;
                     response.httpvermajor = 1;
-                    response.responsetext = string.Join("\n\n", Utilities.SkipArray(data.Split("\n\n"), 1));
+                    response.responsetext = string.Join("\n\n", data.Split("\n\n").Skip(1));
                     response.responsetype = "text/plain";
                 }
                 return response;
@@ -52,7 +53,7 @@ namespace wdOS.Core.Foundation.Network
                 return response;
             }
         }
-        internal static int PingServer(Address serveraddress, ushort port)
+        public static int PingServer(Address serveraddress, ushort port)
         {
             try
             {
@@ -63,21 +64,21 @@ namespace wdOS.Core.Foundation.Network
             catch { return -1; }
         }
     }
-    internal struct HTTPRequest
+    public struct HTTPRequest
     {
-        internal string requesttext;
-        internal string requesttype;
-        internal string requestmethod;
-        internal string serverdomain;
-        internal string pagelocation;
-        internal Address serverhost;
+        public string requesttext;
+        public string requesttype;
+        public string requestmethod;
+        public string serverdomain;
+        public string pagelocation;
+        public Address serverhost;
     }
-    internal struct HTTPResponse
+    public struct HTTPResponse
     {
-        internal string responsetext;
-        internal string responsetype;
-        internal ushort httpcode;
-        internal ushort httpvermajor;
-        internal ushort httpverminor;
+        public string responsetext;
+        public string responsetype;
+        public ushort httpcode;
+        public ushort httpvermajor;
+        public ushort httpverminor;
     }
 }
