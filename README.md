@@ -12,7 +12,7 @@ that should be able to run native apps on disk.
 Almost implemented features:
 - User System
 - TShell, basically optimized terminal
-- CShell, basically unoptimized graphical shell (removed, if you want use it, use 
+- CShell, basically unoptimized graphical shell (removed; if you want use it, use 
 commit history to get it back)
 - Some nix commands
 - System Installer
