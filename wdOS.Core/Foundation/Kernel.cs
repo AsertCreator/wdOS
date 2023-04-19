@@ -6,7 +6,6 @@ using Cosmos.System.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using wdOS.Core.Shell.CShell;
 using wdOS.Core.Shell.DebugShell;
 using Sys = Cosmos.System;
 using wdOS.Core.Shell.Services;
