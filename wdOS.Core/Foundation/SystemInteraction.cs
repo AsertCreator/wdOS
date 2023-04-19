@@ -115,7 +115,7 @@ namespace wdOS.Core.Foundation
                 else
                     ShowScreenMessage("Restarting CPU...", true);
 
-                if (!restart) Power.ACPIReboot();
+                if (!restart) Power.CPUReboot();
                 else Power.ACPIShutdown();
             }
             catch

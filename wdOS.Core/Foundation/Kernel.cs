@@ -71,7 +71,7 @@ namespace wdOS.Core.Foundation
                         ErrorHandler.Panic(5);
                     }
                 }
-                Log("Shell is exited!", LogLevel.Warning);
+                Log("Shell have exited!", LogLevel.Warning);
                 ShutdownPC(false);
             }
             catch (Exception e) { Log("System crash! Message: " + e.Message, LogLevel.Fatal); ErrorHandler.Panic(5); }

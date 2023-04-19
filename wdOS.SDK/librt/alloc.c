@@ -7,9 +7,9 @@
 
 // Allocates memory from RAM. Raises MSG_MEMORY_ALLOC message
 void* wd_user_mem_alloc(size_t size) {
-	return (void*)wd_user_msg_send(MSG_MEMORY_ALLOC, size, 0, 0);
+	return (void*)wd_user_msg_send(MSG_MEMORY_ALLOC, size);
 }
 // Frees allocated memory from RAM. Raises MSG_MEMORY_FREE message
 void wd_user_mem_free(void* memory) {
-	wd_user_msg_send(MSG_MEMORY_FREE, (uint32_t)memory, 0, 0);
+	wd_user_msg_send(MSG_MEMORY_FREE, (uint32_t)memory);
 }

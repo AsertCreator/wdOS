@@ -4,7 +4,10 @@ Don't even try to ask me about name, its basically means wednesday. Just an idea
 to create an OS came at wednesday
 
 ### Development process
-~Look at projects~. Currently system is at version 0.6.0 I think its a post-alpha. 
+Currently system is at version 0.7.0, pre-beta. Also, system is currently in state 
+of switching to almost new architecture, so most of its features will be rewritten. 
+List below applies only to wdOS Core OS. wdOS Platform OS is somewhat seperate OS 
+that should be able to run native apps on disk.
 
 Almost implemented features:
 - User System

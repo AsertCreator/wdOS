@@ -96,6 +96,7 @@ namespace wdOS.Core.Foundation
         }
         public static void CreateUser(UserBase user)
         {
+            KernelLogger.Log("Adding new user. Name: " + user.UserName);
             AvailableUsers.Add(user);
             user.IsDisabled = false;
             FileSystem.CreateDirectory(GetUserProfile(user));

@@ -7,9 +7,9 @@
 
 // Gets current UNIX Timestamp. Raises MSG_CONTROL_GETTIME message
 time_t wd_user_time_get() {
-	return wd_user_msg_send(MSG_CONTROL_GETTIME, 0, 0, 0);
+	return wd_user_msg_send(MSG_CONTROL_GETTIME, 0);
 }
 // Sets current UNIX Timestamp. Raises MSG_CONTROL_SETTIME message
 void wd_user_time_set(time_t t) {
-	wd_user_msg_send(MSG_CONTROL_SETTIME, t, 0, 0);
+	wd_user_msg_send(MSG_CONTROL_SETTIME, t);
 }
