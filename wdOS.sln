@@ -54,6 +54,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wdOS Platform", "wdOS Platf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Platform", "wdOS.Platform\wdOS.Platform.csproj", "{DB37A038-2030-49EC-B0AB-AFCB5EDCCB25}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wdOS Built-in Apps", "wdOS Built-in Apps", "{C4DAB998-0DD6-47F3-91B1-3F386A9BE1D0}"
+	ProjectSection(SolutionItems) = preProject
+		wdOS.Apps\init.c = wdOS.Apps\init.c
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

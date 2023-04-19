@@ -146,7 +146,6 @@ namespace wdOS.Core.Foundation
 
                 VGAScreen.SetFont(font.CreateVGAFont(), font.Height);
                 SystemDatabase.SSDShells.Add(new TShellManager());
-                SystemDatabase.SSDShells.Add(new CShellManager());
                 SystemDatabase.SSDService.Add(new PeriodicGC());
                 SystemInteraction.CurrentShell = SystemDatabase.SSDShells[0];
                 Log($"Selected shell: {SystemInteraction.CurrentShell.ShellName} - {SystemInteraction.CurrentShell.ShellDesc}");
