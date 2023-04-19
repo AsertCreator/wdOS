@@ -14,7 +14,6 @@ namespace wdOS.Core.Shell.DebugShell
         public static void AddCommands()
         {
             TShellManager.AllCommands.Add(new ClearCommand());
-            TShellManager.AllCommands.Add(new CShellCommand());
             TShellManager.AllCommands.Add(new EchoCommand());
             TShellManager.AllCommands.Add(new HelpCommand());
             TShellManager.AllCommands.Add(new LogCatCommand());
@@ -231,24 +230,6 @@ namespace wdOS.Core.Shell.DebugShell
                 if (args.Length > 0) { Console.WriteLine("logcat: too much arguments"); return 1; }
                 Console.WriteLine(SystemDatabase.SystemLog.ToString());
                 return 0;
-            }
-        }
-        public class CShellCommand : ConsoleCommand
-        {
-            public override string Name => "cshell";
-            public override string Description => "opens CShell GUI shell";
-            public override int Execute(string[] args)
-            {
-                if (args.Length > 0) { Console.WriteLine("cshell: too much arguments"); return 1; }
-                if (SystemInteraction.Mice.Count > 0)
-                {
-                    CShell.CShellManager shell = new();
-                    shell.ShellBeforeRun();
-                    while (shell.IsRunning) shell.ShellRun();
-                    return 0;
-                }
-                Console.WriteLine("cshell: mouse not detected");
-                return 1;
             }
         }
         public class RepeatCommand : ConsoleCommand
