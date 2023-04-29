@@ -18,14 +18,37 @@
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-        <DebugEnabled>True</DebugEnabled>
+        <DebugEnabled>False</DebugEnabled>
         <VMWareEdition>Workstation</VMWareEdition>
+        <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
+        <StackCorruptionDetectionEnabled>False</StackCorruptionDetectionEnabled>
+        <OptimizationLevel>2</OptimizationLevel>
+        <Timeout>5</Timeout>
     </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <NoWarn>1701;1702;1416</NoWarn>
+      <Optimize>True</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <NoWarn>1701;1702;1416</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="XSharp">
+        <HintPath>$(USERPROFILE)\AppData\Roaming\Cosmos User Kit\Build\IL2CPU\XSharp.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>
