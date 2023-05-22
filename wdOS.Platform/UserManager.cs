@@ -20,6 +20,7 @@ namespace wdOS.Platform
         internal static TimeSpan NoLoginMaxTime;
         internal static List<User> AvailableUsers;
         internal static User CurrentUser;
+        internal static User EveryoneUser;
         internal static bool initialized = false;
         internal static void Initialize()
         {
@@ -28,9 +29,11 @@ namespace wdOS.Platform
                 LastLoginTime = DateTime.Now - new TimeSpan(10, 0, 0);
                 NoLoginMaxTime = new TimeSpan(0, 10, 0);
 
+                EveryoneUser = new User("everyone", "everything", "", 0);
                 AvailableUsers = new List<User>
                 {
-                    new RootUser("root")
+                    new RootUser("root"),
+                    EveryoneUser
                 };
                 CurrentUser = AvailableUsers[0];
 
@@ -46,7 +49,7 @@ namespace wdOS.Platform
             for (int i = 0; i < AvailableUsers.Count; i++)
             {
                 User user = AvailableUsers[i];
-                if (user.UserName == username)
+                if (user.UserName == username && user != EveryoneUser)
                 {
                     if (user.IsDisabled) return UserLoginResultNotAvailable;
                     if (user.UserKey == key || user.UserLockType == UserLockTypeNone || force)
@@ -68,9 +71,13 @@ namespace wdOS.Platform
             }
             return null;
         }
-        internal static void CreateUser(User user)
+        internal static bool CreateUser(User user)
         {
             if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+
+            user.UserName = user.UserName.Trim();
+
+            if (FindByName(user.UserName) != null) return false;
 
             PlatformLogger.Log("adding new user. Name: " + user.UserName, "usermanager");
             AvailableUsers.Add(user);
@@ -80,16 +87,15 @@ namespace wdOS.Platform
             for (int i = 0; i < ProfileSubfolders.Length; i++)
                 FileSystemManager.CreateDirectory(GetUserProfile(user) + ProfileSubfolders[i]);
 
-            // FileSystem.WriteStringFile(GetUserProfile(user) + "userinfo.dat",
-            //     $"user.name=\"{user.UserName}\";" +
-            //     $"user.pass=\"{user.UserKey}\";" +
-            //     $"user.locktype={user.UserLockType};" +
-            //     $"user.group=\"{user.UserGroup}\";" +
-            //     $"user.state.isroot={user.IsRoot};" +
-            //     $"user.state.ishidden={user.IsHidden};" +
-            //     $"user.state.isdisabled={user.IsDisabled}");
+            if (!UpdateUserDatabase())
+            {
+                BroadcastManager.SendBroadcast(EveryoneUser, "User Database",
+                    "User Manager notifies you, that it wasn't able to save User Database, " +
+                    "please save your work for PC maintainer to reboot it");
+            }
 
             PlatformLogger.Log("created new user: " + user.UserName, "usermanager");
+            return true;
         }
         internal static bool RemoveUser(string username)
         {
@@ -103,6 +109,18 @@ namespace wdOS.Platform
             AvailableUsers.Remove(user);
 
             PlatformLogger.Log("removed user: " + user.UserName, "usermanager");
+            return true;
+        }
+        internal static bool UpdateUserDatabase()
+        {
+            // FileSystem.WriteStringFile(GetUserProfile(user) + "userinfo.dat",
+            //     $"user.name=\"{user.UserName}\";" +
+            //     $"user.pass=\"{user.UserKey}\";" +
+            //     $"user.locktype={user.UserLockType};" +
+            //     $"user.group=\"{user.UserGroup}\";" +
+            //     $"user.state.isroot={user.IsRoot};" +
+            //     $"user.state.ishidden={user.IsHidden};" +
+            //     $"user.state.isdisabled={user.IsDisabled}");
             return true;
         }
         internal static string GetUserProfile(User user) => "0:\\PrivateUsers\\" + user.UserName + '\\';

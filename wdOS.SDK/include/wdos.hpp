@@ -53,6 +53,7 @@ namespace wdOS {
 		static void SetConsoleBackground(uint val);
 		static void SetCursorX(uint val);
 		static void SetCursorY(uint val);
+		static void Write(const char* buffer);
 		static void Write(char* buffer);
 		static uint Read(char* buffer);
 	};

@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static wdOS.Platform.Bootstrapper;
+using static wdOS.Setup.Platform.Bootstrapper;
 
-namespace wdOS.Platform
+namespace wdOS.Setup.Platform
 {
     internal static class FailureManager
     {
@@ -77,8 +77,6 @@ namespace wdOS.Platform
             }
             else
             {
-                if (FailureDepth <= 1) ACPIManager.ForceShutdownPC();
-                if (FailureDepth <= 2) HardwareManager.ForceRestartPC();
                 while (true) { }
             }
         }

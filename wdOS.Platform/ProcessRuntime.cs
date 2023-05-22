@@ -17,6 +17,7 @@ namespace wdOS.Platform
         internal const int FileStdErr = -2;
         internal const int FileStdIn = -3;
         internal static bool initialized = false;
+        internal static List<AddressRange> Ranges = new();
         internal unsafe static void Initialize()
         {
             if (!initialized)
@@ -109,6 +110,34 @@ namespace wdOS.Platform
                             [9] = x => UserConsole.Read((char*)x)
                         }
                     },
+                    new KernelFunctionTable()
+                    {
+                        FunctionTableName = "BroadcastManager",
+                        FunctionTableID = 0xFF04,
+                        Functions = new()
+                        {
+                            // ProcessRuntime.GetCursorX
+                            [0] = x => UserConsole.GetCursorX(),
+                            // ProcessRuntime.GetCursorY
+                            [1] = x => UserConsole.GetCursorY(),
+                            // ProcessRuntime.GetConsoleForeground
+                            [2] = x => UserConsole.GetConsoleForeground(),
+                            // ProcessRuntime.GetConsoleBackground
+                            [3] = x => UserConsole.GetConsoleBackground(),
+                            // ProcessRuntime.SetConsoleForeground
+                            [4] = x => { UserConsole.SetConsoleForeground(x); return 0; },
+                            // ProcessRuntime.SetConsoleBackground
+                            [5] = x => { UserConsole.SetConsoleBackground(x); return 0; },
+                            // ProcessRuntime.SetCursorX
+                            [6] = x => { UserConsole.SetCursorX(x); return 0; },
+                            // ProcessRuntime.SetCursorY
+                            [7] = x => { UserConsole.SetCursorY(x); return 0; },
+                            // ProcessRuntime.Write
+                            [8] = x => { UserConsole.Write((char*)x); return 0; },
+                            // ProcessRuntime.Read
+                            [9] = x => UserConsole.Read((char*)x)
+                        }
+                    },
                 };
                 INTs.SetIntHandler(0xF0, HandleSWI);
                 initialized = true;
@@ -167,15 +196,65 @@ namespace wdOS.Platform
             if (!FileSystemManager.FileExists(path)) return 1;
             byte[] bytes = FileSystemManager.ReadBytesFile(path);
             ElfFile file = new(bytes, path);
-            StartElfFile(file, cmd, true);
+            StartFile(file, cmd, true);
             return 0;
+        }
+        internal unsafe static void Demap(ElfFile file)
+        {
+            Ranges.Remove(file.AddressRange);
+            // we can do more
         }
         internal unsafe static void MapElfFile(ElfFile file)
         {
-            _ = file;
-            // todo: mapping
+            // get free memory
+            uint progoffset = 0;
+            uint maxaddr = 0;
+            uint minaddr = 0;
+            for (int i = 0; i < file.FileHeader->ElfSectionTableEntryCount; i++)
+            {
+                var current = file.SectHeader[i];
+                if (current.SectAddress < minaddr) minaddr = current.SectAddress;
+                if (current.SectAddress + current.SectSize > maxaddr) maxaddr = current.SectAddress + current.SectSize;
+            }
+            var range = new AddressRange() { StartAddress = minaddr, EndAddress = maxaddr, RangeType = 0 };
+            var isoverlapping = false;
+            for (int i = 0; i < Ranges.Count; i++)
+            {
+                var other = Ranges[i];
+                if (other.IntersectsWith(range))
+                {
+                    isoverlapping = true;
+                    break;
+                }
+            }
+            if (isoverlapping)
+            {
+                uint maxprogaddr = 0;
+                for (int i = 0; i < Ranges.Count; i++)
+                {
+                    var other = Ranges[i];
+                    if (other.EndAddress > maxprogaddr)
+                        maxprogaddr = other.EndAddress;
+                }
+                progoffset = maxprogaddr - minaddr;
+            }
+            // now we've allocated program code & data address range so other
+            // processes can reside in memory
+            // now map it
+            var sectcount = file.FileHeader->ElfSectionTableEntryCount;
+            for (int i = 0; i < sectcount; i++)
+            {
+                var current = file.SectHeader[i];
+                var sectdata = file.RawFile + current.SectOffset;
+                for (int e = 0; e < current.SectSize; e++)
+                    *(byte*)(current.SectAddress + progoffset + e) = sectdata[e];
+            }
+            file.ProgOffset = progoffset;
+            file.AddressRange = range;
+            Ranges.Add(range);
+            // yay, we mapped it!
         }
-        internal static unsafe int StartElfFile(ElfFile file, string args, bool saveprev)
+        internal static unsafe int StartFile(ElfFile file, string args, bool saveprev)
         {
             MapElfFile(file);
             file.CurrentProcess = new()
@@ -187,9 +266,10 @@ namespace wdOS.Platform
                 IsRunning = true,
                 Executor = PlatformManager.CurrentProcess
             };
-            int result = Utilities.Call(file.FileHeader->ElfPointerEntry);
+            int result = Utilities.Call(file.FileHeader->ElfPointerEntry + file.ProgOffset);
             file.CurrentProcess.IsRunning = false;
             PlatformManager.CurrentProcess = file.CurrentProcess.Executor;
+            Demap(file);
             return result;
         }
     }
@@ -205,6 +285,8 @@ namespace wdOS.Platform
         internal ElfProgHeader32* ProgHeader;
         internal ElfSectHeader32* SectHeader;
         internal Process CurrentProcess;
+        internal AddressRange AddressRange;
+        internal uint ProgOffset;
         internal byte* RawFile;
         internal string BinaryPath;
         internal byte[] reference;
@@ -344,5 +426,13 @@ namespace wdOS.Platform
     {
         internal void* UsedMemory;
         internal uint MemorySize;
+    }
+    internal struct AddressRange
+    {
+        internal uint StartAddress;
+        internal uint EndAddress;
+        internal int RangeType;
+        internal bool IntersectsWith(AddressRange other) => 
+            StartAddress < other.EndAddress && other.StartAddress < EndAddress;
     }
 }

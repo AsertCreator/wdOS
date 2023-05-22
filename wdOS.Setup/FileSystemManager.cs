@@ -7,18 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace wdOS.Platform
+namespace wdOS.Setup.Platform
 {
     internal static class FileSystemManager
     {
         internal const string SystemDriveLabel = "wdOSDisk";
         internal static VFSBase VFS = new CosmosVFS();
         internal static List<FileDevice> Devices = new();
-        internal static string[] SystemFolders =
-            {
-                "PrivateSystem", "PrivateUsers", "Applications", "bin", "lib", "proc", "dev",
-                "PrivateSystem/kernels", "PrivateSystem/failure", "PrivateSystem/config",
-            };
         private static bool initialized = false;
         internal static void Initialize()
         {

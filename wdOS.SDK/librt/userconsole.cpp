@@ -27,6 +27,9 @@ void UserConsole::SetCursorX(uint val) {
 void UserConsole::SetCursorY(uint val) {
 	PlatformSyscall(_tableid, 7, val);
 }
+void UserConsole::Write(const char* buffer) {
+	PlatformSyscall(_tableid, 8, (uint)buffer);
+}
 void UserConsole::Write(char* buffer) {
 	PlatformSyscall(_tableid, 8, (uint)buffer);
 }

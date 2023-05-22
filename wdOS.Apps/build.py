@@ -69,7 +69,7 @@ def linkapp():
 
     print("linking app...", end = '')
     try:
-        cmd = gcc + "-gcc -fpie -o " + output + " -ffreestanding -static -nostdlib -O0 " + cobjects + "../wdOS.SDK/bin/librt.bin"
+        cmd = gcc + "-gcc -T linker.ld -fpie -o " + output + " -ffreestanding -static -nostdlib -O0 " + cobjects + "../wdOS.SDK/bin/librt.bin"
         if debug: print(cmd)
         system(cmd)
     except:

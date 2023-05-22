@@ -10,13 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace wdOS.Platform
+namespace wdOS.Setup.Platform
 {
     internal static class PlatformManager
     {
-        internal static Process KernelProcess;
-        internal static Process CurrentProcess;
-        internal static List<Process> AllProcesses;
         internal static List<KeyboardBase> AttachedKeyboards;
         internal static List<MouseBase> AttachedMice;
         internal static List<KernelModule> LoadedModules = new();
@@ -40,19 +37,6 @@ namespace wdOS.Platform
         {
             if (!initialized)
             {
-                PlatformLogger.Log("setting up system folders...", "platformmanager");
-                for (int i = 0; i < FileSystemManager.SystemFolders.Length; i++)
-                    FileSystemManager.CreateDirectory("0:\\" + FileSystemManager.SystemFolders[i]);
-
-                KernelProcess = new Process
-                {
-                    BinaryPath = "<kernel>",
-                    ConsoleArguments = "",
-                    IsRunning = true
-                };
-                KernelProcess.Executor = KernelProcess;
-                CurrentProcess = KernelProcess;
-
                 PlatformLogger.Log("set up basic platform!", "platformmanager");
                 initialized = true;
             }
@@ -96,46 +80,6 @@ namespace wdOS.Platform
             internal const int TypePreRelease = 3;
             internal const int TypeRelease = 4;
         }
-        internal static void Relogin()
-        {
-            if (UserManager.AvailableUsers.Count == 1)
-            {
-                var user = UserManager.AvailableUsers[0];
-                if (user.UserLockType != 0)
-                {
-                retry:
-                    Console.Write("login: " + user.UserName);
-                    Console.Write("password: ");
-                    string password = Console.ReadLine();
-                    if (UserManager.Login(user.UserName, password) != UserManager.UserLoginResultLoggedInto)
-                    {
-                        Console.WriteLine("invalid credentials\n");
-                        goto retry;
-                    }
-                }
-                else
-                {
-                    if (UserManager.Login(user.UserName, "", true) != UserManager.UserLoginResultLoggedInto)
-                    {
-                        Console.WriteLine("corrupted user database\n");
-                    }
-                }
-            }
-            else
-            {
-            retry:
-                Console.Write("login: ");
-                string username = Console.ReadLine();
-                Console.Write("password: ");
-                string password = Console.ReadLine();
-                if (UserManager.Login(username, password) != UserManager.UserLoginResultLoggedInto)
-                {
-                    Console.WriteLine("invalid credentials\n");
-                    goto retry;
-                }
-            }
-            Console.WriteLine("logged in as " + UserManager.CurrentUser.UserName);
-        }
         internal static void Shutdown(ShutdownType type, bool halt = false, uint panic = 0)
         {
             Console.WriteLine('\n'); // double new line
@@ -146,10 +90,6 @@ namespace wdOS.Platform
                 case ShutdownType.SoftShutdown:
                     Console.WriteLine("shutting down...");
 
-                    BroadcastManager.SaveBroadcasts();
-                    Configurator.SaveSystemConfig();
-
-                    AllProcesses.Clear();
                     Heap.Collect();
 
                     if (halt)
@@ -162,10 +102,6 @@ namespace wdOS.Platform
                 case ShutdownType.SoftRestart:
                     Console.WriteLine("restarting...");
 
-                    BroadcastManager.SaveBroadcasts();
-                    Configurator.SaveSystemConfig();
-
-                    AllProcesses.Clear();
                     Heap.Collect();
 
                     if (halt)

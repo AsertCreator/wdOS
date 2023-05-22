@@ -6,10 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using IL2CPU.API.Attribs;
 using Cosmos.Core.Memory;
-using XSharp.Assembler;
-using XSharp;
 
-namespace wdOS.Platform
+namespace wdOS.Setup.Platform
 {
     internal static unsafe class Utilities
     {
@@ -20,8 +18,6 @@ namespace wdOS.Platform
             var target = DateTime.Now.AddMilliseconds(timeout);
             while (DateTime.Now < target) { }
         }
-        [PlugMethod(Assembler = typeof(UtilitiesImpl))]
-        internal static int Call(uint address) => 0; 
         internal static int FromOctal(byte* str, int size)
         {
             int n = 0;
@@ -39,7 +35,7 @@ namespace wdOS.Platform
             StringBuilder sb = new();
             byte* ptr = (byte*)c;
             for (int i = 0; ptr[i] != 0; i++)
-                sb.Append((char)(ptr[i]));
+                sb.Append((char)ptr[i]);
             return sb.ToString();
         }
         internal static int StringLength(byte* c)
@@ -56,16 +52,7 @@ namespace wdOS.Platform
                     return false;
             return true;
         }
-        // uses process's memory
-        internal static char* ToCStringU(string str)
-        {
-            char* c = (char*)PlatformManager.CurrentProcess.Alloc((uint)(str.Length + 1));
-            for (int i = 0; i < str.Length; i++) c[i] = str[i];
-            c[str.Length] = '\0';
-            return c;
-        }
-        // uses kernel memory
-        internal static char* ToCStringK(string str)
+        internal static char* ToCString(string str)
         {
             char* c = (char*)Heap.Alloc((uint)(str.Length + 1));
             for (int i = 0; i < str.Length; i++) c[i] = str[i];
@@ -75,14 +62,5 @@ namespace wdOS.Platform
         internal static string ConcatArray(string[] args) => ConnectArgs(args, ' ');
         internal static string ConnectArgs(string[] args, char sep) => string.Join(sep, args);
         internal static bool HasFlag(int value, int match) => (value & match) != 0;
-    }
-    internal class UtilitiesImpl : AssemblerMethod
-    {
-        public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
-        {
-            XS.Set(XSRegisters.EAX, XSRegisters.ESP, sourceIsIndirect: true, sourceDisplacement: 4);
-            XS.Call(XSRegisters.EAX);
-            XS.Return();
-        }
     }
 }

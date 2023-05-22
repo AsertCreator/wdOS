@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal sealed class PlatformApplication
+    internal sealed class ShellManager
     {
         internal void Start()
         {

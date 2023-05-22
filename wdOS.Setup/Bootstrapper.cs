@@ -6,14 +6,14 @@ using System;
 using System.Linq;
 using Sys = Cosmos.System;
 using Cosmos.Debug.Kernel;
-using static wdOS.Platform.PlatformLogger;
+using static wdOS.Setup.Platform.PlatformLogger;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Collections.Generic;
 using Cosmos.Core.Multiboot;
 
-namespace wdOS.Platform
+namespace wdOS.Setup.Platform
 {
     public unsafe class Bootstrapper : Sys.Kernel
     {
@@ -73,8 +73,6 @@ namespace wdOS.Platform
                     Console.WriteLine("bootloader  : " + BootloaderName);
                 }
 
-                PlatformManager.Relogin();
-
                 ShellManager app = new();
                 app.Start();
             }
@@ -119,11 +117,6 @@ namespace wdOS.Platform
                 {
                     string logtext;
 
-                    ACPIManager.Initialize();
-                    logtext = "initalized ACPIManager: available? " + ACPIManager.IsAvailable;
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
-
                     FileSystemManager.Initialize();
                     logtext = "initalized FileSystemManager: mounted volumes: " + FileSystemManager.VFS.GetVolumes().Count;
                     Log(logtext, "bootstrap");
@@ -136,21 +129,6 @@ namespace wdOS.Platform
 
                     FailureManager.Initialize();
                     logtext = "initalized EventManager: no data";
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
-
-                    UserManager.Initialize();
-                    logtext = "initalized UserManager: found/created users: " + UserManager.AvailableUsers.Count;
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
-
-                    ServiceManager.Initialize();
-                    logtext = "initalized ServiceManager: started services: " + ServiceManager.Services.Count;
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
-
-                    BroadcastManager.Initialize();
-                    logtext = "initalized BroadcastManager: no data";
                     Log(logtext, "bootstrap");
                     Console.WriteLine(logtext);
                 }
@@ -183,9 +161,6 @@ namespace wdOS.Platform
                         {
                             case "-v" or "--verbose":
                                 VerboseMode = true;
-                                break;
-                            case "--no-acpi":
-                                ACPIManager.ForceDisable = true;
                                 break;
                             case "--no-logging":
                                 PlatformManager.SystemSettings.EnableLogging = false;

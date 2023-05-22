@@ -2,6 +2,10 @@
 using namespace wdOS;
 
 int main() {
-	UserConsole::Write("initializing wdOS...");
+	UserConsole::Write("hello world!");
 	return 0;
+}
+
+int _start() {
+	return main();
 }

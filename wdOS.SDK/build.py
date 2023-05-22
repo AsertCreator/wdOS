@@ -81,7 +81,7 @@ def linklibrary():
 
     print("linking library...", end = '')
     try:
-        cmd = gcc + "-gcc -T linker.ld -flinker-output=dyn -o " + output + " -ffreestanding -shared -static -nostdlib -O0 " + cobjects
+        cmd = gcc + "-gcc -flinker-output=dyn -o " + output + " -ffreestanding -shared -static -nostdlib -O0 " + cobjects
         if debug: print(cmd)
         system(cmd)
     except:

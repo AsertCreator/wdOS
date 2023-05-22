@@ -70,6 +70,13 @@ namespace wdOS.Platform.GraphicalPlatform
             }
         }
     }
+    internal struct Rect
+    {
+        internal int Top;
+        internal int Bottom;
+        internal int Right;
+        internal int Left;
+    }
     internal struct Mode
     {
         internal int Width;
@@ -78,8 +85,8 @@ namespace wdOS.Platform.GraphicalPlatform
 
         public static explicit operator Mode(Cosmos.System.Graphics.Mode m) => new()
         {
-            Width = m.Width,
-            Height = m.Height,
+            Width = (int)m.Width,
+            Height = (int)m.Height,
             ColorDepth = (int)m.ColorDepth
         };
     }

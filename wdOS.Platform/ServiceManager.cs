@@ -1,5 +1,6 @@
 ﻿using Cosmos.Core.Memory;
 using Cosmos.HAL;
+using Cosmos.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace wdOS.Platform
                     catch { }
                 },
                 500000000, true);
-                Global.PIT.RegisterTimer(ServiceTimer);
+                Cosmos.HAL.Global.PIT.RegisterTimer(ServiceTimer);
 
                 CreateManagedService("PeriodicGC", "Service, that periodically collects memory garbage", () =>
                 {
