@@ -52,7 +52,7 @@ namespace wdOS.Platform
             }
             catch (Exception e)
             {
-                FailureManager.HandleNETException(e);
+                PlatformManager.HandleNETException(e);
             }
         }
         internal static void LateMain()
@@ -81,7 +81,7 @@ namespace wdOS.Platform
             catch (Exception e)
             {
                 Log("platform application crash! message: " + e.Message, "bootstrap", LogLevel.Fatal);
-                FailureManager.Panic(5);
+                PlatformManager.Panic(5);
             }
         }
         [SupportedOSPlatform("windows")]
@@ -134,11 +134,6 @@ namespace wdOS.Platform
                     Log(logtext, "bootstrap");
                     Console.WriteLine(logtext);
 
-                    FailureManager.Initialize();
-                    logtext = "initalized FailureManager: no data";
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
-
                     UserManager.Initialize();
                     logtext = "initalized UserManager: found/created users: " + UserManager.AvailableUsers.Count;
                     Log(logtext, "bootstrap");
@@ -161,7 +156,7 @@ namespace wdOS.Platform
                 }
                 catch { }
 
-                if (FileSystemManager.VFS.GetDisks().Count == 0) FailureManager.Panic(2);
+                if (FileSystemManager.VFS.GetDisks().Count == 0) PlatformManager.Panic(2);
 
                 PlatformManager.AttachedKeyboards = Cosmos.HAL.Global.GetKeyboardDevices().ToList();
                 PlatformManager.AttachedMice = Cosmos.HAL.Global.GetMouseDevices().ToList();
@@ -201,7 +196,7 @@ namespace wdOS.Platform
                                 break;
                             default:
                                 Console.WriteLine("wdOS.Platform: unknown kernel argument: " + CommandLineArgs[i]);
-                                FailureManager.Panic("unknown kernel argument");
+                                PlatformManager.Panic("unknown kernel argument");
                                 break;
                         }
                     }
@@ -210,7 +205,7 @@ namespace wdOS.Platform
             catch
             {
                 Console.WriteLine("wdOS.Platform: failed to parse console arguments");
-                FailureManager.Panic("failed to parse console arguments");
+                PlatformManager.Panic("failed to parse console arguments");
             }
         }
         internal static void CheckMultibootTags()

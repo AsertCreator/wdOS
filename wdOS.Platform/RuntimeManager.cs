@@ -104,7 +104,7 @@ namespace wdOS.Platform
         }
         internal static int Execute(string path, string cmd)
         {
-            Process process = new Process();
+            Process process = new();
             int result = int.MinValue;
             process.IsRunning = true;
             PlatformManager.AllProcesses.Add(process);

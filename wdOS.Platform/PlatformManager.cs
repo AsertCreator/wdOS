@@ -21,10 +21,21 @@ namespace wdOS.Platform
         internal static List<MouseBase> AttachedMice;
         internal static List<KernelModule> LoadedModules = new();
         internal static StringBuilder SystemLog = new();
-        internal static bool VerboseMode = false;
-        internal static int SessionAge;
         internal static bool LoadUsersFromDisk = false;
-        internal static int GlobalGarbage = 0;
+        internal static bool VerboseMode = false;
+        internal static int SessionAge = 0;
+        internal static int FailureDepth = 0;
+        internal static Dictionary<uint, string> ErrorTexts = new()
+        {
+            [0] = "MANUALLY_INITIATED_CRASH",
+            [1] = "INVALID_CPU_OPCODE",
+            [2] = "NO_BLOCK_DEVICES",
+            [3] = "NO_INPUT_DEVICES",
+            [4] = "GENERAL_PROTECTION_FAULT",
+            [5] = "SYSTEM_EXCEPTION",
+            [6] = "SYSTEM_SHUTDOWN",
+            [7] = "INVALID_CPUID"
+        };
         private static int nextpid = 0;
         private static bool initialized = false;
         internal static void Log(string message, string component, LogLevel level = LogLevel.Info)
@@ -77,6 +88,55 @@ namespace wdOS.Platform
 
                 PlatformManager.Log("set up basic platform!", "platformmanager");
                 initialized = true;
+            }
+        }
+        internal static void HandleNETException(Exception exc)
+        {
+            string text = "unhandled platform exception, type: " + exc.GetType().Name + ", msg: " + exc.Message;
+            Console.WriteLine(text);
+            Panic(text);
+        }
+        internal static void Panic(uint message)
+        {
+            PlatformManager.SessionAge = 3;
+            if (FailureDepth != 1)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.BackgroundColor = ConsoleColor.Black;
+                string text0 = "!!! panic !!! " + ErrorTexts[message];
+                string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
+                PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
+                PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
+                Console.WriteLine(text0);
+                Console.WriteLine(text1);
+                Bootstrapper.WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
+                FailureDepth++;
+            }
+            else
+            {
+                PlatformManager.Shutdown(ShutdownType.HardShutdown);
+            }
+        }
+        internal static void Panic(string msg)
+        {
+            PlatformManager.SessionAge = 3;
+            if (FailureDepth != 1)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.BackgroundColor = ConsoleColor.Black;
+                string text0 = "!!! panic !!! message: " + msg;
+                string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
+                PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
+                PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
+                Console.WriteLine(text0);
+                Console.WriteLine(text1);
+                Bootstrapper.WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
+                FailureDepth++;
+            }
+            else
+            {
+                if (FailureDepth <= 1) HardwareManager.ForceShutdownPC();
+                while (true) { }
             }
         }
         internal static string GetTimeAsString() =>
@@ -214,7 +274,7 @@ namespace wdOS.Platform
                     Console.WriteLine("restart failed! cpu halted");
                     goto case ShutdownType.Halt;
                 case ShutdownType.Panic:
-                    FailureManager.Panic(panic);
+                    Panic(panic);
                     goto case ShutdownType.Halt;
                 case ShutdownType.Halt:
                 default:

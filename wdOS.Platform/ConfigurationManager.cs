@@ -16,7 +16,6 @@ namespace wdOS.Platform
         internal static string SystemConfigrationFileName = "sysconf.bin";
         internal static ConfigurationTableHeader* SystemConfigHeader;
         internal static List<ConfigurationTableEntry> SystemConfigEntries = new();
-        private static byte[] reference;
         private static bool initialized = false;
         internal static void Initialize()
         {
@@ -39,9 +38,9 @@ namespace wdOS.Platform
             var entries = new List<ConfigurationTableEntry>();
             ConfigurationTableHeader* header;
 
-            fixed (byte* ptr = &reference[0])
+            fixed (byte* ptr = &bytes[0])
             {
-                BinaryReader br = new(new MemoryStream(reference));
+                BinaryReader br = new(new MemoryStream(bytes));
 
                 br.ReadInt64(); br.ReadInt64();
                 header = (ConfigurationTableHeader*)ptr;
