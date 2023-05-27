@@ -78,7 +78,6 @@ namespace wdOS.Platform
             else
             {
                 if (FailureDepth <= 1) ACPIManager.ForceShutdownPC();
-                if (FailureDepth <= 2) HardwareManager.ForceRestartPC();
                 while (true) { }
             }
         }
