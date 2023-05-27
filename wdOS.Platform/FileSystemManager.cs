@@ -106,10 +106,4 @@ namespace wdOS.Platform
         internal Func<int, byte[]> Read;
         internal Action<byte[]> Write;
     }
-    internal struct FileReadResult
-    {
-        internal string Name;
-        internal bool FileExists;
-        internal byte[] Result;
-    }
 }

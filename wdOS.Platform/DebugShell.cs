@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using wdOS.Pillow;
-using wdOS.Platform.GraphicalPlatform;
 
 namespace wdOS.Platform
 {

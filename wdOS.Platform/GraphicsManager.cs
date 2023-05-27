@@ -5,7 +5,7 @@ using Cosmos.System.Graphics.Fonts;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace wdOS.Platform.GraphicalPlatform
+namespace wdOS.Platform
 {
     internal static class GraphicsManager
     {

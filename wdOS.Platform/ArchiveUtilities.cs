@@ -4,19 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace wdOS.Platform.FileFormats
+namespace wdOS.Platform
 {
-    internal unsafe class TarArchiveFile
+    internal abstract class ArchiveBase
+    {
+        public abstract string Name { get; protected set; }
+        public abstract string Type { get; protected set; }
+        public abstract bool FileExists(string filename);
+        public abstract FileReadResult ReadFile(string filename);
+    }
+    internal unsafe class TarArchive : ArchiveBase
     {
         internal static byte* TarFileIdentifier = (byte*)Utilities.ToCString("ustar");
-        internal string FileName;
-        internal byte[] FileContents;
-        internal TarArchiveFile(string name, byte[] contents)
+        public override string Name { get; protected set; }
+        public override string Type { get; protected set; }
+        private byte[] FileContents;
+        internal TarArchive(string name, byte[] contents)
         {
             FileContents = contents;
-            FileName = name;
+            Name = name;
+            Type = "USTAR";
         }
-        internal bool FileExists(string path)
+        public override bool FileExists(string path)
         {
             fixed (byte* aptr = &FileContents[0])
             {
@@ -27,7 +36,7 @@ namespace wdOS.Platform.FileFormats
                 return length != -1;
             }
         }
-        internal FileReadResult ReadFile(string path)
+        public override FileReadResult ReadFile(string path)
         {
             fixed (byte* aptr = &FileContents[0])
             {
@@ -71,9 +80,15 @@ namespace wdOS.Platform.FileFormats
                     *o = ptr + 512;
                     return filesize;
                 }
-                ptr += (((filesize + 511) / 512) + 1) * 512;
+                ptr += ((filesize + 511) / 512 + 1) * 512;
             }
             return -1;
         }
+    }
+    internal struct FileReadResult
+    {
+        internal string Name;
+        internal bool FileExists;
+        internal byte[] Result;
     }
 }
