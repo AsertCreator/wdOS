@@ -20,7 +20,7 @@ namespace wdOS.Platform
         {
             if (!initialized)
             {
-                ExecutionEngine.InstrinsicHandlers.Add(delegate(ref EEFunctionExecutionContext ctx) 
+                ExecutionEngine.InstrinsicHandlers.Add(delegate(ref EEFunctionExecutionContext ctx) // IOWrite
                 {
                     var raw_write = ctx.FunctionStack.Pop();
                     var raw_index = ctx.FunctionStack.Pop();
@@ -65,6 +65,23 @@ namespace wdOS.Platform
                     }
 
                     ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeInteger) { ObjectValue = result });
+                    return;
+                });
+                ExecutionEngine.InstrinsicHandlers.Add(delegate (ref EEFunctionExecutionContext ctx) // ConsoleWrite
+                {
+                    var raw_write = ctx.FunctionStack.Pop();
+
+                    if (raw_write.ObjectType != ExecutionEngine.ObjectTypeString)
+                    {
+                        ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeUndefined));
+                        return;
+                    }
+
+                    var write = (string)raw_write.ObjectValue;
+
+                    Console.Write(write);
+
+                    ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeUndefined));
                     return;
                 });
                 initialized = true;

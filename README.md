@@ -46,7 +46,8 @@ Third-party features:
 
 **Q**: Can I make apps or drivers for this OS?
 
-**A**: No, currently SDK is in development
+**A**: Somewhat. wdOS is now has somewhat working Pillow Runtime, so you can embed and run
+primitive apps. Finally!
 
 
 **Q**: Can I install system to drive?
