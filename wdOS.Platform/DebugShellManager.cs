@@ -88,6 +88,17 @@ namespace wdOS.Platform
                     },
                     new()
                     {
+                        Name = "logcat",
+                        Description = "prints out system log",
+                        Execute = args =>
+                        {
+                            if (args.Length != 0) { Console.WriteLine("logcat: invalid count of arguments"); return 1; }
+                            Console.WriteLine(PlatformManager.GetSystemLog());
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
                         Name = "testpillow",
                         Description = "test pillow vm",
                         Execute = args =>
