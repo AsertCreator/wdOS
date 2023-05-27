@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal unsafe static class ACPIManager
+    internal unsafe static class HardwareManager
     {
-        internal static bool IsAvailable { get; private set; }
-        internal static bool ForceDisable = false;
-        internal static bool initialized = false;
+        internal static bool ACPIAvailable { get; private set; }
+        internal static bool ForceDisableACPI = false;
+        private static bool initialized = false;
         internal static void Initialize()
         {
-            if (!initialized && !ForceDisable)
+            if (!initialized && !ForceDisableACPI)
             {
                 var ptr = LocateRSDTPointer();
-                IsAvailable = ptr.Available && VerifyACPITable(ptr.Version10->RSDTAddress);
+                ACPIAvailable = ptr.Available && VerifyACPITable(ptr.Version10->RSDTAddress);
 
-                if (!IsAvailable)
+                if (!ACPIAvailable)
                 {
                     PlatformManager.Log("acpi is not available or was corrupted", "acpimanager", LogLevel.Warning);
                     initialized = true;
@@ -95,11 +95,11 @@ namespace wdOS.Platform
         }
         internal static void ForceShutdownPC()
         {
-
+            // todo: implement acpi shutdown
         }
         internal static void ForceRestartPC()
         {
-
+            // todo: implement acpi restart
         }
         internal struct RSDTPointer
         {

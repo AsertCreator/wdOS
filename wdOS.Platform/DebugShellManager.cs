@@ -7,7 +7,7 @@ using wdOS.Pillow;
 
 namespace wdOS.Platform
 {
-    internal static class DebugShell
+    internal static class DebugShellManager
     {
         internal static List<ConsoleCommand> AllCommands;
         internal static string Path = "/";
@@ -263,7 +263,7 @@ namespace wdOS.Platform
         }
         internal static int ExecuteBinaryFile(string path, string args)
         {
-            ProcessRuntime.Execute(path, args);
+            RuntimeManager.Execute(path, args);
             return 0;
         }
         internal static ConsoleCommand FindCommandByName(string name)

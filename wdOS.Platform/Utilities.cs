@@ -20,8 +20,6 @@ namespace wdOS.Platform
             var target = DateTime.Now.AddMilliseconds(timeout);
             while (DateTime.Now < target) { }
         }
-        [PlugMethod(Assembler = typeof(UtilitiesImpl))]
-        internal static int Call(uint address) => 0; 
         internal static int FromOctal(byte* str, int size)
         {
             int n = 0;
@@ -66,14 +64,5 @@ namespace wdOS.Platform
         internal static string ConcatArray(string[] args) => ConnectArgs(args, ' ');
         internal static string ConnectArgs(string[] args, char sep) => string.Join(sep, args);
         internal static bool HasFlag(int value, int match) => (value & match) != 0;
-    }
-    internal class UtilitiesImpl : AssemblerMethod
-    {
-        public override void AssembleNew(Assembler aAssembler, object aMethodInfo)
-        {
-            XS.Set(XSRegisters.EAX, XSRegisters.ESP, sourceIsIndirect: true, sourceDisplacement: 4);
-            XS.Call(XSRegisters.EAX);
-            XS.Return();
-        }
     }
 }

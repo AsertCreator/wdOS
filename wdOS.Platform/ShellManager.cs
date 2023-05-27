@@ -12,7 +12,7 @@ namespace wdOS.Platform
         {
             if (Bootstrapper.AlterShell == "debugsh")
             {
-                Console.WriteLine("Debug Shell ended with code " + DebugShell.RunDebugShell());
+                Console.WriteLine("Debug Shell ended with code " + DebugShellManager.RunDebugShell());
                 while (true) { }
             }
         }

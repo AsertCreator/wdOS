@@ -95,21 +95,21 @@ namespace wdOS.Platform
         {
             try
             {
-                var font = PlatformManager.SystemSettings.TerminalFonts[PlatformManager.SystemSettings.SystemTerminalFont];
+                var font = SystemSettings.TerminalFonts[SystemSettings.SystemTerminalFont];
                 Console.SetWindowSize(90, 30);
                 VGAScreen.SetFont(font.CreateVGAFont(), font.Height);
 
                 Log("wdOS Platform is booting, running on " + CPU.GetCPUBrandString(), "bootstrap");
-                Log("current kernel version: " + PlatformManager.GetPlatformVersion(), "bootstrap");
+                Log("current kernel version: " + GetPlatformVersion(), "bootstrap");
                 Log("current memory amount: " + GetTotalRAM(), "bootstrap");
                 Console.WriteLine("Starting up platform components...");
 
-                PlatformManager.SessionAge = 0;
+                SessionAge = 0;
 
                 CheckMultibootTags();
                 ParseCommandLineArgs();
 
-                if (!PlatformManager.SystemSettings.EnableLogging)
+                if (!SystemSettings.EnableLogging)
                 {
                     Console.WriteLine("logging is disabled!");
                     KernelDebugger.Send("logging is disabled!");
@@ -119,8 +119,8 @@ namespace wdOS.Platform
                 {
                     string logtext;
 
-                    ACPIManager.Initialize();
-                    logtext = "initalized ACPIManager: available? " + ACPIManager.IsAvailable;
+                    HardwareManager.Initialize();
+                    logtext = "initalized HardwareManager: acpi available? " + HardwareManager.ACPIAvailable;
                     Log(logtext, "bootstrap");
                     Console.WriteLine(logtext);
 
@@ -135,7 +135,7 @@ namespace wdOS.Platform
                     Console.WriteLine(logtext);
 
                     FailureManager.Initialize();
-                    logtext = "initalized EventManager: no data";
+                    logtext = "initalized FailureManager: no data";
                     Log(logtext, "bootstrap");
                     Console.WriteLine(logtext);
 
@@ -151,6 +151,11 @@ namespace wdOS.Platform
 
                     BroadcastManager.Initialize();
                     logtext = "initalized BroadcastManager: no data";
+                    Log(logtext, "bootstrap");
+                    Console.WriteLine(logtext);
+
+                    RuntimeManager.Initialize();
+                    logtext = "initalized RuntimeManager: no data";
                     Log(logtext, "bootstrap");
                     Console.WriteLine(logtext);
                 }
@@ -185,7 +190,7 @@ namespace wdOS.Platform
                                 VerboseMode = true;
                                 break;
                             case "--no-acpi":
-                                ACPIManager.ForceDisable = true;
+                                HardwareManager.ForceDisableACPI = true;
                                 break;
                             case "--no-logging":
                                 PlatformManager.SystemSettings.EnableLogging = false;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal unsafe static class Configurator
+    internal unsafe static class ConfigurationManager
     {
         internal const uint ConfigurationMagic = 0x55AA55AA;
         internal const uint ConfigurationMaxSize = 128 * 1024;
@@ -17,14 +17,14 @@ namespace wdOS.Platform
         internal static ConfigurationTableHeader* SystemConfigHeader;
         internal static List<ConfigurationTableEntry> SystemConfigEntries = new();
         private static byte[] reference;
-        private static bool configured = false;
-        internal static bool Configure()
+        private static bool initialized = false;
+        internal static bool Initialize()
         {
-            if (!configured) 
+            if (!initialized) 
             {
                 LoadSystemConfig();
 
-                configured = true;
+                initialized = true;
                 return true;
             }
             return false;

@@ -59,7 +59,7 @@ namespace wdOS.Platform
                     "please save your work for PC maintainer to repair it");
                 return;
             }
-            var entries = Configurator.LoadConfig(FileSystemManager.ReadBytesFile(BroadcastPath));
+            var entries = ConfigurationManager.LoadConfig(FileSystemManager.ReadBytesFile(BroadcastPath));
             for (int i = 0; i < entries.Length; i++)
             {
                 var entry = entries[i];
@@ -80,7 +80,7 @@ namespace wdOS.Platform
                     Name = "BroadcastContents"
                 });
             }
-            File.WriteAllBytes(BroadcastPath, Configurator.SaveConfig(entries.ToArray()));
+            File.WriteAllBytes(BroadcastPath, ConfigurationManager.SaveConfig(entries.ToArray()));
             PlatformManager.Log("saved all broadcasts!", "braodcastmanager");
         }
     }

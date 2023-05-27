@@ -58,18 +58,6 @@ namespace wdOS.Platform
             Services.Add(serv);
             return serv.SID;
         }
-        internal unsafe static uint CreateNativeService(char* name, char* desc, void* callback)
-        {
-            Service serv = new()
-            {
-                Name = Utilities.FromCString(name),
-                Description = Utilities.FromCString(desc),
-                AuxObject = (uint)callback,
-                Tick = x => Utilities.Call((uint)x.AuxObject) == 0
-            };
-            Services.Add(serv);
-            return serv.SID;
-        }
         internal static Service GetServiceBySID(uint sid)
         {
             for (int i = 0; i < Services.Count; i++)

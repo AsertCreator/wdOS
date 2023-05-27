@@ -10,7 +10,7 @@ using wdOS.Pillow;
 
 namespace wdOS.Platform
 {
-    internal unsafe static class ProcessRuntime
+    internal unsafe static class RuntimeManager
     {
         internal const int FileStdOut = -1;
         internal const int FileStdErr = -2;
@@ -121,6 +121,7 @@ namespace wdOS.Platform
             }
             return result;
         }
+        internal static int GetRuntimeVersion() => 10;
         internal static void OnProcessCrash(EEFunctionResult res)
         {
             // todo: process crash handling

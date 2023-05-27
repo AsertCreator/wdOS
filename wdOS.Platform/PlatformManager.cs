@@ -108,7 +108,7 @@ namespace wdOS.Platform
         internal static class BuildConstants
         {
             internal const int VersionMajor = 0;
-            internal const int VersionMinor = 9;
+            internal const int VersionMinor = 10;
             internal const int VersionPatch = 0;
             internal const int CurrentType = TypePreBeta;
             internal const int TypePreAlpha = 0;
@@ -169,7 +169,7 @@ namespace wdOS.Platform
                     Console.WriteLine("shutting down...");
 
                     BroadcastManager.SaveBroadcasts();
-                    Configurator.SaveSystemConfig();
+                    ConfigurationManager.SaveSystemConfig();
 
                     AllProcesses.Clear();
                     Heap.Collect();
@@ -185,7 +185,7 @@ namespace wdOS.Platform
                     Console.WriteLine("restarting...");
 
                     BroadcastManager.SaveBroadcasts();
-                    Configurator.SaveSystemConfig();
+                    ConfigurationManager.SaveSystemConfig();
 
                     AllProcesses.Clear();
                     Heap.Collect();
