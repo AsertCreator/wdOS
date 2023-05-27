@@ -28,7 +28,7 @@ namespace wdOS.Platform
         {
             if (!initialized)
             {
-                PlatformLogger.Log("set up basic error handling!", "failuremanager");
+                PlatformManager.Log("set up basic error handling!", "failuremanager");
                 initialized = true;
             }
         }
@@ -47,8 +47,8 @@ namespace wdOS.Platform
                 Console.BackgroundColor = ConsoleColor.Black;
                 string text0 = "!!! panic !!! " + ErrorTexts[message];
                 string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
-                PlatformLogger.Log(text0, "failuremanager", LogLevel.Fatal);
-                PlatformLogger.Log(text1, "failuremanager", LogLevel.Fatal);
+                PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
+                PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
                 Console.WriteLine(text0);
                 Console.WriteLine(text1);
                 WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
@@ -68,8 +68,8 @@ namespace wdOS.Platform
                 Console.BackgroundColor = ConsoleColor.Black;
                 string text0 = "!!! panic !!! message: " + msg;
                 string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
-                PlatformLogger.Log(text0, "failuremanager", LogLevel.Fatal);
-                PlatformLogger.Log(text1, "failuremanager", LogLevel.Fatal);
+                PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
+                PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
                 Console.WriteLine(text0);
                 Console.WriteLine(text1);
                 WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);

@@ -26,7 +26,7 @@ namespace wdOS.Platform
             {
                 VFSManager.RegisterVFS(VFS, false);
 
-                PlatformLogger.Log("set up basic file system!", "filesystemmanager");
+                PlatformManager.Log("set up basic file system!", "filesystemmanager");
                 initialized = true;
             }
         }

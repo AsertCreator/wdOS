@@ -37,13 +37,13 @@ namespace wdOS.Platform
                 };
                 CurrentUser = AvailableUsers[0];
 
-                PlatformLogger.Log("set up basic user information!", "usermanager");
+                PlatformManager.Log("set up basic user information!", "usermanager");
                 initialized = true;
             }
         }
         internal static int Login(string username, string key, bool force = false)
         {
-            if (force) PlatformLogger.Log("using a force login on user " + username, "usermanager");
+            if (force) PlatformManager.Log("using a force login on user " + username, "usermanager");
             if (force && !CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
 
             for (int i = 0; i < AvailableUsers.Count; i++)
@@ -79,7 +79,7 @@ namespace wdOS.Platform
 
             if (FindByName(user.UserName) != null) return false;
 
-            PlatformLogger.Log("adding new user. Name: " + user.UserName, "usermanager");
+            PlatformManager.Log("adding new user. Name: " + user.UserName, "usermanager");
             AvailableUsers.Add(user);
             user.SetDisabledState(false);
             FileSystemManager.CreateDirectory(GetUserProfile(user));
@@ -94,7 +94,7 @@ namespace wdOS.Platform
                     "please save your work for PC maintainer to reboot it");
             }
 
-            PlatformLogger.Log("created new user: " + user.UserName, "usermanager");
+            PlatformManager.Log("created new user: " + user.UserName, "usermanager");
             return true;
         }
         internal static bool RemoveUser(string username)
@@ -104,11 +104,11 @@ namespace wdOS.Platform
             var user = FindByName(username);
             if (user == null) return false;
 
-            PlatformLogger.Log("removing user. Name: " + username, "usermanager");
+            PlatformManager.Log("removing user. Name: " + username, "usermanager");
 
             AvailableUsers.Remove(user);
 
-            PlatformLogger.Log("removed user: " + user.UserName, "usermanager");
+            PlatformManager.Log("removed user: " + user.UserName, "usermanager");
             return true;
         }
         internal static bool UpdateUserDatabase()

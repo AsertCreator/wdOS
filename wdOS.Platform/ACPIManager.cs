@@ -22,7 +22,7 @@ namespace wdOS.Platform
 
                 if (!IsAvailable)
                 {
-                    PlatformLogger.Log("acpi is not available or was corrupted", "acpimanager", LogLevel.Warning);
+                    PlatformManager.Log("acpi is not available or was corrupted", "acpimanager", LogLevel.Warning);
                     initialized = true;
                     return;
                 }

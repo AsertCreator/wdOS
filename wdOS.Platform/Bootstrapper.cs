@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using Sys = Cosmos.System;
 using Cosmos.Debug.Kernel;
-using static wdOS.Platform.PlatformLogger;
+using static wdOS.Platform.PlatformManager;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal static class PlatformManager
+    internal static partial class PlatformManager
     {
         internal static Process KernelProcess;
         internal static Process CurrentProcess;
@@ -20,11 +20,33 @@ namespace wdOS.Platform
         internal static List<KeyboardBase> AttachedKeyboards;
         internal static List<MouseBase> AttachedMice;
         internal static List<KernelModule> LoadedModules = new();
+        internal static StringBuilder SystemLog = new();
+        internal static bool VerboseMode = false;
         internal static int SessionAge;
         internal static bool LoadUsersFromDisk = false;
         internal static int GlobalGarbage = 0;
         private static int nextpid = 0;
         private static bool initialized = false;
+        internal static void Log(string message, string component, LogLevel level = LogLevel.Info)
+        {
+            if (SystemSettings.EnableLogging)
+            {
+                string data = "[" + component + "][" + GetLogLevelAsString(level) +
+                    "][" + GetTimeAsString() + "] " + message;
+                if (VerboseMode) Console.WriteLine(data);
+                Bootstrapper.KernelDebugger.Send(data);
+                SystemLog.Append(data + '\n');
+            }
+        }
+        internal static StringBuilder GetSystemLog() => SystemLog;
+        internal static string GetLogLevelAsString(LogLevel level) => level switch
+        {
+            LogLevel.Info => "info ",
+            LogLevel.Warning => "warn ",
+            LogLevel.Error => "error",
+            LogLevel.Fatal => "fatal",
+            _ => "unknw",
+        };
         internal static int GetCPUBitWidth()
         {
             int ecx = 0, edx = 0, unused = 0;
@@ -40,7 +62,7 @@ namespace wdOS.Platform
         {
             if (!initialized)
             {
-                PlatformLogger.Log("setting up system folders...", "platformmanager");
+                PlatformManager.Log("setting up system folders...", "platformmanager");
                 for (int i = 0; i < FileSystemManager.SystemFolders.Length; i++)
                     FileSystemManager.CreateDirectory("0:\\" + FileSystemManager.SystemFolders[i]);
 
@@ -53,7 +75,7 @@ namespace wdOS.Platform
                 KernelProcess.Executor = KernelProcess;
                 CurrentProcess = KernelProcess;
 
-                PlatformLogger.Log("set up basic platform!", "platformmanager");
+                PlatformManager.Log("set up basic platform!", "platformmanager");
                 initialized = true;
             }
         }
@@ -204,4 +226,5 @@ namespace wdOS.Platform
     {
         SoftShutdown, SoftRestart, HardShutdown, HardRestart, Panic, Halt
     }
+    internal enum LogLevel { Info, Warning, Error, Fatal }
 }

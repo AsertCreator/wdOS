@@ -32,7 +32,7 @@ namespace wdOS.Platform
                 Sendee = to,
                 SendTime = DateTime.Now,
             });
-            PlatformLogger.Log($"sent broadcast from {UserManager.CurrentUser.UserName} to {to.UserName}", "braodcastmanager");
+            PlatformManager.Log($"sent broadcast from {UserManager.CurrentUser.UserName} to {to.UserName}", "braodcastmanager");
         }
         internal static Broadcast[] GetAvailableBroadcasts()
         {
@@ -65,7 +65,7 @@ namespace wdOS.Platform
                 var entry = entries[i];
                 allBroadcasts.Add(new Broadcast(entry.ContentBytes));
             }
-            PlatformLogger.Log("loaded all broadcasts!", "braodcastmanager");
+            PlatformManager.Log("loaded all broadcasts!", "braodcastmanager");
         }
         internal static void SaveBroadcasts()
         {
@@ -81,7 +81,7 @@ namespace wdOS.Platform
                 });
             }
             File.WriteAllBytes(BroadcastPath, Configurator.SaveConfig(entries.ToArray()));
-            PlatformLogger.Log("saved all broadcasts!", "braodcastmanager");
+            PlatformManager.Log("saved all broadcasts!", "braodcastmanager");
         }
     }
     internal struct Broadcast
