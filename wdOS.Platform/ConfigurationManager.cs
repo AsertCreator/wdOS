@@ -18,7 +18,7 @@ namespace wdOS.Platform
         internal static List<ConfigurationTableEntry> SystemConfigEntries = new();
         private static byte[] reference;
         private static bool initialized = false;
-        internal static bool Initialize()
+        internal static void Initialize()
         {
             if (!initialized)
             {
@@ -32,9 +32,7 @@ namespace wdOS.Platform
                 SystemConfigEntries = entries.ToList();
 
                 initialized = true;
-                return true;
             }
-            return false;
         }
         internal static ConfigurationTableEntry[] LoadConfig(byte[] bytes)
         {
