@@ -30,8 +30,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Setup", "wdOS.Setup\wd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Pillow", "wdOS.Pillow\wdOS.Pillow.csproj", "{52A68088-5194-44C6-A6C7-C9090AD8C077}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PillowTest", "PillowTest\PillowTest.csproj", "{D6AE90FA-9238-4D13-A843-B577D8570369}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,18 +88,6 @@ Global
 		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|x64.Build.0 = Release|Any CPU
 		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|x86.ActiveCfg = Release|Any CPU
 		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|x86.Build.0 = Release|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|x64.Build.0 = Debug|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|x86.Build.0 = Debug|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|x64.ActiveCfg = Release|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|x64.Build.0 = Release|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|x86.ActiveCfg = Release|Any CPU
-		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
