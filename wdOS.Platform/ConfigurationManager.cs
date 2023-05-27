@@ -20,9 +20,16 @@ namespace wdOS.Platform
         private static bool initialized = false;
         internal static bool Initialize()
         {
-            if (!initialized) 
+            if (!initialized)
             {
-                LoadSystemConfig();
+                if (!FileSystemManager.FileExists(SystemConfigrationDirectoryPath + SystemConfigrationFileName))
+                {
+                    Console.WriteLine("no system configuration found! consider using debugshell to create one");
+                    return;
+                }
+
+                var entries = LoadConfig(FileSystemManager.ReadBytesFile(SystemConfigrationDirectoryPath + SystemConfigrationFileName));
+                SystemConfigEntries = entries.ToList();
 
                 initialized = true;
                 return true;
@@ -110,17 +117,6 @@ namespace wdOS.Platform
             }
 
             return bytes[0..new((int)bw.BaseStream.Position)];
-        }
-        internal static void LoadSystemConfig()
-        {
-            if (!FileSystemManager.FileExists(SystemConfigrationDirectoryPath + SystemConfigrationFileName))
-            {
-                Console.WriteLine("no system configuration found! consider using debugshell to create one");
-                return;
-            }
-
-            var entries = LoadConfig(FileSystemManager.ReadBytesFile(SystemConfigrationDirectoryPath + SystemConfigrationFileName));
-            SystemConfigEntries = entries.ToList();
         }
         internal static void SaveSystemConfig()
         {
