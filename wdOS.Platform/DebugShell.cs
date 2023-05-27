@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Cosmos.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using wdOS.Pillow;
 using wdOS.Platform.GraphicalPlatform;
 
 namespace wdOS.Platform
@@ -87,27 +89,75 @@ namespace wdOS.Platform
                     },
                     new()
                     {
-                        Name = "testmt",
-                        Description = "test multithreading",
+                        Name = "testpillow",
+                        Description = "test pillow vm",
                         Execute = args =>
                         {
-                            PlatformManager.GlobalGarbage = 0;
+                            EEExecutable exec = new();
+                            exec.AllStringLiterals.Add("Hello World!");
+                            exec.AllFunctions.Add(EEAssembler.AssemblePillowIL(
+                                ".maxlocal 1\n" +
+                                "pushobj\n" +
+                                "pushint.b 0\n" +
+                                "setlocal\n" +
+                                "pushint.b 0\n" +
+                                "getlocal\n" +
+                                "pushint.b 0\n" +
+                                "pushint.b 5\n" +
+                                "setfield\n" +
+                                "pushstr 0\n" +
+                                "pushint.i 5345446\n" +
+                                "setfield\n" +
+                                "ret"));
+                            exec.Entrypoint = exec.AllFunctions[0];
+                            ExecutionEngine.AllFunctions.Add(exec.Entrypoint);
 
-                            Cosmos.System.Thread th = new Cosmos.System.Thread(() =>
+                            var res = exec.Execute("");
+                            Console.WriteLine(res.ReturnedValue.ToString());
+
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
+                        Name = "testgraphics",
+                        Description = "test graphics",
+                        Execute = args =>
+                        {
+                            GraphicsManager.Initialize();
+                            Cosmos.System.MouseManager.ScreenWidth = (uint)GraphicsManager.CurrentMode.Width;
+                            Cosmos.System.MouseManager.ScreenHeight = (uint)GraphicsManager.CurrentMode.Height;
+                            bool running = true;
+
+                            while (running)
                             {
-                                DateTime dt = DateTime.Now.AddSeconds(5);
-                                while (dt > DateTime.Now) { }
-                                PlatformManager.GlobalGarbage = 5;
-                            });
-                            th.Start();
+                                var mouse = new Rect() 
+                                { 
+                                    Top = (int)Cosmos.System.MouseManager.Y,
+                                    Left = (int)Cosmos.System.MouseManager.X,
+                                    Right = (int)(GraphicsManager.CurrentMode.Width - Cosmos.System.MouseManager.X),
+                                    Bottom = (int)(GraphicsManager.CurrentMode.Height - Cosmos.System.MouseManager.Y),
+                                };
+                                GraphicsManager.FillRectangle(System.Drawing.Color.Beige, GraphicsManager.ScreenSpanRect);
+                                GraphicsManager.FillRectangle(System.Drawing.Color.Black, mouse);
+                                GCImplementation.Free(mouse);
+                                
+                                GraphicsManager.Swap();
 
-                            DateTime dt = DateTime.Now.AddSeconds(7);
-                            while (dt > DateTime.Now) { }
+                                if (Cosmos.System.KeyboardManager.TryReadKey(out Cosmos.System.KeyEvent ev))
+                                {
+                                    switch (ev.Key)
+                                    {
+                                        case Cosmos.System.ConsoleKeyEx.Q:
+                                            if ((ev.Modifiers & ConsoleModifiers.Control) != 0 &&
+                                                (ev.Modifiers & ConsoleModifiers.Alt) != 0)
+                                                running = false;
+                                            break;
+                                    }
+                                }
+                            }
 
-                            if (PlatformManager.GlobalGarbage == 5) Console.WriteLine("test succeded!");
-                            else Console.WriteLine("test failed!");
-
-                            th.Stop();
+                            GraphicsManager.Disable();
 
                             return 0;
                         }

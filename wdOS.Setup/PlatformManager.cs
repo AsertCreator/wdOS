@@ -74,11 +74,11 @@ namespace wdOS.Setup.Platform
             internal const int VersionPatch = 0;
             internal const int CurrentType = TypePreBeta;
             internal const int TypePreAlpha = 0;
-            internal const int TypeAlpha = 0;
-            internal const int TypePreBeta = 1;
-            internal const int TypeBeta = 2;
-            internal const int TypePreRelease = 3;
-            internal const int TypeRelease = 4;
+            internal const int TypeAlpha = 1;
+            internal const int TypePreBeta = 2;
+            internal const int TypeBeta = 3;
+            internal const int TypePreRelease = 4;
+            internal const int TypeRelease = 5;
         }
         internal static void Shutdown(ShutdownType type, bool halt = false, uint panic = 0)
         {

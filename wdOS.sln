@@ -12,54 +12,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wdOS.SDK", "wdOS.SDK", "{077306E7-D3D3-4410-A69D-789EB93AB5C3}"
-	ProjectSection(SolutionItems) = preProject
-		wdOS.SDK\build.py = wdOS.SDK\build.py
-		wdOS.SDK\SDK.md = wdOS.SDK\SDK.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "include", "include", "{8334AF2D-488E-4CD2-86A7-FDD5FD05B4A1}"
-	ProjectSection(SolutionItems) = preProject
-		wdOS.SDK\include\errno.h = wdOS.SDK\include\errno.h
-		wdOS.SDK\include\limits.h = wdOS.SDK\include\limits.h
-		wdOS.SDK\include\stdbool.h = wdOS.SDK\include\stdbool.h
-		wdOS.SDK\include\stddef.h = wdOS.SDK\include\stddef.h
-		wdOS.SDK\include\stdint.h = wdOS.SDK\include\stdint.h
-		wdOS.SDK\include\wdos.hpp = wdOS.SDK\include\wdos.hpp
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{CB7CE3CA-A12C-40F0-BAA4-A0578C2160A6}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\API.md = Docs\API.md
 		Docs\Managers.md = Docs\Managers.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "librt", "librt", "{5D349A88-E776-412B-90E9-A53F4609322C}"
-	ProjectSection(SolutionItems) = preProject
-		wdOS.SDK\librt\platform.cpp = wdOS.SDK\librt\platform.cpp
-		wdOS.SDK\librt\processruntime.cpp = wdOS.SDK\librt\processruntime.cpp
-		wdOS.SDK\librt\userconsole.cpp = wdOS.SDK\librt\userconsole.cpp
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{B694C094-924B-4366-B7C6-B9E6F6A44FFD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Platform", "wdOS.Platform\wdOS.Platform.csproj", "{DB37A038-2030-49EC-B0AB-AFCB5EDCCB25}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wdOS Built-in Apps", "wdOS Built-in Apps", "{C4DAB998-0DD6-47F3-91B1-3F386A9BE1D0}"
-	ProjectSection(SolutionItems) = preProject
-		wdOS.Apps\build.py = wdOS.Apps\build.py
-		wdOS.Apps\echo.cpp = wdOS.Apps\echo.cpp
-		wdOS.Apps\init.cpp = wdOS.Apps\init.cpp
-		wdOS.Apps\linker.ld = wdOS.Apps\linker.ld
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wdOS Native", "wdOS Native", "{D832E774-FE63-4CA1-ACB3-27D25F737A51}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Playground", "Playground", "{28E03346-E69E-4ECC-A189-E09BA95EA34E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shell", "Shell", "{112B5D3B-F3BD-4D98-8491-324410A8EFF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wdOS.Setup", "wdOS.Setup\wdOS.Setup.csproj", "{4951AA34-F35B-4D72-8F34-EF42F381AC41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Setup", "wdOS.Setup\wdOS.Setup.csproj", "{4951AA34-F35B-4D72-8F34-EF42F381AC41}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Pillow", "wdOS.Pillow\wdOS.Pillow.csproj", "{52A68088-5194-44C6-A6C7-C9090AD8C077}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PillowTest", "PillowTest\PillowTest.csproj", "{D6AE90FA-9238-4D13-A843-B577D8570369}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,17 +78,37 @@ Global
 		{4951AA34-F35B-4D72-8F34-EF42F381AC41}.Release|x64.Build.0 = Release|Any CPU
 		{4951AA34-F35B-4D72-8F34-EF42F381AC41}.Release|x86.ActiveCfg = Release|Any CPU
 		{4951AA34-F35B-4D72-8F34-EF42F381AC41}.Release|x86.Build.0 = Release|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Debug|x64.Build.0 = Debug|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Debug|x86.Build.0 = Debug|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|x64.ActiveCfg = Release|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|x64.Build.0 = Release|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|x86.ActiveCfg = Release|Any CPU
+		{52A68088-5194-44C6-A6C7-C9090AD8C077}.Release|x86.Build.0 = Release|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|x64.Build.0 = Debug|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Debug|x86.Build.0 = Debug|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|x64.ActiveCfg = Release|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|x64.Build.0 = Release|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6AE90FA-9238-4D13-A843-B577D8570369}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CB65F170-5EDF-46C4-BDD7-24A7CEA20330} = {B694C094-924B-4366-B7C6-B9E6F6A44FFD}
-		{077306E7-D3D3-4410-A69D-789EB93AB5C3} = {D832E774-FE63-4CA1-ACB3-27D25F737A51}
-		{8334AF2D-488E-4CD2-86A7-FDD5FD05B4A1} = {077306E7-D3D3-4410-A69D-789EB93AB5C3}
 		{CB7CE3CA-A12C-40F0-BAA4-A0578C2160A6} = {38B45CDF-3F9A-4AA0-B4BD-680C7D5D4747}
-		{5D349A88-E776-412B-90E9-A53F4609322C} = {077306E7-D3D3-4410-A69D-789EB93AB5C3}
-		{C4DAB998-0DD6-47F3-91B1-3F386A9BE1D0} = {D832E774-FE63-4CA1-ACB3-27D25F737A51}
 		{4951AA34-F35B-4D72-8F34-EF42F381AC41} = {112B5D3B-F3BD-4D98-8491-324410A8EFF5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

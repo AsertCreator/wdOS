@@ -18,12 +18,13 @@
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-        <DebugEnabled>False</DebugEnabled>
+        <DebugEnabled>True</DebugEnabled>
         <VMWareEdition>Workstation</VMWareEdition>
         <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
         <StackCorruptionDetectionEnabled>False</StackCorruptionDetectionEnabled>
         <OptimizationLevel>2</OptimizationLevel>
         <Timeout>5</Timeout>
+        <DebugCom>1</DebugCom>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -43,6 +44,10 @@
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\wdOS.Pillow\wdOS.Pillow.csproj" />
     </ItemGroup>
 
     <ItemGroup>

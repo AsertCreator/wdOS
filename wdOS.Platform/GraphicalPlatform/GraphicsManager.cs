@@ -28,6 +28,7 @@ namespace wdOS.Platform.GraphicalPlatform
                 initialized = true;
             }
         }
+        internal static void Disable() => SystemCanvas.Disable();
         internal static void Swap() => SystemCanvas.Display();
         internal static void Clear(Color c)
         {

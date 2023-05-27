@@ -56,16 +56,7 @@ namespace wdOS.Platform
                     return false;
             return true;
         }
-        // uses process's memory
-        internal static char* ToCStringU(string str)
-        {
-            char* c = (char*)PlatformManager.CurrentProcess.Alloc((uint)(str.Length + 1));
-            for (int i = 0; i < str.Length; i++) c[i] = str[i];
-            c[str.Length] = '\0';
-            return c;
-        }
-        // uses kernel memory
-        internal static char* ToCStringK(string str)
+        internal static char* ToCString(string str)
         {
             char* c = (char*)Heap.Alloc((uint)(str.Length + 1));
             for (int i = 0; i < str.Length; i++) c[i] = str[i];

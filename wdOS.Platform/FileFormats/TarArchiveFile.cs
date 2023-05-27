@@ -8,7 +8,7 @@ namespace wdOS.Platform.FileFormats
 {
     internal unsafe class TarArchiveFile
     {
-        internal static byte* TarFileIdentifier = (byte*)Utilities.ToCStringK("ustar");
+        internal static byte* TarFileIdentifier = (byte*)Utilities.ToCString("ustar");
         internal string FileName;
         internal byte[] FileContents;
         internal TarArchiveFile(string name, byte[] contents)
@@ -21,7 +21,7 @@ namespace wdOS.Platform.FileFormats
             fixed (byte* aptr = &FileContents[0])
             {
                 byte* result = (byte*)0;
-                char* flname = Utilities.ToCStringK(path);
+                char* flname = Utilities.ToCString(path);
                 int length = TarLookup(aptr, flname, &result);
 
                 return length != -1;
@@ -32,7 +32,7 @@ namespace wdOS.Platform.FileFormats
             fixed (byte* aptr = &FileContents[0])
             {
                 byte* result = (byte*)0;
-                char* flname = Utilities.ToCStringK(path);
+                char* flname = Utilities.ToCString(path);
                 int length = TarLookup(aptr, flname, &result);
 
                 if (length != -1)
