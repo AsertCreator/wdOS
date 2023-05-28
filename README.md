@@ -5,7 +5,7 @@ Bundled with Pillow Runtime and Weirdo Compiler which both make up Pillow Platfo
 For more information, read `PILLOW.md` file.
 
 ### Development State
-I've got this to version 0.11.0, pre-beta. Note, that system is currently has two
+I've got this to version 0.10.0, pre-beta. Note, that system is currently has two
 versions: wdOS Core and wdOS Platform. Latter one is newer and more stable. First
 one is very buggy and definitely not modular. however, first one has cool things
 that most of Cosmos-built OSes have. wdOS Core's development is stopped, now I work
