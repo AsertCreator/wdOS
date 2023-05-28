@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal static class ServiceManager
+    public static class ServiceManager
     {
-        internal static List<Service> Services = new();
-        internal static PIT.PITTimer ServiceTimer;
+        public static List<Service> Services = new();
+        public static PIT.PITTimer ServiceTimer;
         private static bool initialized = false;
         private static uint nextsid = 0;
-        internal static void Initialize()
+        public static void Initialize()
         {
             if (!initialized)
             {
@@ -45,8 +45,8 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static uint AllocSID() => nextsid++;
-        internal unsafe static uint CreateManagedService(string name, string desc, Func<bool> callback)
+        public static uint AllocSID() => nextsid++;
+        public unsafe static uint CreateManagedService(string name, string desc, Func<bool> callback)
         {
             Service serv = new()
             {
@@ -58,7 +58,7 @@ namespace wdOS.Platform
             Services.Add(serv);
             return serv.SID;
         }
-        internal static Service GetServiceBySID(uint sid)
+        public static Service GetServiceBySID(uint sid)
         {
             for (int i = 0; i < Services.Count; i++)
             {
@@ -67,14 +67,14 @@ namespace wdOS.Platform
             }
             return null;
         }
-        internal static bool EnableService(uint sid)
+        public static bool EnableService(uint sid)
         {
             var service = GetServiceBySID(sid);
             if (service == null) return false;
             service.IsEnabled = true;
             return true;
         }
-        internal static bool DisableService(uint sid)
+        public static bool DisableService(uint sid)
         {
             var service = GetServiceBySID(sid);
             if (service == null) return false;
@@ -82,13 +82,13 @@ namespace wdOS.Platform
             return true;
         }
     }
-    internal unsafe sealed class Service
+    public unsafe sealed class Service
     {
-        internal string Name;
-        internal string Description;
-        internal bool IsEnabled = true;
-        internal object AuxObject = null;
-        internal uint SID = ServiceManager.AllocSID();
-        internal Func<Service, bool> Tick;
+        public string Name;
+        public string Description;
+        public bool IsEnabled = true;
+        public object AuxObject = null;
+        public uint SID = ServiceManager.AllocSID();
+        public Func<Service, bool> Tick;
     }
 }

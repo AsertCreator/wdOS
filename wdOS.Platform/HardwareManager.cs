@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal unsafe static class HardwareManager
+    public unsafe static class HardwareManager
     {
-        internal static bool ACPIAvailable { get; private set; }
-        internal static bool ForceDisableACPI = false;
+        public static bool ACPIAvailable { get; private set; }
+        public static bool ForceDisableACPI = false;
         private static bool initialized = false;
-        internal static void Initialize()
+        public static void Initialize()
         {
             if (!initialized && !ForceDisableACPI)
             {
@@ -32,7 +32,7 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static bool VerifyACPITable(ACPITableHeader* header)
+        public static bool VerifyACPITable(ACPITableHeader* header)
         {
             byte sum = 0;
 
@@ -41,7 +41,7 @@ namespace wdOS.Platform
 
             return sum == 0;
         }
-        internal static RSDTPointer LocateRSDTPointer()
+        public static RSDTPointer LocateRSDTPointer()
         {
             RSDTPointer ptr = new();
             byte* end = (byte*)(0x00080000 + 1024);
@@ -93,55 +93,55 @@ namespace wdOS.Platform
 
             return ptr;
         }
-        internal static void ForceShutdownPC()
+        public static void ForceShutdownPC()
         {
             // todo: implement acpi shutdown
         }
-        internal static void ForceRestartPC()
+        public static void ForceRestartPC()
         {
             // todo: implement acpi restart
         }
-        internal struct RSDTPointer
+        public struct RSDTPointer
         {
-            internal bool Available;
-            internal RSDTPointer10* Version10;
-            internal RSDTPointer20* Version20;
-            internal int Revision;
+            public bool Available;
+            public RSDTPointer10* Version10;
+            public RSDTPointer20* Version20;
+            public int Revision;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct ACPITableHeader
+        public struct ACPITableHeader
         {
-            internal fixed char Signature[4];
-            internal uint Length;
-            internal byte Revision;
-            internal byte Checksum;
-            internal fixed char OEMID[6];
-            internal fixed char OEMTableID[8];
-            internal uint OEMRevision;
-            internal uint CreatorID;
-            internal uint CreatorRevision;
+            public fixed char Signature[4];
+            public uint Length;
+            public byte Revision;
+            public byte Checksum;
+            public fixed char OEMID[6];
+            public fixed char OEMTableID[8];
+            public uint OEMRevision;
+            public uint CreatorID;
+            public uint CreatorRevision;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct RSDTPointer10
+        public struct RSDTPointer10
         {
-            internal fixed char Signature[8];
-            internal byte Checksum;
-            internal fixed char OEMID[6];
-            internal byte ACPIVersion;
-            internal ACPITableHeader* RSDTAddress;
+            public fixed char Signature[8];
+            public byte Checksum;
+            public fixed char OEMID[6];
+            public byte ACPIVersion;
+            public ACPITableHeader* RSDTAddress;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        internal struct RSDTPointer20
+        public struct RSDTPointer20
         {
-            internal fixed char Signature[8];
-            internal byte Checksum;
-            internal fixed char OEMID[6];
-            internal byte ACPIVersion;
-            internal ACPITableHeader* RSDTAddress;
-            internal uint RSDTLength;
-            internal ulong XSDTAddress;
-            internal byte ExtendedChecksum;
-            internal fixed byte Reserved[3];
+            public fixed char Signature[8];
+            public byte Checksum;
+            public fixed char OEMID[6];
+            public byte ACPIVersion;
+            public ACPITableHeader* RSDTAddress;
+            public uint RSDTLength;
+            public ulong XSDTAddress;
+            public byte ExtendedChecksum;
+            public fixed byte Reserved[3];
         }
     }
 }

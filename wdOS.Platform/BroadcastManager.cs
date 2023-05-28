@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal static class BroadcastManager
+    public static class BroadcastManager
     {
-        internal const uint MaxBroadcastSize = 1024;
-        internal static string BroadcastPath = "0:/PrivateSystem/broadcasts.bin";
-        internal static bool SaveDatabase;
+        public const uint MaxBroadcastSize = 1024;
+        public static string BroadcastPath = "0:/PrivateSystem/broadcasts.bin";
+        public static bool SaveDatabase;
         private static List<Broadcast> allBroadcasts;
         private static bool initialized = false;
-        internal static void Initialize()
+        public static void Initialize()
         {
             if (!initialized)
             {
@@ -22,7 +22,7 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static void SendBroadcast(UserManager.User to, string subject, string message)
+        public static void SendBroadcast(UserManager.User to, string subject, string message)
         {
             allBroadcasts.Add(new()
             {
@@ -34,7 +34,7 @@ namespace wdOS.Platform
             });
             PlatformManager.Log($"sent broadcast from {UserManager.CurrentUser.UserName} to {to.UserName}", "braodcastmanager");
         }
-        internal static Broadcast[] GetAvailableBroadcasts()
+        public static Broadcast[] GetAvailableBroadcasts()
         {
             if (UserManager.CurrentUser.IsRoot) return allBroadcasts.ToArray();
 
@@ -50,7 +50,7 @@ namespace wdOS.Platform
 
             return availableBroadcasts.ToArray();
         }
-        internal static void LoadBroadcasts() 
+        public static void LoadBroadcasts() 
         {
             if (!FileSystemManager.FileExists(BroadcastPath))
             {
@@ -67,7 +67,7 @@ namespace wdOS.Platform
             }
             PlatformManager.Log("loaded all broadcasts!", "braodcastmanager");
         }
-        internal static void SaveBroadcasts()
+        public static void SaveBroadcasts()
         {
             List<ConfigurationTableEntry> entries = new();
             for (int i = 0; i < allBroadcasts.Count; i++)
@@ -84,14 +84,14 @@ namespace wdOS.Platform
             PlatformManager.Log("saved all broadcasts!", "braodcastmanager");
         }
     }
-    internal struct Broadcast
+    public struct Broadcast
     {
-        internal string Subject;
-        internal string Message;
-        internal DateTime SendTime;
-        internal UserManager.User Sender;
-        internal UserManager.User Sendee;
-        internal Broadcast(byte[] bytes)
+        public string Subject;
+        public string Message;
+        public DateTime SendTime;
+        public UserManager.User Sender;
+        public UserManager.User Sendee;
+        public Broadcast(byte[] bytes)
         {
             BinaryReader br = new(new MemoryStream(bytes));
             var subjectlength = br.ReadByte();
@@ -104,7 +104,7 @@ namespace wdOS.Platform
             Sendee = UserManager.FindByName(new string(br.ReadChars(sendeelength)));
             SendTime = new DateTime(br.ReadInt64());
         }
-        internal byte[] ToBytes()
+        public byte[] ToBytes()
         {
             byte[] bytes = new byte[BroadcastManager.MaxBroadcastSize];
             BinaryWriter bw = new(new MemoryStream(bytes));

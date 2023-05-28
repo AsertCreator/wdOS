@@ -7,16 +7,16 @@ using System.Drawing;
 
 namespace wdOS.Platform
 {
-    internal static class GraphicsManager
+    public static class GraphicsManager
     {
-        internal static Color WhiteColor = Color.White;
-        internal static Color BlackColor = Color.Black;
-        internal static Canvas SystemCanvas;
-        internal static Mode CurrentMode;
-        internal static List<Font> Fonts = new();
-        internal readonly static Rect ScreenSpanRect = new();
+        public static Color WhiteColor = Color.White;
+        public static Color BlackColor = Color.Black;
+        public static Canvas SystemCanvas;
+        public static Mode CurrentMode;
+        public static List<Font> Fonts = new();
+        public readonly static Rect ScreenSpanRect = new();
         private static bool initialized = false;
-        internal static void Initialize()
+        public static void Initialize()
         {
             if (!initialized)
             {
@@ -28,25 +28,25 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static void Disable() => SystemCanvas.Disable();
-        internal static void Swap() => SystemCanvas.Display();
-        internal static void Clear(Color c)
+        public static void Disable() => SystemCanvas.Disable();
+        public static void Swap() => SystemCanvas.Display();
+        public static void Clear(Color c)
         {
             for (int y = 0; y < CurrentMode.Height; y++)
                 for (int x = 0; x < CurrentMode.Width; x++)
                     SystemCanvas.DrawPoint(c, x, y);
         }
-        internal static void SetPixel(ushort x, ushort y, Color c)
+        public static void SetPixel(ushort x, ushort y, Color c)
         {
             SystemCanvas.DrawPoint(c, x, y);
         }
-        internal static void FillRectangle(Color c, Rect rect)
+        public static void FillRectangle(Color c, Rect rect)
         {
             for (int y = rect.Top; y < CurrentMode.Height - rect.Bottom; y++)
                 for (int x = rect.Left; x < CurrentMode.Width - rect.Right; x++)
                     SystemCanvas.DrawPoint(c, x, y);
         }
-        internal static void DrawText(Color c, string text, int ix, int iy, Font fnt)
+        public static void DrawText(Color c, string text, int ix, int iy, Font fnt)
         {
             var x = ix;
             var y = iy;
@@ -71,18 +71,18 @@ namespace wdOS.Platform
             }
         }
     }
-    internal struct Rect
+    public struct Rect
     {
-        internal int Top;
-        internal int Bottom;
-        internal int Right;
-        internal int Left;
+        public int Top;
+        public int Bottom;
+        public int Right;
+        public int Left;
     }
-    internal struct Mode
+    public struct Mode
     {
-        internal int Width;
-        internal int Height;
-        internal int ColorDepth;
+        public int Width;
+        public int Height;
+        public int ColorDepth;
 
         public static explicit operator Mode(Cosmos.System.Graphics.Mode m) => new()
         {

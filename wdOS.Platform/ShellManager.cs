@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal sealed class ShellManager
+    public sealed class ShellManager
     {
-        internal void Start()
+        public void Start()
         {
             if (Bootstrapper.AlterShell == "debugsh")
             {

@@ -7,14 +7,14 @@ using wdOS.Pillow;
 
 namespace wdOS.Platform
 {
-    internal static class DebugShellManager
+    public static class DebugShellManager
     {
-        internal static List<ConsoleCommand> AllCommands;
-        internal static string Path = "/";
-        internal static bool Running = true;
-        internal static bool ShowPrompt = true;
-        internal static bool ClearScreen = true;
-        internal unsafe static int RunDebugShell()
+        public static List<ConsoleCommand> AllCommands;
+        public static string Path = "/";
+        public static bool Running = true;
+        public static bool ShowPrompt = true;
+        public static bool ClearScreen = true;
+        public unsafe static int RunDebugShell()
         {
             try
             {
@@ -202,14 +202,14 @@ namespace wdOS.Platform
                 return 1;
             }
         }
-        internal static void ShowWelcomeMessage()
+        public static void ShowWelcomeMessage()
         {
             var color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("wdOS Platform Debug Shell, version " + PlatformManager.GetPlatformVersion());
             Console.ForegroundColor = color;
         }
-        internal static void PrintPrompt(string cmd)
+        public static void PrintPrompt(string cmd)
         {
             if (ShowPrompt)
             {
@@ -223,7 +223,7 @@ namespace wdOS.Platform
                 if (cmd != null) Console.WriteLine(cmd);
             }
         }
-        internal static bool ExecuteCmd(string cmdline)
+        public static bool ExecuteCmd(string cmdline)
         {
             if (!cmdline.StartsWith("::") && !string.IsNullOrWhiteSpace(cmdline))
             {
@@ -266,18 +266,18 @@ namespace wdOS.Platform
             }
             return true;
         }
-        internal static void ExecuteScriptFile(string path)
+        public static void ExecuteScriptFile(string path)
         {
             string[] lines = FileSystemManager.ReadStringFile(path).Split('\n');
             for (int i = 0; i < lines.Length; i++)
                 ExecuteCmd(lines[i]);
         }
-        internal static int ExecuteBinaryFile(string path, string args)
+        public static int ExecuteBinaryFile(string path, string args)
         {
             RuntimeManager.Execute(path, args);
             return 0;
         }
-        internal static ConsoleCommand FindCommandByName(string name)
+        public static ConsoleCommand FindCommandByName(string name)
         {
             for (int i = 0; i < AllCommands.Count; i++)
             {
@@ -287,10 +287,10 @@ namespace wdOS.Platform
             return null;
         }
     }
-    internal sealed class ConsoleCommand
+    public sealed class ConsoleCommand
     {
-        internal string Name;
-        internal string Description;
-        internal Func<string[], int> Execute;
+        public string Name;
+        public string Description;
+        public Func<string[], int> Execute;
     }
 }

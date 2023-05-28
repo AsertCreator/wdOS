@@ -12,20 +12,21 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal static partial class PlatformManager
+    public static partial class PlatformManager
     {
-        internal static Process KernelProcess;
-        internal static Process CurrentProcess;
-        internal static List<Process> AllProcesses;
-        internal static List<KeyboardBase> AttachedKeyboards;
-        internal static List<MouseBase> AttachedMice;
-        internal static List<KernelModule> LoadedModules = new();
-        internal static StringBuilder SystemLog = new();
-        internal static bool LoadUsersFromDisk = false;
-        internal static bool VerboseMode = false;
-        internal static int SessionAge = 0;
-        internal static int FailureDepth = 0;
-        internal static Dictionary<uint, string> ErrorTexts = new()
+        public static Process KernelProcess;
+        public static Process CurrentProcess;
+        public static List<Process> AllProcesses;
+        public static List<KeyboardBase> AttachedKeyboards;
+        public static List<MouseBase> AttachedMice;
+        public static List<KernelModule> LoadedModules = new();
+        public static StringBuilder SystemLog = new();
+        public static bool LoadUsersFromDisk = false;
+        public static bool VerboseMode = false;
+        public static bool LogIntoConsole = true;
+        public static int SessionAge = 0;
+        public static int FailureDepth = 0;
+        public static Dictionary<uint, string> ErrorTexts = new()
         {
             [0] = "MANUALLY_INITIATED_CRASH",
             [1] = "INVALID_CPU_OPCODE",
@@ -38,7 +39,7 @@ namespace wdOS.Platform
         };
         private static int nextpid = 0;
         private static bool initialized = false;
-        internal static void Log(string message, string component, LogLevel level = LogLevel.Info)
+        public static void Log(string message, string component, LogLevel level = LogLevel.Info)
         {
             if (SystemSettings.EnableLogging)
             {
@@ -47,10 +48,11 @@ namespace wdOS.Platform
                 if (VerboseMode) Console.WriteLine(data);
                 Bootstrapper.KernelDebugger.Send(data);
                 SystemLog.Append(data + '\n');
+                if (LogIntoConsole) Console.WriteLine(data);
             }
         }
-        internal static StringBuilder GetSystemLog() => SystemLog;
-        internal static string GetLogLevelAsString(LogLevel level) => level switch
+        public static StringBuilder GetSystemLog() => SystemLog;
+        public static string GetLogLevelAsString(LogLevel level) => level switch
         {
             LogLevel.Info => "info ",
             LogLevel.Warning => "warn ",
@@ -58,18 +60,18 @@ namespace wdOS.Platform
             LogLevel.Fatal => "fatal",
             _ => "unknw",
         };
-        internal static int GetCPUBitWidth()
+        public static int GetCPUBitWidth()
         {
             int ecx = 0, edx = 0, unused = 0;
             CPU.ReadCPUID(1, ref unused, ref unused, ref ecx, ref edx);
             return (edx & 1 << 30) != 0 ? 64 : 32;
         }
-        internal static string GetPlatformVersion() =>
+        public static string GetPlatformVersion() =>
             BuildConstants.VersionMajor + "." +
             BuildConstants.VersionMinor + "." +
             BuildConstants.VersionPatch;
-        internal static int AllocPID() => nextpid++;
-        internal static unsafe void Initialize()
+        public static int AllocPID() => nextpid++;
+        public static unsafe void Initialize()
         {
             if (!initialized)
             {
@@ -90,13 +92,13 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static void HandleNETException(Exception exc)
+        public static void HandleNETException(Exception exc)
         {
             string text = "unhandled platform exception, type: " + exc.GetType().Name + ", msg: " + exc.Message;
             Console.WriteLine(text);
             Panic(text);
         }
-        internal static void Panic(uint message)
+        public static void Panic(uint message)
         {
             PlatformManager.SessionAge = 3;
             if (FailureDepth != 1)
@@ -117,7 +119,7 @@ namespace wdOS.Platform
                 PlatformManager.Shutdown(ShutdownType.HardShutdown);
             }
         }
-        internal static void Panic(string msg)
+        public static void Panic(string msg)
         {
             PlatformManager.SessionAge = 3;
             if (FailureDepth != 1)
@@ -139,46 +141,46 @@ namespace wdOS.Platform
                 while (true) { }
             }
         }
-        internal static string GetTimeAsString() =>
+        public static string GetTimeAsString() =>
             (RTC.Hour < 10 ? "0" + RTC.Hour : RTC.Hour) + ":" +
             (RTC.Minute < 10 ? "0" + RTC.Minute : RTC.Minute) + ":" +
             (RTC.Second < 10 ? "0" + RTC.Second : RTC.Second);
-        internal static string GetDateAsString() =>
+        public static string GetDateAsString() =>
             (RTC.DayOfTheMonth < 10 ? "0" + RTC.DayOfTheMonth : RTC.DayOfTheMonth) + "." +
             (RTC.Month < 10 ? "0" + RTC.Month : RTC.Month) + "." + RTC.Year;
-        internal static class SystemSettings
+        public static class SystemSettings
         {
-            internal static int CrashPowerOffTimeout = 5;
-            internal static int SystemTerminalFont = 0;
-            internal static int ServicePeriod = 1000;
-            internal static Address CustomAddress = null;
-            internal static Address RouterAddress = null;
-            internal static bool EnableAudio = false;
-            internal static bool EnableLogging = true;
-            internal static bool EnableNetwork = false;
-            internal static bool EnableVerbose = false;
-            internal static bool EnableServices = false;
-            internal static bool EnablePeriodicGC = true;
-            internal static bool RamdiskAsRoot = false;
-            internal static Dictionary<int, PCScreenFont> TerminalFonts = new()
+            public static int CrashPowerOffTimeout = 5;
+            public static int SystemTerminalFont = 0;
+            public static int ServicePeriod = 1000;
+            public static Address CustomAddress = null;
+            public static Address RouterAddress = null;
+            public static bool EnableAudio = false;
+            public static bool EnableLogging = true;
+            public static bool EnableNetwork = false;
+            public static bool EnableVerbose = false;
+            public static bool EnableServices = false;
+            public static bool EnablePeriodicGC = true;
+            public static bool RamdiskAsRoot = false;
+            public static Dictionary<int, PCScreenFont> TerminalFonts = new()
             {
                 [0] = PCScreenFont.Default
             };
         }
-        internal static class BuildConstants
+        public static class BuildConstants
         {
-            internal const int VersionMajor = 0;
-            internal const int VersionMinor = 10;
-            internal const int VersionPatch = 0;
-            internal const int CurrentType = TypePreBeta;
-            internal const int TypePreAlpha = 0;
-            internal const int TypeAlpha = 0;
-            internal const int TypePreBeta = 1;
-            internal const int TypeBeta = 2;
-            internal const int TypePreRelease = 3;
-            internal const int TypeRelease = 4;
+            public const int VersionMajor = 0;
+            public const int VersionMinor = 10;
+            public const int VersionPatch = 0;
+            public const int CurrentType = TypePreBeta;
+            public const int TypePreAlpha = 0;
+            public const int TypeAlpha = 0;
+            public const int TypePreBeta = 1;
+            public const int TypeBeta = 2;
+            public const int TypePreRelease = 3;
+            public const int TypeRelease = 4;
         }
-        internal static void Relogin()
+        public static void Relogin()
         {
             if (UserManager.AvailableUsers.Count == 1)
             {
@@ -218,7 +220,7 @@ namespace wdOS.Platform
             }
             Console.WriteLine("logged in as " + UserManager.CurrentUser.UserName);
         }
-        internal static void Shutdown(ShutdownType type, bool halt = false, uint panic = 0)
+        public static void Shutdown(ShutdownType type, bool halt = false, uint panic = 0)
         {
             Console.WriteLine('\n'); // double new line
             SessionAge = 2;
@@ -286,5 +288,5 @@ namespace wdOS.Platform
     {
         SoftShutdown, SoftRestart, HardShutdown, HardRestart, Panic, Halt
     }
-    internal enum LogLevel { Info, Warning, Error, Fatal }
+    public enum LogLevel { Info, Warning, Error, Fatal }
 }

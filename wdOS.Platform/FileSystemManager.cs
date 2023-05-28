@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal static class FileSystemManager
+    public static class FileSystemManager
     {
-        internal const string SystemDriveLabel = "wdOSDisk";
-        internal static VFSBase VFS = new CosmosVFS();
-        internal static List<FileDevice> Devices = new();
-        internal static string[] SystemFolders =
+        public const string SystemDriveLabel = "wdOSDisk";
+        public static VFSBase VFS = new CosmosVFS();
+        public static List<FileDevice> Devices = new();
+        public static string[] SystemFolders =
             {
                 "PrivateSystem", "PrivateUsers", "Applications", "bin", "lib", "proc", "dev",
                 "PrivateSystem/kernels", "PrivateSystem/failure", "PrivateSystem/config",
             };
         private static bool initialized = false;
-        internal static void Initialize()
+        public static void Initialize()
         {
             if (!initialized)
             {
@@ -30,23 +30,23 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static string Normalize(string path)
+        public static string Normalize(string path)
         {
             string result = path.Replace('/', '\\').Replace("\\\\", "\\");
             if (result.EndsWith("\\")) result = result.Remove(result.Length - 2);
             return result;
         }
-        internal static byte[] StreamFullRead(Stream stream)
+        public static byte[] StreamFullRead(Stream stream)
         {
             byte[] buffer = new byte[stream.Length];
             stream.Read(buffer);
             return buffer;
         }
-        internal static void StreamFullWrite(Stream stream, byte[] data)
+        public static void StreamFullWrite(Stream stream, byte[] data)
         {
             stream.Flush(); stream.Write(data);
         }
-        internal static string ReadStringFile(string filepath)
+        public static string ReadStringFile(string filepath)
         {
             if (!FileExists(filepath)) return null;
             var stream = VFSManager.GetFileStream(filepath);
@@ -54,14 +54,14 @@ namespace wdOS.Platform
             stream.Close();
             return result;
         }
-        internal static void WriteStringFile(string filepath, string data)
+        public static void WriteStringFile(string filepath, string data)
         {
             if (!FileExists(filepath)) { VFSManager.CreateFile(filepath); }
             var stream = VFSManager.GetFileStream(filepath);
             StreamFullWrite(stream, Encoding.ASCII.GetBytes(data));
             stream.Close();
         }
-        internal static byte[] ReadBytesFile(string filepath)
+        public static byte[] ReadBytesFile(string filepath)
         {
             if (!FileExists(filepath)) return null;
             var stream = VFSManager.GetFileStream(filepath);
@@ -69,41 +69,41 @@ namespace wdOS.Platform
             stream.Close();
             return result;
         }
-        internal static void WriteBytesFile(string filepath, byte[] data)
+        public static void WriteBytesFile(string filepath, byte[] data)
         {
             if (!FileExists(filepath)) { VFSManager.CreateFile(filepath); }
             var stream = VFSManager.GetFileStream(filepath);
             StreamFullWrite(stream, data);
             stream.Close();
         }
-        internal static void CreateDevice(FileDevice device)
+        public static void CreateDevice(FileDevice device)
         {
             if (device != null) { Devices.Add(device); return; }
             throw new ArgumentNullException(nameof(device));
         }
-        internal static void CreateDirectory(string dirpath)
+        public static void CreateDirectory(string dirpath)
         {
             if (!DirectoryExists(dirpath) && !FileExists(dirpath))
                 VFSManager.CreateDirectory(dirpath);
         }
-        internal static void DeleteDirectory(string dirpath)
+        public static void DeleteDirectory(string dirpath)
         {
             if (DirectoryExists(dirpath) && !FileExists(dirpath))
                 VFSManager.DeleteDirectory(dirpath, true);
         }
-        internal static void DeleteFile(string filepath)
+        public static void DeleteFile(string filepath)
         {
             if (FileExists(filepath) && !DirectoryExists(filepath))
                 VFSManager.DeleteFile(filepath);
         }
-        internal static bool FileExists(string filepath) => VFSManager.FileExists(filepath);
-        internal static bool DirectoryExists(string dirpath) => VFSManager.DirectoryExists(dirpath);
+        public static bool FileExists(string filepath) => VFSManager.FileExists(filepath);
+        public static bool DirectoryExists(string dirpath) => VFSManager.DirectoryExists(dirpath);
     }
-    internal abstract class FileDevice
+    public abstract class FileDevice
     {
-        internal string FriendlyName;
-        internal string DevicePath;
-        internal Func<int, byte[]> Read;
-        internal Action<byte[]> Write;
+        public string FriendlyName;
+        public string DevicePath;
+        public Func<int, byte[]> Read;
+        public Action<byte[]> Write;
     }
 }

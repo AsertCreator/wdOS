@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal abstract class ArchiveBase
+    public abstract class ArchiveBase
     {
         public abstract string Name { get; protected set; }
         public abstract string Type { get; protected set; }
         public abstract bool FileExists(string filename);
         public abstract FileReadResult ReadFile(string filename);
     }
-    internal unsafe class TarArchive : ArchiveBase
+    public unsafe class TarArchive : ArchiveBase
     {
-        internal static byte* TarFileIdentifier = (byte*)Utilities.ToCString("ustar");
+        public static byte* TarFileIdentifier = (byte*)Utilities.ToCString("ustar");
         public override string Name { get; protected set; }
         public override string Type { get; protected set; }
         private byte[] FileContents;
-        internal TarArchive(string name, byte[] contents)
+        public TarArchive(string name, byte[] contents)
         {
             FileContents = contents;
             Name = name;
@@ -85,10 +85,10 @@ namespace wdOS.Platform
             return -1;
         }
     }
-    internal struct FileReadResult
+    public struct FileReadResult
     {
-        internal string Name;
-        internal bool FileExists;
-        internal byte[] Result;
+        public string Name;
+        public bool FileExists;
+        public byte[] Result;
     }
 }

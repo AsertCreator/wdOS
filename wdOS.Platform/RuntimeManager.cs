@@ -10,13 +10,13 @@ using wdOS.Pillow;
 
 namespace wdOS.Platform
 {
-    internal unsafe static class RuntimeManager
+    public unsafe static class RuntimeManager
     {
-        internal const int FileStdOut = -1;
-        internal const int FileStdErr = -2;
-        internal const int FileStdIn = -3;
-        internal static bool initialized = false;
-        internal unsafe static void Initialize()
+        public const int FileStdOut = -1;
+        public const int FileStdErr = -2;
+        public const int FileStdIn = -3;
+        public static bool initialized = false;
+        public unsafe static void Initialize()
         {
             if (!initialized)
             {
@@ -87,7 +87,7 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static int Write(byte[] bytes, int index, int fd)
+        public static int Write(byte[] bytes, int index, int fd)
         {
             switch (fd)
             {
@@ -102,7 +102,7 @@ namespace wdOS.Platform
             }
             return -1;
         }
-        internal static int Execute(string path, string cmd)
+        public static int Execute(string path, string cmd)
         {
             Process process = new();
             int result = int.MinValue;
@@ -138,20 +138,20 @@ namespace wdOS.Platform
             }
             return result;
         }
-        internal static int GetRuntimeVersion() => 10;
-        internal static void OnProcessCrash(EEFunctionResult res)
+        public static int GetRuntimeVersion() => 10;
+        public static void OnProcessCrash(EEFunctionResult res)
         {
             // todo: process crash handling
         }
     }
-    internal unsafe class Process
+    public unsafe class Process
     {
-        internal int PID = PlatformManager.AllocPID();
-        internal string BinaryPath;
-        internal string ConsoleArguments;
-        internal string CurrentDirectory;
-        internal EEExecutable ExecutableFile;
-        internal Process Executor;
-        internal bool IsRunning = false;
+        public int PID = PlatformManager.AllocPID();
+        public string BinaryPath;
+        public string ConsoleArguments;
+        public string CurrentDirectory;
+        public EEExecutable ExecutableFile;
+        public Process Executor;
+        public bool IsRunning = false;
     }
 }

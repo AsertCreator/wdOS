@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal static class UserManager
+    public static class UserManager
     {
-        internal static string[] ProfileSubfolders =
+        public static string[] ProfileSubfolders =
             { "Workspace", "Desktop", "Downloads", "Music", "Documents" };
-        internal const int UserLockTypeNone = 0;
-        internal const int UserLockTypePass = 1;
-        internal const int UserLoginResultLoggedInto = 0;
-        internal const int UserLoginResultInvalidUsername = 1;
-        internal const int UserLoginResultInvalidPassword = 2;
-        internal const int UserLoginResultNotAvailable = 3;
-        internal static DateTime LastLoginTime;
-        internal static TimeSpan NoLoginMaxTime;
-        internal static List<User> AvailableUsers;
-        internal static User CurrentUser;
-        internal static User EveryoneUser;
-        internal static bool initialized = false;
-        internal static void Initialize()
+        public const int UserLockTypeNone = 0;
+        public const int UserLockTypePass = 1;
+        public const int UserLoginResultLoggedInto = 0;
+        public const int UserLoginResultInvalidUsername = 1;
+        public const int UserLoginResultInvalidPassword = 2;
+        public const int UserLoginResultNotAvailable = 3;
+        public static DateTime LastLoginTime;
+        public static TimeSpan NoLoginMaxTime;
+        public static List<User> AvailableUsers;
+        public static User CurrentUser;
+        public static User EveryoneUser;
+        public static bool initialized = false;
+        public static void Initialize()
         {
             if (!initialized)
             {
@@ -41,7 +41,7 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static int Login(string username, string key, bool force = false)
+        public static int Login(string username, string key, bool force = false)
         {
             if (force) PlatformManager.Log("using a force login on user " + username, "usermanager");
             if (force && !CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
@@ -62,7 +62,7 @@ namespace wdOS.Platform
             }
             return UserLoginResultInvalidUsername;
         }
-        internal static User FindByName(string username)
+        public static User FindByName(string username)
         {
             for (int i = 0; i < AvailableUsers.Count; i++)
             {
@@ -71,7 +71,7 @@ namespace wdOS.Platform
             }
             return null;
         }
-        internal static bool CreateUser(User user)
+        public static bool CreateUser(User user)
         {
             if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
 
@@ -97,7 +97,7 @@ namespace wdOS.Platform
             PlatformManager.Log("created new user: " + user.UserName, "usermanager");
             return true;
         }
-        internal static bool RemoveUser(string username)
+        public static bool RemoveUser(string username)
         {
             if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
 
@@ -111,7 +111,7 @@ namespace wdOS.Platform
             PlatformManager.Log("removed user: " + user.UserName, "usermanager");
             return true;
         }
-        internal static bool UpdateUserDatabase()
+        public static bool UpdateUserDatabase()
         {
             // FileSystem.WriteStringFile(GetUserProfile(user) + "userinfo.dat",
             //     $"user.name=\"{user.UserName}\";" +
@@ -123,36 +123,36 @@ namespace wdOS.Platform
             //     $"user.state.isdisabled={user.IsDisabled}");
             return true;
         }
-        internal static string GetUserProfile(User user) => "0:\\PrivateUsers\\" + user.UserName + '\\';
-        internal class RootUser : User
+        public static string GetUserProfile(User user) => "0:\\PrivateUsers\\" + user.UserName + '\\';
+        public class RootUser : User
         {
-            internal RootUser() : base("root", "root", "", 0)
+            public RootUser() : base("root", "root", "", 0)
             {
                 IsDisabled = false;
                 privs.IsRoot = true;
             }
-            internal RootUser(string username) : base(username, "root", "", 0)
+            public RootUser(string username) : base(username, "root", "", 0)
             {
                 IsDisabled = false;
                 privs.IsRoot = true;
             }
         }
-        internal class User
+        public class User
         {
-            internal string UserName;
-            internal string UserGroup;
-            internal string UserKey;
-            internal int UserLockType;
-            internal bool IsHidden;
-            internal bool IsDisabled;
-            internal bool IsRoot => privs.IsRoot;
-            internal bool IsAbleToManageHardware => privs.IsAbleToManageHardware;
-            internal bool IsAbleToManageServices => privs.IsAbleToManageServices;
-            internal bool IsAbleToUseProtectedFS => privs.IsAbleToUseProtectedFS;
-            internal bool IsAbleToManageUsers => privs.IsAbleToManageUsers;
-            internal bool IsAbleToShutdown => privs.IsAbleToShutdown;
+            public string UserName;
+            public string UserGroup;
+            public string UserKey;
+            public int UserLockType;
+            public bool IsHidden;
+            public bool IsDisabled;
+            public bool IsRoot => privs.IsRoot;
+            public bool IsAbleToManageHardware => privs.IsAbleToManageHardware;
+            public bool IsAbleToManageServices => privs.IsAbleToManageServices;
+            public bool IsAbleToUseProtectedFS => privs.IsAbleToUseProtectedFS;
+            public bool IsAbleToManageUsers => privs.IsAbleToManageUsers;
+            public bool IsAbleToShutdown => privs.IsAbleToShutdown;
             protected UserPrivileges privs;
-            internal User(string userName, string userGroup, string userKey, int userLockType)
+            public User(string userName, string userGroup, string userKey, int userLockType)
             {
                 UserName = userName.Replace("/", "_").Replace("\\", "_").Replace(";", "_").Replace(" ", "_");
                 UserGroup = userGroup;
@@ -162,37 +162,37 @@ namespace wdOS.Platform
                 IsDisabled = true;
                 privs = new();
             }
-            internal void SetUserGroup(string group)
+            public void SetUserGroup(string group)
             {
                 if (!CurrentUser.privs.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
                 UserGroup = group;
             }
-            internal void SetUserLock(int locktype, string key)
+            public void SetUserLock(int locktype, string key)
             {
                 if (CurrentUser != this) throw new InsufficientPrivilegesException();
                 UserLockType = locktype;
                 UserKey = key;
             }
-            internal void SetHiddenState(bool state)
+            public void SetHiddenState(bool state)
             {
                 if (!CurrentUser.privs.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
                 IsHidden = state;
             }
-            internal void SetDisabledState(bool state)
+            public void SetDisabledState(bool state)
             {
                 if (!CurrentUser.privs.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
                 IsDisabled = state;
             }
         }
-        internal sealed class UserPrivileges
+        public sealed class UserPrivileges
         {
-            internal bool IsRoot;
-            internal bool IsAbleToManageHardware;
-            internal bool IsAbleToManageServices;
-            internal bool IsAbleToUseProtectedFS;
-            internal bool IsAbleToManageUsers;
-            internal bool IsAbleToShutdown;
+            public bool IsRoot;
+            public bool IsAbleToManageHardware;
+            public bool IsAbleToManageServices;
+            public bool IsAbleToUseProtectedFS;
+            public bool IsAbleToManageUsers;
+            public bool IsAbleToShutdown;
         }
     }
-    internal sealed class InsufficientPrivilegesException : Exception { }
+    public sealed class InsufficientPrivilegesException : Exception { }
 }

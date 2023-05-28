@@ -15,18 +15,17 @@ using Cosmos.Core.Multiboot;
 
 namespace wdOS.Platform
 {
-    public unsafe class Bootstrapper : Sys.Kernel
+    public unsafe class Bootstrapper
     {
-        internal const string AssemblyName = nameof(Platform);
-        internal static Bootstrapper Instance;
-        internal static Debugger KernelDebugger;
-        internal static string BootloaderName = "Unknown";
-        internal static string[] CommandLineArgs = Array.Empty<string>();
-        internal static string AlterShell = "debugsh";
-        internal static bool EnableStatistics = false;
+        public const string AssemblyName = nameof(Platform);
+        public static Debugger KernelDebugger;
+        public static string BootloaderName = "Unknown";
+        public static string[] CommandLineArgs = Array.Empty<string>();
+        public static string AlterShell = "debugsh";
+        public static bool EnableStatistics = false;
         private static bool isRunning = false;
         [SupportedOSPlatform("windows")]
-        internal static void EarlyMain()
+        public static void Main(Debugger debugger)
         {
             if (isRunning)
             {
@@ -39,26 +38,25 @@ namespace wdOS.Platform
             try
             {
                 PlatformManager.SessionAge = 0;
-                KernelDebugger = Instance.mDebugger;
+                KernelDebugger = debugger;
 
                 Initialize();
 
                 Log("starting platform application...", "bootstrap");
 
-                LateMain();
-
-                Log("platform application have exited!", "bootstrap", LogLevel.Warning);
-                PlatformManager.Shutdown(ShutdownType.SoftShutdown, false);
+                LateInitialization();
             }
             catch (Exception e)
             {
                 PlatformManager.HandleNETException(e);
             }
         }
-        internal static void LateMain()
+        public static void LateInitialization()
         {
             try
             {
+                PlatformManager.LogIntoConsole = false;
+
                 PlatformManager.SessionAge = 1;
                 Cosmos.HAL.Global.EnableInterrupts();
 
@@ -74,24 +72,15 @@ namespace wdOS.Platform
                 }
 
                 PlatformManager.Relogin();
-
-                ShellManager app = new();
-                app.Start();
             }
             catch (Exception e)
             {
-                Log("platform application crash! message: " + e.Message, "bootstrap", LogLevel.Fatal);
+                Log("late initialization crash! message: " + e.Message, "bootstrap", LogLevel.Fatal);
                 PlatformManager.Panic(5);
             }
         }
         [SupportedOSPlatform("windows")]
-        protected override void BeforeRun()
-        {
-            Instance = this;
-            EarlyMain();
-        }
-        [SupportedOSPlatform("windows")]
-        internal unsafe static void Initialize()
+        public unsafe static void Initialize()
         {
             try
             {
@@ -102,7 +91,6 @@ namespace wdOS.Platform
                 Log("wdOS Platform is booting, running on " + CPU.GetCPUBrandString(), "bootstrap");
                 Log("current kernel version: " + GetPlatformVersion(), "bootstrap");
                 Log("current memory amount: " + GetTotalRAM(), "bootstrap");
-                Console.WriteLine("Starting up platform components...");
 
                 SessionAge = 0;
 
@@ -117,42 +105,26 @@ namespace wdOS.Platform
 
                 try
                 {
-                    string logtext;
-
                     HardwareManager.Initialize();
-                    logtext = "initalized HardwareManager: acpi available? " + HardwareManager.ACPIAvailable;
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
+                    Log("initalized HardwareManager: acpi available? " + HardwareManager.ACPIAvailable, "bootstrap");
 
                     FileSystemManager.Initialize();
-                    logtext = "initalized FileSystemManager: mounted volumes: " + FileSystemManager.VFS.GetVolumes().Count;
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
+                    Log("initalized FileSystemManager: mounted volumes: " + FileSystemManager.VFS.GetVolumes().Count, "bootstrap");
 
                     PlatformManager.Initialize();
-                    logtext = "initalized PlatformManager: no data";
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
+                    Log("initalized PlatformManager: no data", "bootstrap");
 
                     UserManager.Initialize();
-                    logtext = "initalized UserManager: found/created users: " + UserManager.AvailableUsers.Count;
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
+                    Log("initalized UserManager: found/created users: " + UserManager.AvailableUsers.Count, "bootstrap");
 
                     ServiceManager.Initialize();
-                    logtext = "initalized ServiceManager: started services: " + ServiceManager.Services.Count;
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
+                    Log("initalized ServiceManager: started services: " + ServiceManager.Services.Count, "bootstrap");
 
                     BroadcastManager.Initialize();
-                    logtext = "initalized BroadcastManager: no data";
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
+                    Log("initalized BroadcastManager: no data", "bootstrap");
 
                     RuntimeManager.Initialize();
-                    logtext = "initalized RuntimeManager: no data";
-                    Log(logtext, "bootstrap");
-                    Console.WriteLine(logtext);
+                    Log("initalized RuntimeManager: no data", "bootstrap");
                 }
                 catch { }
 
@@ -171,7 +143,7 @@ namespace wdOS.Platform
                 PlatformManager.Shutdown(ShutdownType.Panic, panic: 5);
             }
         }
-        internal static void ParseCommandLineArgs()
+        public static void ParseCommandLineArgs()
         {
             try
             {
@@ -208,7 +180,7 @@ namespace wdOS.Platform
                 PlatformManager.Panic("failed to parse console arguments");
             }
         }
-        internal static void CheckMultibootTags()
+        public static void CheckMultibootTags()
         {
             var MbAddress = (IntPtr)Multiboot2.GetMBIAddress();
 
@@ -242,7 +214,7 @@ namespace wdOS.Platform
                 }
             }
         }
-        internal static void WaitForShutdown(bool restart, int timeout, bool force)
+        public static void WaitForShutdown(bool restart, int timeout, bool force)
         {
             if (!force)
             {
@@ -257,52 +229,51 @@ namespace wdOS.Platform
                 while (true) CPU.Halt();
             }
         }
-        internal static uint GetTotalRAM() => CPU.GetAmountOfRAM() * 1024 * 1024;
-        internal static uint GetUsedRAM() => GCImplementation.GetUsedRAM();
-        internal static double GetUsedRAMPercentage() => GetUsedRAM() / (double)GetTotalRAM() * 100;
-        protected override void Run() { }
+        public static uint GetTotalRAM() => CPU.GetAmountOfRAM() * 1024 * 1024;
+        public static uint GetUsedRAM() => GCImplementation.GetUsedRAM();
+        public static double GetUsedRAMPercentage() => GetUsedRAM() / (double)GetTotalRAM() * 100;
     }
-    internal unsafe class KernelModule
+    public unsafe class KernelModule
     {
-        internal string Name;
-        internal uint ModuleStart;
-        internal uint ModuleEnd;
-        internal byte* ModuleAddress;
+        public string Name;
+        public uint ModuleStart;
+        public uint ModuleEnd;
+        public byte* ModuleAddress;
     }
 
     [StructLayout(LayoutKind.Explicit, Size = 8)]
-    internal struct Mb2Tag
+    public struct Mb2Tag
     {
-        [FieldOffset(0)] internal uint Type;
-        [FieldOffset(4)] internal uint Size;
+        [FieldOffset(0)] public uint Type;
+        [FieldOffset(4)] public uint Size;
     }
     [StructLayout(LayoutKind.Explicit)]
-    internal struct Mb2StringTag
+    public struct Mb2StringTag
     {
-        [FieldOffset(0)] internal uint Type;
-        [FieldOffset(4)] internal uint Size;
-        [FieldOffset(8)] internal char FirstChar;
+        [FieldOffset(0)] public uint Type;
+        [FieldOffset(4)] public uint Size;
+        [FieldOffset(8)] public char FirstChar;
     }
     [StructLayout(LayoutKind.Explicit)]
-    internal struct Mb2ModuleTag
+    public struct Mb2ModuleTag
     {
-        [FieldOffset(0)] internal uint Type;
-        [FieldOffset(4)] internal uint Size;
-        [FieldOffset(8)] internal uint ModuleStart;
-        [FieldOffset(12)] internal uint ModuleEnd;
-        [FieldOffset(16)] internal char FirstChar;
+        [FieldOffset(0)] public uint Type;
+        [FieldOffset(4)] public uint Size;
+        [FieldOffset(8)] public uint ModuleStart;
+        [FieldOffset(12)] public uint ModuleEnd;
+        [FieldOffset(16)] public char FirstChar;
     }
     [StructLayout(LayoutKind.Explicit, Size = 8)]
-    internal struct Mb2FramebufferTag
+    public struct Mb2FramebufferTag
     {
-        [FieldOffset(0)] internal uint Type;
-        [FieldOffset(4)] internal uint Size;
-        [FieldOffset(8)] internal ulong FramebufferAddress;
-        [FieldOffset(16)] internal uint FramebufferPitch;
-        [FieldOffset(20)] internal uint FramebufferWidth;
-        [FieldOffset(24)] internal uint FramebufferHeight;
-        [FieldOffset(28)] internal byte FramebufferDepth;
-        [FieldOffset(29)] internal byte FramebufferType;
-        [FieldOffset(30)] internal byte Reserved;
+        [FieldOffset(0)] public uint Type;
+        [FieldOffset(4)] public uint Size;
+        [FieldOffset(8)] public ulong FramebufferAddress;
+        [FieldOffset(16)] public uint FramebufferPitch;
+        [FieldOffset(20)] public uint FramebufferWidth;
+        [FieldOffset(24)] public uint FramebufferHeight;
+        [FieldOffset(28)] public byte FramebufferDepth;
+        [FieldOffset(29)] public byte FramebufferType;
+        [FieldOffset(30)] public byte Reserved;
     }
 }

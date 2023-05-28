@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    internal unsafe static class ConfigurationManager
+    public unsafe static class ConfigurationManager
     {
-        internal const uint ConfigurationMagic = 0x55AA55AA;
-        internal const uint ConfigurationMaxSize = 128 * 1024;
-        internal static string SystemConfigrationDirectoryPath = "0:/PrivateSystem/config/";
-        internal static string SystemConfigrationFileName = "sysconf.bin";
-        internal static ConfigurationTableHeader* SystemConfigHeader;
-        internal static List<ConfigurationTableEntry> SystemConfigEntries = new();
+        public const uint ConfigurationMagic = 0x55AA55AA;
+        public const uint ConfigurationMaxSize = 128 * 1024;
+        public static string SystemConfigrationDirectoryPath = "0:/PrivateSystem/config/";
+        public static string SystemConfigrationFileName = "sysconf.bin";
+        public static ConfigurationTableHeader* SystemConfigHeader;
+        public static List<ConfigurationTableEntry> SystemConfigEntries = new();
         private static bool initialized = false;
-        internal static void Initialize()
+        public static void Initialize()
         {
             if (!initialized)
             {
@@ -33,7 +33,7 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        internal static ConfigurationTableEntry[] LoadConfig(byte[] bytes)
+        public static ConfigurationTableEntry[] LoadConfig(byte[] bytes)
         {
             var entries = new List<ConfigurationTableEntry>();
             ConfigurationTableHeader* header;
@@ -85,7 +85,7 @@ namespace wdOS.Platform
 
             return entries.ToArray();
         }
-        internal static byte[] SaveConfig(ConfigurationTableEntry[] entries)
+        public static byte[] SaveConfig(ConfigurationTableEntry[] entries)
         {
             byte[] bytes = new byte[ConfigurationMaxSize];
             BinaryWriter bw = new(new MemoryStream(bytes));
@@ -115,28 +115,28 @@ namespace wdOS.Platform
 
             return bytes[0..new((int)bw.BaseStream.Position)];
         }
-        internal static void SaveSystemConfig()
+        public static void SaveSystemConfig()
         {
             var bytes = SaveConfig(SystemConfigEntries.ToArray());
             FileSystemManager.WriteBytesFile(SystemConfigrationDirectoryPath + SystemConfigrationFileName, bytes);
         }
     }
     [StructLayout(LayoutKind.Sequential)]
-    internal struct ConfigurationTableHeader
+    public struct ConfigurationTableHeader
     {
-        internal uint Magic;
-        internal uint Version;
-        internal uint SizeOfTable;
-        internal uint OffsetOfTable;
+        public uint Magic;
+        public uint Version;
+        public uint SizeOfTable;
+        public uint OffsetOfTable;
     }
-    internal struct ConfigurationTableEntry
+    public struct ConfigurationTableEntry
     {
-        internal string Name;
-        internal string ContentString;
-        internal byte[] ContentBytes;
-        internal uint ContentNumber;
-        internal byte ContentType;
-        internal object Get() => ContentType switch
+        public string Name;
+        public string ContentString;
+        public byte[] ContentBytes;
+        public uint ContentNumber;
+        public byte ContentType;
+        public object Get() => ContentType switch
         {
             0 => ContentNumber,
             1 => ContentString,
