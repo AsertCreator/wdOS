@@ -1,13 +1,16 @@
 # wdOS
 [Cosmos](https://github.com/CosmosOS/Cosmos)-based operating system for x86 PCs. 
-Don't even try to ask me about name, its basically means wednesday. Just an idea 
-to create an OS came at wednesday
+Shall be somewhat architectually and "what use it for"-ly similair to Windows NT.
+Bundled with Pillow Runtime and Weirdo Compiler which both make up Pillow Platform.
+For more information, read `PILLOW.md` file.
 
-### Development process
-Currently system is at version 0.10.0, pre-beta. Also, system is currently in state 
-of switching to almost new architecture, so most of its features will be rewritten. 
-List below applies only to wdOS Core OS. wdOS Platform OS is somewhat seperate OS 
-that should be able to run native apps on disk.
+### Development State
+I've got this to version 0.11.0, pre-beta. Note, that system is currently has two
+versions: wdOS Core and wdOS Platform. Latter one is newer and more stable. First
+one is very buggy and definitely not modular. however, first one has cool things
+that most of Cosmos-built OSes have. wdOS Core's development is stopped, now I work
+on more stable and modular system, wdOS Platofrm. That feature list below is frozen 
+and corresponds to wdOS Core. 
 
 Almost implemented features:
 - User System
@@ -27,30 +30,33 @@ Third-party features:
 - MIV ([author](https://github.com/bartashevich))
 
 ### Not Asked Questions
-**Q**: How?
-
-**A**: This OS uses [Cosmos](https://github.com/CosmosOS/Cosmos) which allows to write OSes on C#/F#/VB.NET
-
-
-**Q**: Minimum system requirements?
-| RAM            | Disk | CD-ROM | Video        | CPU                         |
-|----------------|------|--------|--------------|-----------------------------|
-| 256 MiB, maybe | any  | any    | internal gpu | any starting from core solo |
+**Q**: How's that possible?<br/>
+**A**: This OS is built on [Cosmos](https://github.com/CosmosOS/Cosmos) which allows 
+to write OSes on certain .NET languages. For more information about it, go to link 
+above.
 
 
-**Q**: Recomended system requirements?
-| RAM     | Disk | CD-ROM | Video        | CPU                          |
-|---------|------|--------|--------------|------------------------------|
-| 512 MiB | any  | any    | internal gpu | any starting from core 2 duo |
+**Q**: What's are minimum system requirements?<br/>
+**A**: There goes:
+
+| RAM     | Disk | CD-ROM | Video          | CPU                         |
+|---------|------|--------|----------------|-----------------------------|
+| 256 MiB | IDE  | IDE    | VGA-compatible | Any starting from Pentium 4 |
 
 
-**Q**: Can I make apps or drivers for this OS?
+**Q**: What's are recomended system requirements?<br/>
+**A**: There goes:
 
+| RAM     | Disk | CD-ROM | Video          | CPU                         |
+|---------|------|--------|----------------|-----------------------------|
+| 512 MiB | IDE  | IDE    | VBE-compatible | Any starting from Core Solo |
+
+
+**Q**: Can I make apps or drivers for this OS?<br/>
 **A**: Somewhat. wdOS is now has somewhat working Pillow Runtime, so you can embed and run
-primitive apps. Finally!
+primitive apps. Finally it works!
 
 
-**Q**: Can I install system to drive?
-
-**A**: Somewhat. Kernel itself currently is not installable, beacuse Cosmos's implementation of CDFS is
-broken and systems based on it aren't able to read CDROM
+**Q**: Can I install system to drive?<br/>
+**A**: Nope. Kernel itself currently is not installable, beacuse Cosmos's implementation 
+of CDFS is broken and systems based on it aren't able to read CDROM.
