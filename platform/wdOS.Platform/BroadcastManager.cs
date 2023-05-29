@@ -19,6 +19,7 @@ namespace wdOS.Platform
             if (!initialized)
             {
                 allBroadcasts = new List<Broadcast>();
+                LoadBroadcasts();
                 initialized = true;
             }
         }
@@ -32,7 +33,7 @@ namespace wdOS.Platform
                 Sendee = to,
                 SendTime = DateTime.Now,
             });
-            PlatformManager.Log($"sent broadcast from {UserManager.CurrentUser.UserName} to {to.UserName}", "braodcastmanager");
+            PlatformManager.Log($"sent broadcast from {UserManager.CurrentUser.Username} to {to.Username}", "braodcastmanager");
         }
         public static Broadcast[] GetAvailableBroadcasts()
         {
@@ -110,12 +111,12 @@ namespace wdOS.Platform
             BinaryWriter bw = new(new MemoryStream(bytes));
             bw.Write((byte)Subject.Length);
             bw.Write((byte)Message.Length);
-            bw.Write((byte)Sender.UserName.Length);
-            bw.Write((byte)Sendee.UserName.Length);
+            bw.Write((byte)Sender.Username.Length);
+            bw.Write((byte)Sendee.Username.Length);
             bw.Write(Subject.ToCharArray());
             bw.Write(Message.ToCharArray());
-            bw.Write(Sender.UserName.ToCharArray());
-            bw.Write(Sendee.UserName.ToCharArray());
+            bw.Write(Sender.Username.ToCharArray());
+            bw.Write(Sendee.Username.ToCharArray());
             bw.Write(SendTime.Ticks);
             return bytes[0..new((int)bw.BaseStream.Position)];
         }

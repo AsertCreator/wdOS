@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
+    public delegate void EnumerateUsersCallback(UserManager.User user);
     public static class UserManager
     {
         public static string[] ProfileSubfolders =
@@ -18,10 +19,10 @@ namespace wdOS.Platform
         public const int UserLoginResultNotAvailable = 3;
         public static DateTime LastLoginTime;
         public static TimeSpan NoLoginMaxTime;
-        public static List<User> AvailableUsers;
         public static User CurrentUser;
         public static User EveryoneUser;
         public static bool initialized = false;
+        private static List<User> AvailableUsers;
         public static void Initialize()
         {
             if (!initialized)
@@ -29,8 +30,13 @@ namespace wdOS.Platform
                 LastLoginTime = DateTime.Now - new TimeSpan(10, 0, 0);
                 NoLoginMaxTime = new TimeSpan(0, 10, 0);
 
-                EveryoneUser = new User("everyone", "everything", "", 0);
-                AvailableUsers = new List<User>
+                EveryoneUser = new("everyone", "users", "", 0)
+                {
+                    IsHidden = true,
+                    IsDisabled = true
+                };
+
+                AvailableUsers = new()
                 {
                     new RootUser("root"),
                     EveryoneUser
@@ -49,7 +55,7 @@ namespace wdOS.Platform
             for (int i = 0; i < AvailableUsers.Count; i++)
             {
                 User user = AvailableUsers[i];
-                if (user.UserName == username && user != EveryoneUser)
+                if (user.Username == username && user != EveryoneUser)
                 {
                     if (user.IsDisabled) return UserLoginResultNotAvailable;
                     if (user.UserKey == key || user.UserLockType == UserLockTypeNone || force)
@@ -62,30 +68,62 @@ namespace wdOS.Platform
             }
             return UserLoginResultInvalidUsername;
         }
+        public static int GetUserCount(bool counthidden)
+        {
+            int count = 0;
+            EnumerateUsers(x => count++, counthidden);
+            return count;
+        }
+        public static void OnUserReplication()
+        {
+            // todo: user replication
+        }
+        public static void ReplicateUsers()
+        {
+            // todo: user replication
+        }
+        public static void EnumerateUsers(EnumerateUsersCallback callback, bool showhidden = false)
+        {
+            for (int i = 0; i < AvailableUsers.Count; i++)
+            {
+                var user = AvailableUsers[i];
+                if (user.IsHidden && !showhidden) continue;
+                callback(user);
+            }
+        }
         public static User FindByName(string username)
         {
             for (int i = 0; i < AvailableUsers.Count; i++)
             {
                 var user = AvailableUsers[i];
-                if (user.UserName == username) return user;
+                if (user.Username == username) return user;
             }
             return null;
         }
         public static bool CreateUser(User user)
         {
+            Console.WriteLine("hi");
             if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+            Console.WriteLine("hi");
 
-            user.UserName = user.UserName.Trim();
+            user.Username = user.Username.Trim();
+            Console.WriteLine("hi");
 
-            if (FindByName(user.UserName) != null) return false;
+            if (FindByName(user.Username) != null) return false;
+            Console.WriteLine("hi");
 
-            PlatformManager.Log("adding new user. Name: " + user.UserName, "usermanager");
+            PlatformManager.Log("adding new user. Name: " + user.Username, "usermanager");
+            Console.WriteLine("hi");
             AvailableUsers.Add(user);
+            Console.WriteLine("hi");
             user.SetDisabledState(false);
+            Console.WriteLine("hi");
             FileSystemManager.CreateDirectory(GetUserProfile(user));
+            Console.WriteLine("hi");
 
             for (int i = 0; i < ProfileSubfolders.Length; i++)
                 FileSystemManager.CreateDirectory(GetUserProfile(user) + ProfileSubfolders[i]);
+            Console.WriteLine("hi");
 
             if (!UpdateUserDatabase())
             {
@@ -93,8 +131,10 @@ namespace wdOS.Platform
                     "User Manager notifies you, that it wasn't able to save User Database, " +
                     "please save your work for PC maintainer to reboot it");
             }
+            Console.WriteLine("hi");
 
-            PlatformManager.Log("created new user: " + user.UserName, "usermanager");
+            PlatformManager.Log("created new user: " + user.Username, "usermanager");
+            Console.WriteLine("hi");
             return true;
         }
         public static bool RemoveUser(string username)
@@ -108,7 +148,7 @@ namespace wdOS.Platform
 
             AvailableUsers.Remove(user);
 
-            PlatformManager.Log("removed user: " + user.UserName, "usermanager");
+            PlatformManager.Log("removed user: " + user.Username, "usermanager");
             return true;
         }
         public static bool UpdateUserDatabase()
@@ -123,38 +163,44 @@ namespace wdOS.Platform
             //     $"user.state.isdisabled={user.IsDisabled}");
             return true;
         }
-        public static string GetUserProfile(User user) => "0:\\PrivateUsers\\" + user.UserName + '\\';
+        public static string GetUserProfile(User user) => "0:\\PrivateUsers\\" + user.Username + '\\';
         public class RootUser : User
         {
             public RootUser() : base("root", "root", "", 0)
             {
                 IsDisabled = false;
                 privs.IsRoot = true;
+                IsReplicatedOverNetwork = false;
             }
             public RootUser(string username) : base(username, "root", "", 0)
             {
                 IsDisabled = false;
                 privs.IsRoot = true;
+                IsReplicatedOverNetwork = false;
             }
         }
         public class User
         {
-            public string UserName;
-            public string UserGroup;
-            public string UserKey;
-            public int UserLockType;
-            public bool IsHidden;
-            public bool IsDisabled;
+            internal string Username;
+            internal string UserGroup;
+            internal string UserKey;
+            internal int UserLockType;
+            internal bool IsHidden;
+            internal bool IsDisabled;
+            internal bool IsLocal = true;
+            public string UserName => Username;
             public bool IsRoot => privs.IsRoot;
-            public bool IsAbleToManageHardware => privs.IsAbleToManageHardware;
-            public bool IsAbleToManageServices => privs.IsAbleToManageServices;
-            public bool IsAbleToUseProtectedFS => privs.IsAbleToUseProtectedFS;
-            public bool IsAbleToManageUsers => privs.IsAbleToManageUsers;
-            public bool IsAbleToShutdown => privs.IsAbleToShutdown;
+            public bool IsAbleToManageHardware => privs.IsAbleToManageHardware || IsRoot;
+            public bool IsAbleToManageServices => privs.IsAbleToManageServices || IsRoot;
+            public bool IsAbleToUseProtectedFS => privs.IsAbleToUseProtectedFS || IsRoot;
+            public bool IsAbleToManageUsers => privs.IsAbleToManageUsers || IsRoot;
+            public bool IsAbleToShutdown => privs.IsAbleToShutdown || IsRoot;
+            public bool IsReplicated => IsReplicatedOverNetwork;
+            protected bool IsReplicatedOverNetwork = false;
             protected UserPrivileges privs;
             public User(string userName, string userGroup, string userKey, int userLockType)
             {
-                UserName = userName.Replace("/", "_").Replace("\\", "_").Replace(";", "_").Replace(" ", "_");
+                Username = userName.Replace("/", "_").Replace("\\", "_").Replace(";", "_").Replace(" ", "_");
                 UserGroup = userGroup;
                 UserKey = userKey;
                 UserLockType = userLockType;
@@ -164,24 +210,29 @@ namespace wdOS.Platform
             }
             public void SetUserGroup(string group)
             {
-                if (!CurrentUser.privs.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+                if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
                 UserGroup = group;
             }
             public void SetUserLock(int locktype, string key)
             {
-                if (CurrentUser != this) throw new InsufficientPrivilegesException();
+                if (CurrentUser != this || !CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
                 UserLockType = locktype;
                 UserKey = key;
             }
             public void SetHiddenState(bool state)
             {
-                if (!CurrentUser.privs.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+                if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
                 IsHidden = state;
             }
             public void SetDisabledState(bool state)
             {
-                if (!CurrentUser.privs.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+                if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
                 IsDisabled = state;
+            }
+            public void SetReplicatableState(bool state)
+            {
+                if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+                IsReplicatedOverNetwork = state;
             }
         }
         public sealed class UserPrivileges

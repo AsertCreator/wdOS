@@ -45,10 +45,9 @@ namespace wdOS.Platform
             {
                 string data = "[" + component + "][" + GetLogLevelAsString(level) +
                     "][" + GetTimeAsString() + "] " + message;
-                if (VerboseMode) Console.WriteLine(data);
                 Bootstrapper.KernelDebugger.Send(data);
                 SystemLog.Append(data + '\n');
-                if (LogIntoConsole) Console.WriteLine(data);
+                if (LogIntoConsole || VerboseMode) Console.WriteLine(data);
             }
         }
         public static StringBuilder GetSystemLog() => SystemLog;
@@ -101,45 +100,40 @@ namespace wdOS.Platform
         public static void Panic(uint message)
         {
             PlatformManager.SessionAge = 3;
-            if (FailureDepth != 1)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.BackgroundColor = ConsoleColor.Black;
-                string text0 = "!!! panic !!! " + ErrorTexts[message];
-                string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
-                PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
-                PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
-                Console.WriteLine(text0);
-                Console.WriteLine(text1);
-                Bootstrapper.WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
-                FailureDepth++;
-            }
-            else
-            {
-                PlatformManager.Shutdown(ShutdownType.HardShutdown);
-            }
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.BackgroundColor = ConsoleColor.Black;
+
+            string text0 = "!!! panic !!! " + ErrorTexts[message];
+            string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
+
+            PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
+            PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
+
+            Console.WriteLine(text0);
+            Console.WriteLine(text1);
+
+            Bootstrapper.WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
+            while (true) { }
         }
         public static void Panic(string msg)
         {
             PlatformManager.SessionAge = 3;
-            if (FailureDepth != 1)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.BackgroundColor = ConsoleColor.Black;
-                string text0 = "!!! panic !!! message: " + msg;
-                string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
-                PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
-                PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
-                Console.WriteLine(text0);
-                Console.WriteLine(text1);
-                Bootstrapper.WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
-                FailureDepth++;
-            }
-            else
-            {
-                if (FailureDepth <= 1) HardwareManager.ForceShutdownPC();
-                while (true) { }
-            }
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.BackgroundColor = ConsoleColor.Black;
+
+            string text0 = "!!! panic !!! message: " + msg;
+            string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
+
+            PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
+            PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
+
+            Console.WriteLine(text0);
+            Console.WriteLine(text1);
+
+            Bootstrapper.WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
+            while (true) { }
         }
         public static string GetTimeAsString() =>
             (RTC.Hour < 10 ? "0" + RTC.Hour : RTC.Hour) + ":" +
@@ -182,43 +176,17 @@ namespace wdOS.Platform
         }
         public static void Relogin()
         {
-            if (UserManager.AvailableUsers.Count == 1)
-            {
-                var user = UserManager.AvailableUsers[0];
-                if (user.UserLockType != 0)
-                {
-                retry:
-                    Console.Write("login: " + user.UserName);
-                    Console.Write("password: ");
-                    string password = Console.ReadLine();
-                    if (UserManager.Login(user.UserName, password) != UserManager.UserLoginResultLoggedInto)
-                    {
-                        Console.WriteLine("invalid credentials\n");
-                        goto retry;
-                    }
-                }
-                else
-                {
-                    if (UserManager.Login(user.UserName, "", true) != UserManager.UserLoginResultLoggedInto)
-                    {
-                        Console.WriteLine("corrupted user database\n");
-                    }
-                }
-            }
-            else
-            {
             retry:
-                Console.Write("login: ");
-                string username = Console.ReadLine();
-                Console.Write("password: ");
-                string password = Console.ReadLine();
-                if (UserManager.Login(username, password) != UserManager.UserLoginResultLoggedInto)
-                {
-                    Console.WriteLine("invalid credentials\n");
-                    goto retry;
-                }
+            Console.Write("login: ");
+            string username = Console.ReadLine();
+            Console.Write("password: ");
+            string password = Console.ReadLine();
+            if (UserManager.Login(username, password) != UserManager.UserLoginResultLoggedInto)
+            {
+                Console.WriteLine("invalid credentials\n");
+                goto retry;
             }
-            Console.WriteLine("logged in as " + UserManager.CurrentUser.UserName);
+            Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
         }
         public static void Shutdown(ShutdownType type, bool halt = false, uint panic = 0)
         {
@@ -242,7 +210,7 @@ namespace wdOS.Platform
                     Power.ACPIShutdown();
 
                     Console.WriteLine("shutdown failed! cpu halted");
-                    goto case ShutdownType.Halt;
+                    while (true) CPU.Halt();
                 case ShutdownType.SoftRestart:
                     Console.WriteLine("restarting...");
 
@@ -258,7 +226,7 @@ namespace wdOS.Platform
                     Power.CPUReboot();
 
                     Console.WriteLine("restart failed! cpu halted");
-                    goto case ShutdownType.Halt;
+                    while (true) CPU.Halt();
                 case ShutdownType.HardShutdown:
                     if (halt)
                         while (true) CPU.Halt();
@@ -266,7 +234,7 @@ namespace wdOS.Platform
                     Power.ACPIShutdown();
 
                     Console.WriteLine("shutdown failed! cpu halted");
-                    goto case ShutdownType.Halt;
+                    while (true) CPU.Halt();
                 case ShutdownType.HardRestart:
                     if (halt)
                         while (true) CPU.Halt();
@@ -274,12 +242,12 @@ namespace wdOS.Platform
                     Power.CPUReboot();
 
                     Console.WriteLine("restart failed! cpu halted");
-                    goto case ShutdownType.Halt;
+                    while (true) CPU.Halt();
                 case ShutdownType.Panic:
                     Panic(panic);
-                    goto case ShutdownType.Halt;
+                    while (true) CPU.Halt();
                 case ShutdownType.Halt:
-                default:
+                    Console.WriteLine("cpu halted");
                     while (true) CPU.Halt();
             }
         }

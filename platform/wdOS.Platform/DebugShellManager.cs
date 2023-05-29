@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using wdOS.Pillow;
 
 namespace wdOS.Platform
@@ -22,11 +21,11 @@ namespace wdOS.Platform
                 {
                     new()
                     {
-                        Name = "module",
+                        Name = "modcat",
                         Description = "shows contents of a module",
                         Execute = args =>
                         {
-                            if (args.Length != 1) { Console.WriteLine("module: invalid count of arguments"); return 1; }
+                            if (args.Length != 1) { Console.WriteLine("modcat: too much arguments"); return 1; }
                             var module = PlatformManager.LoadedModules[int.Parse(args[0])];
                             Console.WriteLine(Utilities.FromCString((char*)module.ModuleAddress));
                             return 0;
@@ -38,7 +37,7 @@ namespace wdOS.Platform
                         Description = "shows help menu",
                         Execute = args =>
                         {
-                            if (args.Length != 0) { Console.WriteLine("help: invalid count of arguments"); return 1; }
+                            if (args.Length != 0) { Console.WriteLine("help: too much arguments"); return 1; }
                             for (int i = 0; i < AllCommands.Count; i++)
                             {
                                 var cmd = AllCommands[i];
@@ -53,7 +52,7 @@ namespace wdOS.Platform
                         Description = "sends broadcast",
                         Execute = args =>
                         {
-                            if (args.Length != 0) { Console.WriteLine("send: invalid count of arguments"); return 1; }
+                            if (args.Length != 0) { Console.WriteLine("send: too much arguments"); return 1; }
                             Console.Write("subject: ");
                             var subject = Console.ReadLine();
                             Console.Write("message: ");
@@ -71,13 +70,13 @@ namespace wdOS.Platform
                         Description = "lists received broadcasts",
                         Execute = args =>
                         {
-                            if (args.Length != 0) { Console.WriteLine("brlist: invalid count of arguments"); return 1; }
+                            if (args.Length != 0) { Console.WriteLine("brlist: too much arguments"); return 1; }
                             var broadcasts = BroadcastManager.GetAvailableBroadcasts();
                             for (int i = 0; i < broadcasts.Length; i++)
                             {
                                 var broadcast = broadcasts[i];
-                                Console.WriteLine("from    : " + broadcast.Sender.UserName);
-                                Console.WriteLine("to      : " + broadcast.Sendee.UserName);
+                                Console.WriteLine("from    : " + broadcast.Sender.Username);
+                                Console.WriteLine("to      : " + broadcast.Sendee.Username);
                                 Console.WriteLine("subject : " + broadcast.Subject);
                                 Console.WriteLine("message : " + broadcast.Message);
                                 Console.WriteLine("sent    : " + broadcast.SendTime);
@@ -92,17 +91,19 @@ namespace wdOS.Platform
                         Description = "prints out system log",
                         Execute = args =>
                         {
-                            if (args.Length != 0) { Console.WriteLine("logcat: invalid count of arguments"); return 1; }
+                            if (args.Length != 0) { Console.WriteLine("logcat: too much arguments"); return 1; }
                             Console.WriteLine(PlatformManager.GetSystemLog());
                             return 0;
                         }
                     },
                     new()
                     {
-                        Name = "testpillow",
+                        Name = "test-pillow",
                         Description = "test pillow vm",
                         Execute = args =>
                         {
+                            if (args.Length != 0) { Console.WriteLine("test-pillow: too much arguments"); return 1; }
+
                             EEExecutable exec = new();
                             exec.AllStringLiterals.Add("Hello World!");
                             exec.AllFunctions.Add(EEAssembler.AssemblePillowIL(
@@ -130,10 +131,12 @@ namespace wdOS.Platform
                     },
                     new()
                     {
-                        Name = "testgraphics",
+                        Name = "test-graphics",
                         Description = "test graphics",
                         Execute = args =>
                         {
+                            if (args.Length != 0) { Console.WriteLine("test-graphics: too much arguments"); return 1; }
+
                             GraphicsManager.Initialize();
                             Cosmos.System.MouseManager.ScreenWidth = (uint)GraphicsManager.CurrentMode.Width;
                             Cosmos.System.MouseManager.ScreenHeight = (uint)GraphicsManager.CurrentMode.Height;
@@ -168,6 +171,106 @@ namespace wdOS.Platform
                             }
 
                             GraphicsManager.Disable();
+
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
+                        Name = "user-create",
+                        Description = "creates user",
+                        Execute = args =>
+                        {
+                            if (args.Length != 1) { Console.WriteLine("user-create: too much or too few arguments"); return 1; }
+                            UserManager.User user = new(args[0], "users", "", 0);
+                            if (!UserManager.CreateUser(user))
+                            {
+                                Console.WriteLine("failed to create user");
+                                return 1;
+                            }
+
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
+                        Name = "user-setpass",
+                        Description = "sets user password",
+                        Execute = args =>
+                        {
+                            if (args.Length != 2) { Console.WriteLine("user-setpass: too much or too few arguments"); return 1; }
+
+                            UserManager.User user = UserManager.FindByName(args[0]);
+                            if (user == null) { Console.WriteLine("user-setpass: no such user"); return 1; }
+
+                            user.SetUserLock(UserManager.UserLockTypePass, args[1]);
+
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
+                        Name = "user-remove",
+                        Description = "removes user",
+                        Execute = args =>
+                        {
+                            if (args.Length != 1) { Console.WriteLine("user-remove: too much or too few arguments"); return 1; }
+
+                            if (!UserManager.RemoveUser(args[0]))
+                            {
+                                Console.WriteLine("user-remove: no such user"); 
+                                return 1;
+                            }
+
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
+                        Name = "user-switch",
+                        Description = "switcher current user",
+                        Execute = args =>
+                        {
+                            if (args.Length != 1) { Console.WriteLine("user-switch: too much or too few arguments"); return 1; }
+
+                            UserManager.User user = UserManager.FindByName(args[0]);
+                            if (user == null) { Console.WriteLine("user-switch: no such user"); return 1; }
+
+                            if (user.UserLockType == 1)
+                            {
+                                Console.Write("password: ");
+                                string pass = Console.ReadLine();
+                                if (UserManager.Login(user.Username, pass, false) != UserManager.UserLoginResultLoggedInto)
+                                {
+                                    Console.WriteLine("failed to login, double check your password and username");
+                                    return 1;
+                                }
+                            }
+                            else
+                            {
+                                if (UserManager.Login(user.Username, "", false) != UserManager.UserLoginResultLoggedInto)
+                                {
+                                    Console.WriteLine("failed to login");
+                                    return 1;
+                                }
+                            }
+
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
+                        Name = "user-list",
+                        Description = "lists available users",
+                        Execute = args =>
+                        {
+                            if (args.Length != 0) { Console.WriteLine("user-list: too much arguments"); return 1; }
+
+                            UserManager.EnumerateUsers(x => 
+                            {
+                                Console.WriteLine(x.Username + ", is root: " + x.IsRoot + ", is hidden: " + x.IsHidden + ", is replicatable: " + x.IsReplicated + ", is local: " + x.IsLocal);
+                            }, 
+                            true);
 
                             return 0;
                         }
@@ -213,12 +316,11 @@ namespace wdOS.Platform
         {
             if (ShowPrompt)
             {
-                Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write(UserManager.CurrentUser.UserName + " ");
+                Console.Write(UserManager.CurrentUser.Username + " ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write(Path);
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Console.Write(" $ ");
                 if (cmd != null) Console.WriteLine(cmd);
             }
@@ -258,6 +360,10 @@ namespace wdOS.Platform
                 catch (NotImplementedException)
                 {
                     Console.WriteLine("debugsh: command (\"" + words[0] + "\") is not implemented");
+                }
+                catch (InsufficientPrivilegesException)
+                {
+                    Console.WriteLine("debugsh: command (\"" + words[0] + "\") requires more privileges than given");
                 }
                 catch
                 {

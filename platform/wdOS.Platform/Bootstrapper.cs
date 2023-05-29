@@ -115,7 +115,7 @@ namespace wdOS.Platform
                     Log("initalized PlatformManager: no data", "bootstrap");
 
                     UserManager.Initialize();
-                    Log("initalized UserManager: found/created users: " + UserManager.AvailableUsers.Count, "bootstrap");
+                    Log("initalized UserManager: found/created users: " + UserManager.GetUserCount(true), "bootstrap");
 
                     ServiceManager.Initialize();
                     Log("initalized ServiceManager: started services: " + ServiceManager.Services.Count, "bootstrap");
@@ -156,13 +156,13 @@ namespace wdOS.Platform
                             case "-v" or "--verbose":
                                 VerboseMode = true;
                                 break;
-                            case "--no-acpi":
+                            case "-no-acpi":
                                 HardwareManager.ForceDisableACPI = true;
                                 break;
-                            case "--no-logging":
+                            case "-no-logging":
                                 PlatformManager.SystemSettings.EnableLogging = false;
                                 break;
-                            case "--alter-shell":
+                            case "-shell":
                                 string type = CommandLineArgs[++i];
                                 AlterShell = type;
                                 break;
