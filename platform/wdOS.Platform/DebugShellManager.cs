@@ -21,23 +21,41 @@ namespace wdOS.Platform
                 {
                     new()
                     {
-                        Name = "modcat",
+                        Name = "mod-cat",
                         Description = "shows contents of a module",
                         Execute = args =>
                         {
-                            if (args.Length != 1) { Console.WriteLine("modcat: too much arguments"); return 1; }
-                            var module = PlatformManager.LoadedModules[int.Parse(args[0])];
+                            if (args.Length != 1) { Console.WriteLine("mod-cat: too much or too few arguments"); return 1; }
+                            if (!int.TryParse(args[0], out int res)) { Console.WriteLine("mod-cat: not a module id"); return 1; }
+                            if (res < 0 || res >= PlatformManager.LoadedModules.Count) { Console.WriteLine("mod-cat: invalid module id"); return 1; }
+
+                            var module = PlatformManager.LoadedModules[int.Parse(args[res])];
                             Console.WriteLine(Utilities.FromCString((char*)module.ModuleAddress));
                             return 0;
                         }
                     },
                     new()
                     {
-                        Name = "help",
-                        Description = "shows help menu",
+                        Name = "mod-list",
+                        Description = "lists loaded kernel modules",
                         Execute = args =>
                         {
-                            if (args.Length != 0) { Console.WriteLine("help: too much arguments"); return 1; }
+                            if (args.Length != 0) { Console.WriteLine("mod-list: too much arguments"); return 1; }
+                            for (int i = 0; i < PlatformManager.LoadedModules.Count; i++)
+                            {
+                                var mod = PlatformManager.LoadedModules[i];
+                                Console.WriteLine(mod.Name + ", start addr: 0x" + mod.ModuleStart.ToString("X8") + ", end addr: 0x" + mod.ModuleEnd + ", size: " + (mod.ModuleEnd - mod.ModuleStart));
+			                }
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
+                        Name = "cmd-list",
+                        Description = "lists available commands",
+                        Execute = args =>
+                        {
+                            if (args.Length != 0) { Console.WriteLine("cmd-list: too much arguments"); return 1; }
                             for (int i = 0; i < AllCommands.Count; i++)
                             {
                                 var cmd = AllCommands[i];
@@ -48,11 +66,11 @@ namespace wdOS.Platform
                     },
                     new()
                     {
-                        Name = "send",
+                        Name = "br-send",
                         Description = "sends broadcast",
                         Execute = args =>
                         {
-                            if (args.Length != 0) { Console.WriteLine("send: too much arguments"); return 1; }
+                            if (args.Length != 0) { Console.WriteLine("br-send: too much arguments"); return 1; }
                             Console.Write("subject: ");
                             var subject = Console.ReadLine();
                             Console.Write("message: ");
@@ -66,11 +84,11 @@ namespace wdOS.Platform
                     },
                     new()
                     {
-                        Name = "brlist",
+                        Name = "br-list",
                         Description = "lists received broadcasts",
                         Execute = args =>
                         {
-                            if (args.Length != 0) { Console.WriteLine("brlist: too much arguments"); return 1; }
+                            if (args.Length != 0) { Console.WriteLine("br-list: too much arguments"); return 1; }
                             var broadcasts = BroadcastManager.GetAvailableBroadcasts();
                             for (int i = 0; i < broadcasts.Length; i++)
                             {
