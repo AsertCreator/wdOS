@@ -234,6 +234,16 @@ namespace wdOS.Platform
                 if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
                 IsReplicatedOverNetwork = state;
             }
+            public void MakeRoot()
+            {
+                if (!CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
+                privs.IsRoot = true;
+            }
+            public void MakeRegular()
+            {
+                if (!CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
+                privs.IsRoot = false;
+            }
         }
         public sealed class UserPrivileges
         {

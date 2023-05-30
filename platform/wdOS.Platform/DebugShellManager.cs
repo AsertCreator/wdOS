@@ -228,6 +228,56 @@ namespace wdOS.Platform
                     },
                     new()
                     {
+                        Name = "user-makeroot",
+                        Description = "make certain user root",
+                        Execute = args =>
+                        {
+                            if (args.Length != 1) { Console.WriteLine("user-makeroot: too much arguments"); return 1; }
+
+                            UserManager.User user = UserManager.FindByName(args[0]);
+                            if (user == null) { Console.WriteLine("user-makeroot: no such user"); return 1; }
+
+                            if (!user.IsRoot)
+                            {
+                                if (!UserManager.CurrentUser.IsRoot) { Console.WriteLine("user-makeroot: access denied"); return 1; }
+
+                                user.MakeRoot();
+                            }
+                            else
+                            {
+                                Console.WriteLine("user-makeroot: user is already root");
+                            }
+
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
+                        Name = "user-makeregular",
+                        Description = "make certain user regular",
+                        Execute = args =>
+                        {
+                            if (args.Length != 1) { Console.WriteLine("user-makeregular: too much arguments"); return 1; }
+
+                            UserManager.User user = UserManager.FindByName(args[0]);
+                            if (user == null) { Console.WriteLine("user-makeregular: no such user"); return 1; }
+                            
+                            if (user.IsRoot)
+                            {
+                                if (!UserManager.CurrentUser.IsRoot) { Console.WriteLine("user-makeregular: access denied"); return 1; }
+
+                                user.MakeRegular();
+                            }
+                            else
+                            {
+                                Console.WriteLine("user-makeregular: user is already regular");
+                            }
+
+                            return 0;
+                        }
+                    },
+                    new()
+                    {
                         Name = "user-remove",
                         Description = "removes user",
                         Execute = args =>
