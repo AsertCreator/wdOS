@@ -266,7 +266,13 @@ namespace wdOS.Platform
                             {
                                 if (!UserManager.CurrentUser.IsRoot) { Console.WriteLine("user-makeregular: access denied"); return 1; }
 
-                                user.MakeRegular();
+                                if (!user.MakeRegular())
+                                {
+                                    Console.WriteLine("user-makeregular: failed to lower rights. reason may be that you are only " +
+                                        "regular root in the system and you're trying to lower your rights. at least one regular root " +
+                                        "shall persist in the system"); 
+                                    return 1;
+                                }
                             }
                             else
                             {

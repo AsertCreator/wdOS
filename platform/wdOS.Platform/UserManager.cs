@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace wdOS.Platform
 {
     public delegate void EnumerateUsersCallback(UserManager.User user);
+    public delegate bool FindUsersPredicate(UserManager.User user);
     public static class UserManager
     {
         public static string[] ProfileSubfolders =
@@ -91,6 +92,22 @@ namespace wdOS.Platform
                 callback(user);
             }
         }
+        public static User[] FindRootUsers() => FindUsersByPredicate(x => x.IsRoot);
+        public static User[] FindRegularUsers() => FindUsersByPredicate(x => !x.IsRoot);
+        public static User[] FindPasswordUsers() => FindUsersByPredicate(x => x.UserLockType == UserLockTypePass);
+        public static User[] FindNonPasswordUsers() => FindUsersByPredicate(x => x.UserLockType == UserLockTypeNone);
+        public static User[] FindSystemUsers() => FindUsersByPredicate(x => x.IsSystem);
+        public static User[] FindRegularRootUsers() => FindUsersByPredicate(x => x.IsRegularRoot);
+        public static User[] FindUsersByPredicate(FindUsersPredicate predicate)
+        {
+            List<User> users = new List<User>();
+            for (int i = 0; i < AvailableUsers.Count; i++)
+            {
+                var user = AvailableUsers[i];
+                if (predicate(user)) users.Add(user);
+            }
+            return users.ToArray();
+        }
         public static User FindByName(string username)
         {
             for (int i = 0; i < AvailableUsers.Count; i++)
@@ -102,39 +119,28 @@ namespace wdOS.Platform
         }
         public static bool CreateUser(User user)
         {
-            Console.WriteLine("hi");
             if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
-            Console.WriteLine("hi");
 
             user.Username = user.Username.Trim();
-            Console.WriteLine("hi");
 
             if (FindByName(user.Username) != null) return false;
-            Console.WriteLine("hi");
 
             PlatformManager.Log("adding new user. Name: " + user.Username, "usermanager");
-            Console.WriteLine("hi");
             AvailableUsers.Add(user);
-            Console.WriteLine("hi");
             user.SetDisabledState(false);
-            Console.WriteLine("hi");
             FileSystemManager.CreateDirectory(GetUserProfile(user));
-            Console.WriteLine("hi");
 
             for (int i = 0; i < ProfileSubfolders.Length; i++)
                 FileSystemManager.CreateDirectory(GetUserProfile(user) + ProfileSubfolders[i]);
-            Console.WriteLine("hi");
 
             if (!UpdateUserDatabase())
             {
                 BroadcastManager.SendBroadcast(EveryoneUser, "User Database",
                     "User Manager notifies you, that it wasn't able to save User Database, " +
-                    "please save your work for PC maintainer to reboot it");
+                    "please save your work for PC maintainer to repair it");
             }
-            Console.WriteLine("hi");
 
             PlatformManager.Log("created new user: " + user.Username, "usermanager");
-            Console.WriteLine("hi");
             return true;
         }
         public static bool RemoveUser(string username)
@@ -189,7 +195,9 @@ namespace wdOS.Platform
             internal bool IsDisabled;
             internal bool IsLocal = true;
             public string UserName => Username;
-            public bool IsRoot => privs.IsRoot;
+            public bool IsRoot => privs.IsRoot | privs.IsSystem;
+            public bool IsSystem => privs.IsSystem;
+            public bool IsRegularRoot => !privs.IsSystem && privs.IsRoot;
             public bool IsAbleToManageHardware => privs.IsAbleToManageHardware || IsRoot;
             public bool IsAbleToManageServices => privs.IsAbleToManageServices || IsRoot;
             public bool IsAbleToUseProtectedFS => privs.IsAbleToUseProtectedFS || IsRoot;
@@ -239,15 +247,19 @@ namespace wdOS.Platform
                 if (!CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
                 privs.IsRoot = true;
             }
-            public void MakeRegular()
+            public bool MakeRegular()
             {
                 if (!CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
+                if (FindRegularRootUsers().Length == 1) return false;
                 privs.IsRoot = false;
+
+                return true;
             }
         }
         public sealed class UserPrivileges
         {
             public bool IsRoot;
+            public bool IsSystem;
             public bool IsAbleToManageHardware;
             public bool IsAbleToManageServices;
             public bool IsAbleToUseProtectedFS;
