@@ -20,7 +20,7 @@ namespace wdOS.Platform
         {
             if (!initialized)
             {
-                ExecutionEngine.InstrinsicHandlers.Add(delegate(ref EEFunctionExecutionContext ctx) // IOWrite
+                ExecutionEngine.InstrinsicHandlers.Add(delegate(ref EEFunctionExecutionContext ctx) // IOWrite, icall 0
                 {
                     var raw_write = ctx.FunctionStack.Pop();
                     var raw_index = ctx.FunctionStack.Pop();
@@ -67,7 +67,7 @@ namespace wdOS.Platform
                     ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeInteger) { ObjectValue = result });
                     return;
                 });
-                ExecutionEngine.InstrinsicHandlers.Add(delegate (ref EEFunctionExecutionContext ctx) // ConsoleWrite
+                ExecutionEngine.InstrinsicHandlers.Add(delegate (ref EEFunctionExecutionContext ctx) // ConsoleWrite, icall 1
                 {
                     var raw_write = ctx.FunctionStack.Pop();
 
@@ -82,6 +82,40 @@ namespace wdOS.Platform
                     Console.Write(write);
 
                     ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeUndefined));
+                    return;
+                });
+                ExecutionEngine.InstrinsicHandlers.Add(delegate (ref EEFunctionExecutionContext ctx) // ConsoleReadKey, icall 2
+                {
+                    ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeUndefined));
+                    // not implemented
+                    return;
+                });
+                ExecutionEngine.InstrinsicHandlers.Add(delegate (ref EEFunctionExecutionContext ctx) // ConvertToString, icall 3
+                {
+                    var obj = ctx.FunctionStack.Pop();
+
+                    ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeString) { ObjectValue = obj.ToString() });
+
+                    return;
+                });
+                ExecutionEngine.InstrinsicHandlers.Add(delegate (ref EEFunctionExecutionContext ctx) // IsTypeOf, icall 4
+                {
+                    var type = ctx.FunctionStack.Pop();
+                    var obj = ctx.FunctionStack.Pop();
+
+                    if (type.ObjectType != ExecutionEngine.ObjectTypeInteger)
+                    {
+                        ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeUndefined));
+                        return;
+                    }
+
+                    int actualtype = (int)type.ObjectValue;
+
+                    ctx.FunctionStack.Push(new EEObject(ExecutionEngine.ObjectTypeBoolean) 
+                    { 
+                        ObjectValue = obj.ObjectType == actualtype ? 1 : 0
+                    });
+
                     return;
                 });
                 initialized = true;
