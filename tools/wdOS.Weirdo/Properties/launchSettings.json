@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "wdOS.Weirdo": {
+      "commandName": "Project",
+      "commandLineArgs": "-i ./sample1.wo -r -dbg"
+    }
+  }
+}

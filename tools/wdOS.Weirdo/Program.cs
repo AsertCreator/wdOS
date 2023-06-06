@@ -1,4 +1,6 @@
-﻿using wdOS.Pillow;
+﻿using System;
+using System.IO;
+using wdOS.Pillow;
 
 namespace wdOS.Weirdo
 {
@@ -14,22 +16,27 @@ namespace wdOS.Weirdo
             if (!File.Exists(InputFilePath))
             {
                 Console.WriteLine($"weirdoc: specified file doesn't exist!");
+                if (DebugMode) Console.WriteLine(InputFilePath);
                 return 1;
             }
             string content = File.ReadAllText(InputFilePath);
-            EEExecutable output = Compiler.CompileFile(content);
+            EEExecutable output = CompilerEngine.CompileFile(content);
 
-            if (!Compiler.ErrorOccurred)
+            if (!CompilerEngine.ErrorOccurred)
             {
                 byte[] bytes = ExecutionEngine.Save(output);
                 File.WriteAllBytes(OutputFilePath ??
                     throw new NullReferenceException("s" +
                     "omehow output file path became null"), bytes);
-
+                
                 Console.WriteLine($"written {bytes.Length} bytes");
 
                 if (RunAfterCompilation)
                 {
+                    Console.WriteLine("starting program...");
+
+                    RuntimeEngine.SetupPillowEnvironment();
+
                     var res = output.Execute("");
                     if (res.IsExceptionUnwinding)
                         Console.WriteLine($"exception occurred! \"{res.ExceptionObject}\"");
@@ -39,7 +46,7 @@ namespace wdOS.Weirdo
 
                 return 0;
             }
-            return -1;
+            return 2;
         }
         internal static bool ParseConsoleArguments(string[] args)
         {

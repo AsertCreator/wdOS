@@ -61,6 +61,16 @@ public interface IWeirdoGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitFunction_name([NotNull] WeirdoGrammarParser.Function_nameContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="WeirdoGrammarParser.function_arg"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFunction_arg([NotNull] WeirdoGrammarParser.Function_argContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="WeirdoGrammarParser.function_arg"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFunction_arg([NotNull] WeirdoGrammarParser.Function_argContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="WeirdoGrammarParser.function_call_expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -70,6 +80,46 @@ public interface IWeirdoGrammarListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitFunction_call_expression([NotNull] WeirdoGrammarParser.Function_call_expressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="WeirdoGrammarParser.function_icall_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFunction_icall_expression([NotNull] WeirdoGrammarParser.Function_icall_expressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="WeirdoGrammarParser.function_icall_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFunction_icall_expression([NotNull] WeirdoGrammarParser.Function_icall_expressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="WeirdoGrammarParser.push_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPush_expression([NotNull] WeirdoGrammarParser.Push_expressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="WeirdoGrammarParser.push_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPush_expression([NotNull] WeirdoGrammarParser.Push_expressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="WeirdoGrammarParser.popl_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPopl_expression([NotNull] WeirdoGrammarParser.Popl_expressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="WeirdoGrammarParser.popl_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPopl_expression([NotNull] WeirdoGrammarParser.Popl_expressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="WeirdoGrammarParser.argument_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArgument_expression([NotNull] WeirdoGrammarParser.Argument_expressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="WeirdoGrammarParser.argument_expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArgument_expression([NotNull] WeirdoGrammarParser.Argument_expressionContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="WeirdoGrammarParser.string_literal"/>.
 	/// </summary>

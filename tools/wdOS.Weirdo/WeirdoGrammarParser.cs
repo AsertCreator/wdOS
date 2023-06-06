@@ -37,34 +37,40 @@ public partial class WeirdoGrammarParser : Parser {
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
 		AND=1, OR=2, XOR=3, NOT=4, EQ=5, DEQ=6, NEQ=7, DOT=8, COMMA=9, SEMI=10, 
-		LPAREN=11, RPAREN=12, LCURLY=13, RCURLY=14, ADD=15, SUB=16, MUL=17, DIV=18, 
-		FUNCTION=19, ENTRYPOINT=20, LOCAL=21, RETURN=22, OBJECT=23, PRINT=24, 
-		GLOBAL=25, TRUE=26, FALSE=27, NULL=28, UNDEFINED=29, DBQOUTE=30, QUOTE=31, 
-		CALL=32, IF=33, INT=34, ID=35, WS=36, COMMENT=37, LINE_COMMENT=38, STRING_LITERAL=39;
+		LPAREN=11, RPAREN=12, LCURLY=13, RCURLY=14, LBRACK=15, RBRACK=16, ADD=17, 
+		SUB=18, MUL=19, DIV=20, FUNCTION=21, ENTRYPOINT=22, LOCAL=23, RETURN=24, 
+		OBJECT=25, PRINT=26, GLOBAL=27, TRUE=28, FALSE=29, NULL=30, UNDEFINED=31, 
+		ARGUMENT=32, DBQOUTE=33, QUOTE=34, CALL=35, ICALL=36, PUSH=37, POPL=38, 
+		IF=39, INT=40, ID=41, WS=42, COMMENT=43, LINE_COMMENT=44, STRING_LITERAL=45;
 	public const int
-		RULE_program = 0, RULE_expression = 1, RULE_function_name = 2, RULE_function_call_expression = 3, 
-		RULE_string_literal = 4, RULE_global_directive = 5, RULE_entrypoint_directive = 6, 
-		RULE_statement = 7, RULE_print_statement = 8, RULE_if_statement = 9, RULE_arg_list = 10, 
-		RULE_function = 11;
+		RULE_program = 0, RULE_expression = 1, RULE_function_name = 2, RULE_function_arg = 3, 
+		RULE_function_call_expression = 4, RULE_function_icall_expression = 5, 
+		RULE_push_expression = 6, RULE_popl_expression = 7, RULE_argument_expression = 8, 
+		RULE_string_literal = 9, RULE_global_directive = 10, RULE_entrypoint_directive = 11, 
+		RULE_statement = 12, RULE_print_statement = 13, RULE_if_statement = 14, 
+		RULE_arg_list = 15, RULE_function = 16;
 	public static readonly string[] ruleNames = {
-		"program", "expression", "function_name", "function_call_expression", 
+		"program", "expression", "function_name", "function_arg", "function_call_expression", 
+		"function_icall_expression", "push_expression", "popl_expression", "argument_expression", 
 		"string_literal", "global_directive", "entrypoint_directive", "statement", 
 		"print_statement", "if_statement", "arg_list", "function"
 	};
 
 	private static readonly string[] _LiteralNames = {
 		null, "'&'", "'|'", "'^'", "'!'", "'='", "'=='", "'!='", "'.'", "','", 
-		"';'", "'('", "')'", "'{'", "'}'", "'+'", "'-'", "'*'", "'/'", "'function'", 
-		"'entrypoint'", "'local'", "'return'", "'object'", "'print'", "'global'", 
-		"'true'", "'false'", "'null'", "'undefined'", "'\"'", "'''", "'call'", 
+		"';'", "'('", "')'", "'{'", "'}'", "'['", "']'", "'+'", "'-'", "'*'", 
+		"'/'", "'function'", "'entrypoint'", "'local'", "'return'", "'object'", 
+		"'print'", "'global'", "'true'", "'false'", "'null'", "'undefined'", "'argument'", 
+		"'\"'", "'''", "'call'", "'__internal_call'", "'__push'", "'__pop_local'", 
 		"'if'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "AND", "OR", "XOR", "NOT", "EQ", "DEQ", "NEQ", "DOT", "COMMA", "SEMI", 
-		"LPAREN", "RPAREN", "LCURLY", "RCURLY", "ADD", "SUB", "MUL", "DIV", "FUNCTION", 
-		"ENTRYPOINT", "LOCAL", "RETURN", "OBJECT", "PRINT", "GLOBAL", "TRUE", 
-		"FALSE", "NULL", "UNDEFINED", "DBQOUTE", "QUOTE", "CALL", "IF", "INT", 
-		"ID", "WS", "COMMENT", "LINE_COMMENT", "STRING_LITERAL"
+		"LPAREN", "RPAREN", "LCURLY", "RCURLY", "LBRACK", "RBRACK", "ADD", "SUB", 
+		"MUL", "DIV", "FUNCTION", "ENTRYPOINT", "LOCAL", "RETURN", "OBJECT", "PRINT", 
+		"GLOBAL", "TRUE", "FALSE", "NULL", "UNDEFINED", "ARGUMENT", "DBQOUTE", 
+		"QUOTE", "CALL", "ICALL", "PUSH", "POPL", "IF", "INT", "ID", "WS", "COMMENT", 
+		"LINE_COMMENT", "STRING_LITERAL"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -143,29 +149,29 @@ public partial class WeirdoGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 29;
+			State = 39;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 35127296L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 140509184L) != 0)) {
 				{
-				State = 27;
+				State = 37;
 				ErrorHandler.Sync(this);
 				switch (TokenStream.LA(1)) {
 				case FUNCTION:
 					{
-					State = 24;
+					State = 34;
 					function();
 					}
 					break;
 				case ENTRYPOINT:
 					{
-					State = 25;
+					State = 35;
 					entrypoint_directive();
 					}
 					break;
 				case GLOBAL:
 					{
-					State = 26;
+					State = 36;
 					global_directive();
 					}
 					break;
@@ -173,11 +179,11 @@ public partial class WeirdoGrammarParser : Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				State = 31;
+				State = 41;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 32;
+			State = 42;
 			Match(Eof);
 			}
 		}
@@ -210,14 +216,10 @@ public partial class WeirdoGrammarParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INT() { return GetToken(WeirdoGrammarParser.INT, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TRUE() { return GetToken(WeirdoGrammarParser.TRUE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode FALSE() { return GetToken(WeirdoGrammarParser.FALSE, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ID() { return GetTokens(WeirdoGrammarParser.ID); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID(int i) {
-			return GetToken(WeirdoGrammarParser.ID, i);
+		[System.Diagnostics.DebuggerNonUserCode] public Argument_expressionContext argument_expression() {
+			return GetRuleContext<Argument_expressionContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] DOT() { return GetTokens(WeirdoGrammarParser.DOT); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOT(int i) {
-			return GetToken(WeirdoGrammarParser.DOT, i);
-		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(WeirdoGrammarParser.ID, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ADD() { return GetToken(WeirdoGrammarParser.ADD, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SUB() { return GetToken(WeirdoGrammarParser.SUB, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MUL() { return GetToken(WeirdoGrammarParser.MUL, 0); }
@@ -261,119 +263,107 @@ public partial class WeirdoGrammarParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 51;
+			State = 55;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case NOT:
 				{
-				State = 35;
+				State = 45;
 				Match(NOT);
-				State = 36;
-				expression(8);
+				State = 46;
+				expression(9);
 				}
 				break;
 			case CALL:
 				{
-				State = 37;
+				State = 47;
 				function_call_expression();
 				}
 				break;
 			case STRING_LITERAL:
 				{
-				State = 38;
+				State = 48;
 				string_literal();
 				}
 				break;
 			case OBJECT:
 				{
-				State = 39;
+				State = 49;
 				Match(OBJECT);
 				}
 				break;
 			case INT:
 				{
-				State = 40;
+				State = 50;
 				Match(INT);
 				}
 				break;
 			case TRUE:
 				{
-				State = 41;
+				State = 51;
 				Match(TRUE);
 				}
 				break;
 			case FALSE:
 				{
-				State = 42;
+				State = 52;
 				Match(FALSE);
+				}
+				break;
+			case ARGUMENT:
+				{
+				State = 53;
+				argument_expression();
 				}
 				break;
 			case ID:
 				{
-				State = 43;
+				State = 54;
 				Match(ID);
-				State = 48;
-				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,2,Context);
-				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
-					if ( _alt==1 ) {
-						{
-						{
-						State = 44;
-						Match(DOT);
-						State = 45;
-						Match(ID);
-						}
-						} 
-					}
-					State = 50;
-					ErrorHandler.Sync(this);
-					_alt = Interpreter.AdaptivePredict(TokenStream,2,Context);
-				}
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 61;
+			State = 65;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,5,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,4,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( ParseListeners!=null )
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 59;
+					State = 63;
 					ErrorHandler.Sync(this);
-					switch ( Interpreter.AdaptivePredict(TokenStream,4,Context) ) {
+					switch ( Interpreter.AdaptivePredict(TokenStream,3,Context) ) {
 					case 1:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 53;
-						if (!(Precpred(Context, 10))) throw new FailedPredicateException(this, "Precpred(Context, 10)");
-						State = 54;
+						State = 57;
+						if (!(Precpred(Context, 11))) throw new FailedPredicateException(this, "Precpred(Context, 11)");
+						State = 58;
 						_la = TokenStream.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 491520L) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1966080L) != 0)) ) {
 						ErrorHandler.RecoverInline(this);
 						}
 						else {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 55;
-						expression(11);
+						State = 59;
+						expression(12);
 						}
 						break;
 					case 2:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 56;
-						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
-						State = 57;
+						State = 60;
+						if (!(Precpred(Context, 10))) throw new FailedPredicateException(this, "Precpred(Context, 10)");
+						State = 61;
 						_la = TokenStream.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 206L) != 0)) ) {
 						ErrorHandler.RecoverInline(this);
@@ -382,16 +372,16 @@ public partial class WeirdoGrammarParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 58;
-						expression(10);
+						State = 62;
+						expression(11);
 						}
 						break;
 					}
 					} 
 				}
-				State = 63;
+				State = 67;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,5,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,4,Context);
 			}
 			}
 		}
@@ -432,7 +422,48 @@ public partial class WeirdoGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 64;
+			State = 68;
+			Match(ID);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Function_argContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(WeirdoGrammarParser.ID, 0); }
+		public Function_argContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_function_arg; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.EnterFunction_arg(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.ExitFunction_arg(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Function_argContext function_arg() {
+		Function_argContext _localctx = new Function_argContext(Context, State);
+		EnterRule(_localctx, 6, RULE_function_arg);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 70;
 			Match(ID);
 			}
 		}
@@ -484,34 +515,236 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public Function_call_expressionContext function_call_expression() {
 		Function_call_expressionContext _localctx = new Function_call_expressionContext(Context, State);
-		EnterRule(_localctx, 6, RULE_function_call_expression);
+		EnterRule(_localctx, 8, RULE_function_call_expression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 66;
+			State = 72;
 			Match(CALL);
-			State = 67;
-			Match(LPAREN);
-			State = 68;
-			function_name();
 			State = 73;
+			Match(LPAREN);
+			State = 74;
+			function_name();
+			State = 79;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				State = 69;
+				State = 75;
 				Match(COMMA);
-				State = 70;
+				State = 76;
 				expression(0);
 				}
 				}
-				State = 75;
+				State = 81;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 76;
+			State = 82;
+			Match(RPAREN);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Function_icall_expressionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ICALL() { return GetToken(WeirdoGrammarParser.ICALL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(WeirdoGrammarParser.LPAREN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode INT() { return GetToken(WeirdoGrammarParser.INT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(WeirdoGrammarParser.RPAREN, 0); }
+		public Function_icall_expressionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_function_icall_expression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.EnterFunction_icall_expression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.ExitFunction_icall_expression(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Function_icall_expressionContext function_icall_expression() {
+		Function_icall_expressionContext _localctx = new Function_icall_expressionContext(Context, State);
+		EnterRule(_localctx, 10, RULE_function_icall_expression);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 84;
+			Match(ICALL);
+			State = 85;
+			Match(LPAREN);
+			State = 86;
+			Match(INT);
+			State = 87;
+			Match(RPAREN);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Push_expressionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PUSH() { return GetToken(WeirdoGrammarParser.PUSH, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(WeirdoGrammarParser.LPAREN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(WeirdoGrammarParser.RPAREN, 0); }
+		public Push_expressionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_push_expression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.EnterPush_expression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.ExitPush_expression(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Push_expressionContext push_expression() {
+		Push_expressionContext _localctx = new Push_expressionContext(Context, State);
+		EnterRule(_localctx, 12, RULE_push_expression);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 89;
+			Match(PUSH);
+			State = 90;
+			Match(LPAREN);
+			State = 91;
+			expression(0);
+			State = 92;
+			Match(RPAREN);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Popl_expressionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode POPL() { return GetToken(WeirdoGrammarParser.POPL, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(WeirdoGrammarParser.LPAREN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(WeirdoGrammarParser.ID, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(WeirdoGrammarParser.RPAREN, 0); }
+		public Popl_expressionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_popl_expression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.EnterPopl_expression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.ExitPopl_expression(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Popl_expressionContext popl_expression() {
+		Popl_expressionContext _localctx = new Popl_expressionContext(Context, State);
+		EnterRule(_localctx, 14, RULE_popl_expression);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 94;
+			Match(POPL);
+			State = 95;
+			Match(LPAREN);
+			State = 96;
+			Match(ID);
+			State = 97;
+			Match(RPAREN);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Argument_expressionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ARGUMENT() { return GetToken(WeirdoGrammarParser.ARGUMENT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(WeirdoGrammarParser.LPAREN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(WeirdoGrammarParser.ID, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(WeirdoGrammarParser.RPAREN, 0); }
+		public Argument_expressionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_argument_expression; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.EnterArgument_expression(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IWeirdoGrammarListener typedListener = listener as IWeirdoGrammarListener;
+			if (typedListener != null) typedListener.ExitArgument_expression(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Argument_expressionContext argument_expression() {
+		Argument_expressionContext _localctx = new Argument_expressionContext(Context, State);
+		EnterRule(_localctx, 16, RULE_argument_expression);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 99;
+			Match(ARGUMENT);
+			State = 100;
+			Match(LPAREN);
+			State = 101;
+			Match(ID);
+			State = 102;
 			Match(RPAREN);
 			}
 		}
@@ -548,11 +781,11 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public String_literalContext string_literal() {
 		String_literalContext _localctx = new String_literalContext(Context, State);
-		EnterRule(_localctx, 8, RULE_string_literal);
+		EnterRule(_localctx, 18, RULE_string_literal);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 78;
+			State = 104;
 			Match(STRING_LITERAL);
 			}
 		}
@@ -591,15 +824,15 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public Global_directiveContext global_directive() {
 		Global_directiveContext _localctx = new Global_directiveContext(Context, State);
-		EnterRule(_localctx, 10, RULE_global_directive);
+		EnterRule(_localctx, 20, RULE_global_directive);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 80;
+			State = 106;
 			Match(GLOBAL);
-			State = 81;
+			State = 107;
 			Match(ID);
-			State = 82;
+			State = 108;
 			Match(SEMI);
 			}
 		}
@@ -640,36 +873,36 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public Entrypoint_directiveContext entrypoint_directive() {
 		Entrypoint_directiveContext _localctx = new Entrypoint_directiveContext(Context, State);
-		EnterRule(_localctx, 12, RULE_entrypoint_directive);
+		EnterRule(_localctx, 22, RULE_entrypoint_directive);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 84;
+			State = 110;
 			Match(ENTRYPOINT);
-			State = 86;
+			State = 112;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LPAREN) {
 				{
-				State = 85;
+				State = 111;
 				Match(LPAREN);
 				}
 			}
 
-			State = 88;
+			State = 114;
 			Match(ID);
-			State = 90;
+			State = 116;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==RPAREN) {
 				{
-				State = 89;
+				State = 115;
 				Match(RPAREN);
 				}
 			}
 
-			State = 92;
+			State = 118;
 			Match(SEMI);
 			}
 		}
@@ -686,13 +919,13 @@ public partial class WeirdoGrammarParser : Parser {
 
 	public partial class StatementContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LOCAL() { return GetToken(WeirdoGrammarParser.LOCAL, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ID() { return GetTokens(WeirdoGrammarParser.ID); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID(int i) {
-			return GetToken(WeirdoGrammarParser.ID, i);
-		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID() { return GetToken(WeirdoGrammarParser.ID, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQ() { return GetToken(WeirdoGrammarParser.EQ, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public If_statementContext if_statement() {
 			return GetRuleContext<If_statementContext>(0);
@@ -703,11 +936,18 @@ public partial class WeirdoGrammarParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public Function_call_expressionContext function_call_expression() {
 			return GetRuleContext<Function_call_expressionContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] DOT() { return GetTokens(WeirdoGrammarParser.DOT); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode DOT(int i) {
-			return GetToken(WeirdoGrammarParser.DOT, i);
+		[System.Diagnostics.DebuggerNonUserCode] public Function_icall_expressionContext function_icall_expression() {
+			return GetRuleContext<Function_icall_expressionContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LBRACK() { return GetToken(WeirdoGrammarParser.LBRACK, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RBRACK() { return GetToken(WeirdoGrammarParser.RBRACK, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RETURN() { return GetToken(WeirdoGrammarParser.RETURN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Push_expressionContext push_expression() {
+			return GetRuleContext<Push_expressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Popl_expressionContext popl_expression() {
+			return GetRuleContext<Popl_expressionContext>(0);
+		}
 		public StatementContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -728,92 +968,112 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public StatementContext statement() {
 		StatementContext _localctx = new StatementContext(Context, State);
-		EnterRule(_localctx, 14, RULE_statement);
+		EnterRule(_localctx, 24, RULE_statement);
 		int _la;
 		try {
-			State = 115;
+			State = 144;
 			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case LOCAL:
+			switch ( Interpreter.AdaptivePredict(TokenStream,9,Context) ) {
+			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 94;
+				State = 120;
 				Match(LOCAL);
-				State = 95;
+				State = 121;
 				Match(ID);
-				State = 98;
+				State = 124;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==EQ) {
 					{
-					State = 96;
+					State = 122;
 					Match(EQ);
-					State = 97;
+					State = 123;
 					expression(0);
 					}
 				}
 
 				}
 				break;
-			case IF:
+			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 100;
+				State = 126;
 				if_statement();
 				}
 				break;
-			case PRINT:
+			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 101;
+				State = 127;
 				print_statement();
 				}
 				break;
-			case CALL:
+			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 102;
+				State = 128;
 				function_call_expression();
 				}
 				break;
-			case ID:
+			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 103;
-				Match(ID);
-				State = 108;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==DOT) {
-					{
-					{
-					State = 104;
-					Match(DOT);
-					State = 105;
-					Match(ID);
-					}
-					}
-					State = 110;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 111;
-				Match(EQ);
-				State = 112;
-				expression(0);
+				State = 129;
+				function_icall_expression();
 				}
 				break;
-			case RETURN:
+			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 113;
-				Match(RETURN);
-				State = 114;
+				State = 130;
+				Match(ID);
+				State = 131;
+				Match(EQ);
+				State = 132;
 				expression(0);
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
+			case 7:
+				EnterOuterAlt(_localctx, 7);
+				{
+				State = 133;
+				Match(ID);
+				State = 134;
+				Match(LBRACK);
+				State = 135;
+				expression(0);
+				State = 136;
+				Match(RBRACK);
+				State = 137;
+				Match(EQ);
+				State = 138;
+				expression(0);
+				}
+				break;
+			case 8:
+				EnterOuterAlt(_localctx, 8);
+				{
+				State = 140;
+				Match(RETURN);
+				State = 141;
+				expression(0);
+				}
+				break;
+			case 9:
+				EnterOuterAlt(_localctx, 9);
+				{
+				State = 142;
+				push_expression();
+				}
+				break;
+			case 10:
+				EnterOuterAlt(_localctx, 10);
+				{
+				State = 143;
+				popl_expression();
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -854,17 +1114,17 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public Print_statementContext print_statement() {
 		Print_statementContext _localctx = new Print_statementContext(Context, State);
-		EnterRule(_localctx, 16, RULE_print_statement);
+		EnterRule(_localctx, 26, RULE_print_statement);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 117;
+			State = 146;
 			Match(PRINT);
-			State = 118;
+			State = 147;
 			Match(LPAREN);
-			State = 119;
+			State = 148;
 			expression(0);
-			State = 120;
+			State = 149;
 			Match(RPAREN);
 			}
 		}
@@ -918,54 +1178,54 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public If_statementContext if_statement() {
 		If_statementContext _localctx = new If_statementContext(Context, State);
-		EnterRule(_localctx, 18, RULE_if_statement);
+		EnterRule(_localctx, 28, RULE_if_statement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 122;
+			State = 151;
 			Match(IF);
-			State = 124;
+			State = 153;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LPAREN) {
 				{
-				State = 123;
+				State = 152;
 				Match(LPAREN);
 				}
 			}
 
-			State = 126;
+			State = 155;
 			expression(0);
-			State = 128;
+			State = 157;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==RPAREN) {
 				{
-				State = 127;
+				State = 156;
 				Match(RPAREN);
 				}
 			}
 
-			State = 130;
+			State = 159;
 			Match(LCURLY);
-			State = 136;
+			State = 165;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 47267708928L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3264267419648L) != 0)) {
 				{
 				{
-				State = 131;
+				State = 160;
 				statement();
-				State = 132;
+				State = 161;
 				Match(SEMI);
 				}
 				}
-				State = 138;
+				State = 167;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 139;
+			State = 168;
 			Match(RCURLY);
 			}
 		}
@@ -981,9 +1241,11 @@ public partial class WeirdoGrammarParser : Parser {
 	}
 
 	public partial class Arg_listContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] ID() { return GetTokens(WeirdoGrammarParser.ID); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ID(int i) {
-			return GetToken(WeirdoGrammarParser.ID, i);
+		[System.Diagnostics.DebuggerNonUserCode] public Function_argContext[] function_arg() {
+			return GetRuleContexts<Function_argContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Function_argContext function_arg(int i) {
+			return GetRuleContext<Function_argContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] COMMA() { return GetTokens(WeirdoGrammarParser.COMMA); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COMMA(int i) {
@@ -1009,34 +1271,34 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public Arg_listContext arg_list() {
 		Arg_listContext _localctx = new Arg_listContext(Context, State);
-		EnterRule(_localctx, 20, RULE_arg_list);
+		EnterRule(_localctx, 30, RULE_arg_list);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 142;
+			State = 171;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==ID) {
 				{
-				State = 141;
-				Match(ID);
+				State = 170;
+				function_arg();
 				}
 			}
 
-			State = 148;
+			State = 177;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				State = 144;
+				State = 173;
 				Match(COMMA);
-				State = 145;
-				Match(ID);
+				State = 174;
+				function_arg();
 				}
 				}
-				State = 150;
+				State = 179;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -1095,48 +1357,48 @@ public partial class WeirdoGrammarParser : Parser {
 	[RuleVersion(0)]
 	public FunctionContext function() {
 		FunctionContext _localctx = new FunctionContext(Context, State);
-		EnterRule(_localctx, 22, RULE_function);
+		EnterRule(_localctx, 32, RULE_function);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 151;
+			State = 180;
 			Match(FUNCTION);
-			State = 152;
+			State = 181;
 			function_name();
-			State = 153;
+			State = 182;
 			Match(LPAREN);
-			State = 154;
+			State = 183;
 			arg_list();
-			State = 155;
+			State = 184;
 			Match(RPAREN);
-			State = 156;
+			State = 185;
 			Match(LCURLY);
-			State = 163;
+			State = 192;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 47267708928L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3264267419648L) != 0)) {
 				{
 				{
-				State = 157;
+				State = 186;
 				statement();
-				State = 159;
+				State = 188;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==SEMI) {
 					{
-					State = 158;
+					State = 187;
 					Match(SEMI);
 					}
 				}
 
 				}
 				}
-				State = 165;
+				State = 194;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 166;
+			State = 195;
 			Match(RCURLY);
 			}
 		}
@@ -1159,67 +1421,76 @@ public partial class WeirdoGrammarParser : Parser {
 	}
 	private bool expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return Precpred(Context, 10);
-		case 1: return Precpred(Context, 9);
+		case 0: return Precpred(Context, 11);
+		case 1: return Precpred(Context, 10);
 		}
 		return true;
 	}
 
 	private static int[] _serializedATN = {
-		4,1,39,169,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
-		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,1,0,1,0,1,0,5,0,28,8,0,10,0,12,
-		0,31,9,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,47,
-		8,1,10,1,12,1,50,9,1,3,1,52,8,1,1,1,1,1,1,1,1,1,1,1,1,1,5,1,60,8,1,10,
-		1,12,1,63,9,1,1,2,1,2,1,3,1,3,1,3,1,3,1,3,5,3,72,8,3,10,3,12,3,75,9,3,
-		1,3,1,3,1,4,1,4,1,5,1,5,1,5,1,5,1,6,1,6,3,6,87,8,6,1,6,1,6,3,6,91,8,6,
-		1,6,1,6,1,7,1,7,1,7,1,7,3,7,99,8,7,1,7,1,7,1,7,1,7,1,7,1,7,5,7,107,8,7,
-		10,7,12,7,110,9,7,1,7,1,7,1,7,1,7,3,7,116,8,7,1,8,1,8,1,8,1,8,1,8,1,9,
-		1,9,3,9,125,8,9,1,9,1,9,3,9,129,8,9,1,9,1,9,1,9,1,9,5,9,135,8,9,10,9,12,
-		9,138,9,9,1,9,1,9,1,10,3,10,143,8,10,1,10,1,10,5,10,147,8,10,10,10,12,
-		10,150,9,10,1,11,1,11,1,11,1,11,1,11,1,11,1,11,1,11,3,11,160,8,11,5,11,
-		162,8,11,10,11,12,11,165,9,11,1,11,1,11,1,11,0,1,2,12,0,2,4,6,8,10,12,
-		14,16,18,20,22,0,2,1,0,15,18,2,0,1,3,6,7,186,0,29,1,0,0,0,2,51,1,0,0,0,
-		4,64,1,0,0,0,6,66,1,0,0,0,8,78,1,0,0,0,10,80,1,0,0,0,12,84,1,0,0,0,14,
-		115,1,0,0,0,16,117,1,0,0,0,18,122,1,0,0,0,20,142,1,0,0,0,22,151,1,0,0,
-		0,24,28,3,22,11,0,25,28,3,12,6,0,26,28,3,10,5,0,27,24,1,0,0,0,27,25,1,
-		0,0,0,27,26,1,0,0,0,28,31,1,0,0,0,29,27,1,0,0,0,29,30,1,0,0,0,30,32,1,
-		0,0,0,31,29,1,0,0,0,32,33,5,0,0,1,33,1,1,0,0,0,34,35,6,1,-1,0,35,36,5,
-		4,0,0,36,52,3,2,1,8,37,52,3,6,3,0,38,52,3,8,4,0,39,52,5,23,0,0,40,52,5,
-		34,0,0,41,52,5,26,0,0,42,52,5,27,0,0,43,48,5,35,0,0,44,45,5,8,0,0,45,47,
-		5,35,0,0,46,44,1,0,0,0,47,50,1,0,0,0,48,46,1,0,0,0,48,49,1,0,0,0,49,52,
-		1,0,0,0,50,48,1,0,0,0,51,34,1,0,0,0,51,37,1,0,0,0,51,38,1,0,0,0,51,39,
-		1,0,0,0,51,40,1,0,0,0,51,41,1,0,0,0,51,42,1,0,0,0,51,43,1,0,0,0,52,61,
-		1,0,0,0,53,54,10,10,0,0,54,55,7,0,0,0,55,60,3,2,1,11,56,57,10,9,0,0,57,
-		58,7,1,0,0,58,60,3,2,1,10,59,53,1,0,0,0,59,56,1,0,0,0,60,63,1,0,0,0,61,
-		59,1,0,0,0,61,62,1,0,0,0,62,3,1,0,0,0,63,61,1,0,0,0,64,65,5,35,0,0,65,
-		5,1,0,0,0,66,67,5,32,0,0,67,68,5,11,0,0,68,73,3,4,2,0,69,70,5,9,0,0,70,
-		72,3,2,1,0,71,69,1,0,0,0,72,75,1,0,0,0,73,71,1,0,0,0,73,74,1,0,0,0,74,
-		76,1,0,0,0,75,73,1,0,0,0,76,77,5,12,0,0,77,7,1,0,0,0,78,79,5,39,0,0,79,
-		9,1,0,0,0,80,81,5,25,0,0,81,82,5,35,0,0,82,83,5,10,0,0,83,11,1,0,0,0,84,
-		86,5,20,0,0,85,87,5,11,0,0,86,85,1,0,0,0,86,87,1,0,0,0,87,88,1,0,0,0,88,
-		90,5,35,0,0,89,91,5,12,0,0,90,89,1,0,0,0,90,91,1,0,0,0,91,92,1,0,0,0,92,
-		93,5,10,0,0,93,13,1,0,0,0,94,95,5,21,0,0,95,98,5,35,0,0,96,97,5,5,0,0,
-		97,99,3,2,1,0,98,96,1,0,0,0,98,99,1,0,0,0,99,116,1,0,0,0,100,116,3,18,
-		9,0,101,116,3,16,8,0,102,116,3,6,3,0,103,108,5,35,0,0,104,105,5,8,0,0,
-		105,107,5,35,0,0,106,104,1,0,0,0,107,110,1,0,0,0,108,106,1,0,0,0,108,109,
-		1,0,0,0,109,111,1,0,0,0,110,108,1,0,0,0,111,112,5,5,0,0,112,116,3,2,1,
-		0,113,114,5,22,0,0,114,116,3,2,1,0,115,94,1,0,0,0,115,100,1,0,0,0,115,
-		101,1,0,0,0,115,102,1,0,0,0,115,103,1,0,0,0,115,113,1,0,0,0,116,15,1,0,
-		0,0,117,118,5,24,0,0,118,119,5,11,0,0,119,120,3,2,1,0,120,121,5,12,0,0,
-		121,17,1,0,0,0,122,124,5,33,0,0,123,125,5,11,0,0,124,123,1,0,0,0,124,125,
-		1,0,0,0,125,126,1,0,0,0,126,128,3,2,1,0,127,129,5,12,0,0,128,127,1,0,0,
-		0,128,129,1,0,0,0,129,130,1,0,0,0,130,136,5,13,0,0,131,132,3,14,7,0,132,
-		133,5,10,0,0,133,135,1,0,0,0,134,131,1,0,0,0,135,138,1,0,0,0,136,134,1,
-		0,0,0,136,137,1,0,0,0,137,139,1,0,0,0,138,136,1,0,0,0,139,140,5,14,0,0,
-		140,19,1,0,0,0,141,143,5,35,0,0,142,141,1,0,0,0,142,143,1,0,0,0,143,148,
-		1,0,0,0,144,145,5,9,0,0,145,147,5,35,0,0,146,144,1,0,0,0,147,150,1,0,0,
-		0,148,146,1,0,0,0,148,149,1,0,0,0,149,21,1,0,0,0,150,148,1,0,0,0,151,152,
-		5,19,0,0,152,153,3,4,2,0,153,154,5,11,0,0,154,155,3,20,10,0,155,156,5,
-		12,0,0,156,163,5,13,0,0,157,159,3,14,7,0,158,160,5,10,0,0,159,158,1,0,
-		0,0,159,160,1,0,0,0,160,162,1,0,0,0,161,157,1,0,0,0,162,165,1,0,0,0,163,
-		161,1,0,0,0,163,164,1,0,0,0,164,166,1,0,0,0,165,163,1,0,0,0,166,167,5,
-		14,0,0,167,23,1,0,0,0,19,27,29,48,51,59,61,73,86,90,98,108,115,124,128,
-		136,142,148,159,163
+		4,1,45,198,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
+		2,15,7,15,2,16,7,16,1,0,1,0,1,0,5,0,38,8,0,10,0,12,0,41,9,0,1,0,1,0,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,56,8,1,1,1,1,1,1,1,1,1,1,
+		1,1,1,5,1,64,8,1,10,1,12,1,67,9,1,1,2,1,2,1,3,1,3,1,4,1,4,1,4,1,4,1,4,
+		5,4,78,8,4,10,4,12,4,81,9,4,1,4,1,4,1,5,1,5,1,5,1,5,1,5,1,6,1,6,1,6,1,
+		6,1,6,1,7,1,7,1,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,1,9,1,9,1,10,1,10,1,10,1,
+		10,1,11,1,11,3,11,113,8,11,1,11,1,11,3,11,117,8,11,1,11,1,11,1,12,1,12,
+		1,12,1,12,3,12,125,8,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,
+		12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,3,12,145,8,12,1,13,1,13,1,13,
+		1,13,1,13,1,14,1,14,3,14,154,8,14,1,14,1,14,3,14,158,8,14,1,14,1,14,1,
+		14,1,14,5,14,164,8,14,10,14,12,14,167,9,14,1,14,1,14,1,15,3,15,172,8,15,
+		1,15,1,15,5,15,176,8,15,10,15,12,15,179,9,15,1,16,1,16,1,16,1,16,1,16,
+		1,16,1,16,1,16,3,16,189,8,16,5,16,191,8,16,10,16,12,16,194,9,16,1,16,1,
+		16,1,16,0,1,2,17,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,0,2,1,0,
+		17,20,2,0,1,3,6,7,213,0,39,1,0,0,0,2,55,1,0,0,0,4,68,1,0,0,0,6,70,1,0,
+		0,0,8,72,1,0,0,0,10,84,1,0,0,0,12,89,1,0,0,0,14,94,1,0,0,0,16,99,1,0,0,
+		0,18,104,1,0,0,0,20,106,1,0,0,0,22,110,1,0,0,0,24,144,1,0,0,0,26,146,1,
+		0,0,0,28,151,1,0,0,0,30,171,1,0,0,0,32,180,1,0,0,0,34,38,3,32,16,0,35,
+		38,3,22,11,0,36,38,3,20,10,0,37,34,1,0,0,0,37,35,1,0,0,0,37,36,1,0,0,0,
+		38,41,1,0,0,0,39,37,1,0,0,0,39,40,1,0,0,0,40,42,1,0,0,0,41,39,1,0,0,0,
+		42,43,5,0,0,1,43,1,1,0,0,0,44,45,6,1,-1,0,45,46,5,4,0,0,46,56,3,2,1,9,
+		47,56,3,8,4,0,48,56,3,18,9,0,49,56,5,25,0,0,50,56,5,40,0,0,51,56,5,28,
+		0,0,52,56,5,29,0,0,53,56,3,16,8,0,54,56,5,41,0,0,55,44,1,0,0,0,55,47,1,
+		0,0,0,55,48,1,0,0,0,55,49,1,0,0,0,55,50,1,0,0,0,55,51,1,0,0,0,55,52,1,
+		0,0,0,55,53,1,0,0,0,55,54,1,0,0,0,56,65,1,0,0,0,57,58,10,11,0,0,58,59,
+		7,0,0,0,59,64,3,2,1,12,60,61,10,10,0,0,61,62,7,1,0,0,62,64,3,2,1,11,63,
+		57,1,0,0,0,63,60,1,0,0,0,64,67,1,0,0,0,65,63,1,0,0,0,65,66,1,0,0,0,66,
+		3,1,0,0,0,67,65,1,0,0,0,68,69,5,41,0,0,69,5,1,0,0,0,70,71,5,41,0,0,71,
+		7,1,0,0,0,72,73,5,35,0,0,73,74,5,11,0,0,74,79,3,4,2,0,75,76,5,9,0,0,76,
+		78,3,2,1,0,77,75,1,0,0,0,78,81,1,0,0,0,79,77,1,0,0,0,79,80,1,0,0,0,80,
+		82,1,0,0,0,81,79,1,0,0,0,82,83,5,12,0,0,83,9,1,0,0,0,84,85,5,36,0,0,85,
+		86,5,11,0,0,86,87,5,40,0,0,87,88,5,12,0,0,88,11,1,0,0,0,89,90,5,37,0,0,
+		90,91,5,11,0,0,91,92,3,2,1,0,92,93,5,12,0,0,93,13,1,0,0,0,94,95,5,38,0,
+		0,95,96,5,11,0,0,96,97,5,41,0,0,97,98,5,12,0,0,98,15,1,0,0,0,99,100,5,
+		32,0,0,100,101,5,11,0,0,101,102,5,41,0,0,102,103,5,12,0,0,103,17,1,0,0,
+		0,104,105,5,45,0,0,105,19,1,0,0,0,106,107,5,27,0,0,107,108,5,41,0,0,108,
+		109,5,10,0,0,109,21,1,0,0,0,110,112,5,22,0,0,111,113,5,11,0,0,112,111,
+		1,0,0,0,112,113,1,0,0,0,113,114,1,0,0,0,114,116,5,41,0,0,115,117,5,12,
+		0,0,116,115,1,0,0,0,116,117,1,0,0,0,117,118,1,0,0,0,118,119,5,10,0,0,119,
+		23,1,0,0,0,120,121,5,23,0,0,121,124,5,41,0,0,122,123,5,5,0,0,123,125,3,
+		2,1,0,124,122,1,0,0,0,124,125,1,0,0,0,125,145,1,0,0,0,126,145,3,28,14,
+		0,127,145,3,26,13,0,128,145,3,8,4,0,129,145,3,10,5,0,130,131,5,41,0,0,
+		131,132,5,5,0,0,132,145,3,2,1,0,133,134,5,41,0,0,134,135,5,15,0,0,135,
+		136,3,2,1,0,136,137,5,16,0,0,137,138,5,5,0,0,138,139,3,2,1,0,139,145,1,
+		0,0,0,140,141,5,24,0,0,141,145,3,2,1,0,142,145,3,12,6,0,143,145,3,14,7,
+		0,144,120,1,0,0,0,144,126,1,0,0,0,144,127,1,0,0,0,144,128,1,0,0,0,144,
+		129,1,0,0,0,144,130,1,0,0,0,144,133,1,0,0,0,144,140,1,0,0,0,144,142,1,
+		0,0,0,144,143,1,0,0,0,145,25,1,0,0,0,146,147,5,26,0,0,147,148,5,11,0,0,
+		148,149,3,2,1,0,149,150,5,12,0,0,150,27,1,0,0,0,151,153,5,39,0,0,152,154,
+		5,11,0,0,153,152,1,0,0,0,153,154,1,0,0,0,154,155,1,0,0,0,155,157,3,2,1,
+		0,156,158,5,12,0,0,157,156,1,0,0,0,157,158,1,0,0,0,158,159,1,0,0,0,159,
+		165,5,13,0,0,160,161,3,24,12,0,161,162,5,10,0,0,162,164,1,0,0,0,163,160,
+		1,0,0,0,164,167,1,0,0,0,165,163,1,0,0,0,165,166,1,0,0,0,166,168,1,0,0,
+		0,167,165,1,0,0,0,168,169,5,14,0,0,169,29,1,0,0,0,170,172,3,6,3,0,171,
+		170,1,0,0,0,171,172,1,0,0,0,172,177,1,0,0,0,173,174,5,9,0,0,174,176,3,
+		6,3,0,175,173,1,0,0,0,176,179,1,0,0,0,177,175,1,0,0,0,177,178,1,0,0,0,
+		178,31,1,0,0,0,179,177,1,0,0,0,180,181,5,21,0,0,181,182,3,4,2,0,182,183,
+		5,11,0,0,183,184,3,30,15,0,184,185,5,12,0,0,185,192,5,13,0,0,186,188,3,
+		24,12,0,187,189,5,10,0,0,188,187,1,0,0,0,188,189,1,0,0,0,189,191,1,0,0,
+		0,190,186,1,0,0,0,191,194,1,0,0,0,192,190,1,0,0,0,192,193,1,0,0,0,193,
+		195,1,0,0,0,194,192,1,0,0,0,195,196,5,14,0,0,196,33,1,0,0,0,17,37,39,55,
+		63,65,79,112,116,124,144,153,157,165,171,177,188,192
 	};
 
 	public static readonly ATN _ATN =
