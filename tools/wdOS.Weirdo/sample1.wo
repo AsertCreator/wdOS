@@ -1,0 +1,5 @@
+function main(){
+	local x = "hello ";
+	local y = "world";
+	return x + y + "!";
+}

@@ -3,17 +3,22 @@ using Antlr4.Runtime;
 using System.Text;
 using Antlr4.Runtime.Misc;
 using wdOS.Pillow;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace wdOS.Weirdo
 {
-    public static class Compiler
+    public static class CompilerEngine
     {
-        public static List<EEFunction> CompiledFunctions = new();
-        public static string? Entrypoint = "main";
-        public static List<string> StringLiterals = new();
-        public static bool ErrorOccurred = false;
         private static List<string> GlobalVariableContexts = new();
         private static List<FunctionContext> FunctionContexts = new();
+        public static List<EEFunction> CompiledFunctions = new();
+        public static List<string> StringLiterals = new();
+        public static string? Entrypoint = "main";
+        public static bool ErrorOccurred = false;
+
         public static void ThrowAnError(int i, string message)
         {
             Console.Error.WriteLine($"weirdoc: error \"{message}\" at line {i}");
@@ -38,10 +43,16 @@ namespace wdOS.Weirdo
 
             foreach (var fctx in FunctionContexts)
             {
-                var comp = EEAssembler.AssemblePillowIL(CompileFunction(fctx, context));
+                var comp = EEAssembler.AssemblePillowIL(CompileFunction(fctx));
                 CompiledFunctions.Add(comp);
                 fctx.FinalFunction = comp;
             }
+
+            CompiledFunctions.Add(new EEFunction()
+            {
+                LocalCount = 0, ArgumentCount = 1,
+                Attribute = EEFunctionAttribute.Instrinsic, AttributeAux = 1
+            });
 
             if (Program.DebugMode)
             {
@@ -59,7 +70,7 @@ namespace wdOS.Weirdo
             }
             exec.Entrypoint =
                 (from x in FunctionContexts where x.Name == Entrypoint select x.FinalFunction)
-                .FirstOrDefault();
+                .FirstOrDefault()!;
 
             if (exec.Entrypoint == default)
             {
@@ -71,18 +82,11 @@ namespace wdOS.Weirdo
 
             return exec;
         }
-        private static string CompileFunction(FunctionContext ctx, WeirdoCompilerListener cctx)
+        internal static string CompileFunction(FunctionContext ctx)
         {
             StringBuilder sb = new();
-            Dictionary<string, (int, WeirdoGrammarParser.ExpressionContext?)> locals = new();
+            Dictionary<string, int> locals = new();
             bool hasreturned = false;
-
-            SetupLocals();
-
-            sb.AppendLine($".maxarg {ctx.Arguments.Length}");
-            sb.AppendLine($".maxlocal {locals.Count}");
-
-            EmitLocalInitialization();
 
             void EmitIntPushing(long num)
             {
@@ -198,10 +202,10 @@ namespace wdOS.Weirdo
                     return;
                 }
 
-                token = context.GetToken(WeirdoGrammarLexer.STRING_LITERAL, 0);
+                token = context.GetChild<WeirdoGrammarParser.String_literalContext>(0);
                 if (token != null)
                 {
-                    sb.AppendLine($"pushstr {StringLiterals.IndexOf(token.GetText())}");
+                    sb.AppendLine($"pushstr {StringLiterals.IndexOf(token.GetText()[1..^1])}");
                     return;
                 }
 
@@ -209,65 +213,102 @@ namespace wdOS.Weirdo
                 if (token != null)
                 {
                     string id = token.GetText();
-                    if (!locals.ContainsKey(id))
-                    {
-                        ThrowAnError(((ParserRuleContext)token).Start.Line, $"local \"{id}\" is not defined at this moment. consider moving it.");
-                        return;
-                    }
-                    EmitIntPushing(locals[id].Item1);
+                    EmitIntPushing(GetLocalID(id, ((CommonToken)((TerminalNodeImpl)token).Payload).Line));
                     sb.AppendLine("getlocal");
                     return;
                 }
             }
-            void EmitLocalInitialization()
+            int GetLocalID(string local, int line)
             {
-                for (int i = 0; i < locals.Count; i++)
+                if (!locals.ContainsKey(local))
                 {
-                    var kvp = locals.ElementAt(i);
-                    if (kvp.Value.Item2 != null)
-                    {
-                        EmitExpressionEvaluation(kvp.Value.Item2);
-                        SetLastStackObjectToLocal(kvp.Value.Item1);
-                    }
-                    else
-                    {
-                        sb.AppendLine("pushundf");
-                        SetLastStackObjectToLocal(kvp.Value.Item1);
-                    }
+                    ThrowAnError(line, $"what is \"{local}\"? i don't know that, move that local's declaration upwards");
+                    return 0;
                 }
-            }
-            void SetLastStackObjectToLocal(int i)
-            {
-                EmitIntPushing(i);
-                sb.AppendLine("setlocal");
-            }
-            void SetupLocals()
-            {
-                for (int i = 0; i < ctx.Statements.Length; i++)
-                {
-                    var statement = ctx.Statements[i];
-                    var local = statement.GetChild(0);
-                    if (local.GetText() == "local")
-                    {
-                        if (statement.ChildCount == 2) locals.Add(statement.GetChild(1).GetText(), (i, null));
-                        else if (statement.ChildCount == 4)
-                            locals.Add(statement.GetChild(1).GetText(), (i,
-                                (WeirdoGrammarParser.ExpressionContext)(ParserRuleContext)(RuleContext)statement.GetChild(3)));
-                    }
-                }
+                return locals.Keys.ToList().IndexOf(local);
             }
 
             for (int i = 0; i < ctx.Statements.Length; i++)
             {
                 var statement = ctx.Statements[i];
-                var firstch = statement.GetChild(0);
-                if (firstch.GetText() == "local") { }
-                else if (firstch.GetText() == "return")
+                var token = statement.GetChild(0);
+
+                if (statement.LOCAL() != null)
+                {
+                    var name = statement.GetChild(1).GetText();
+
+                    if (locals.ContainsKey(name))
+                        ThrowAnError(statement.Start.Line, $"redefinition of local \"{name}\"");
+
+                    else
+                    {
+                        if (statement.ChildCount == 2) // uninitalized local
+                        {
+                            locals.Add(name, i);
+                            sb.AppendLine("pushundf");
+                            EmitIntPushing(i);
+                            sb.AppendLine("setlocal");
+                        }
+
+                        else if (statement.ChildCount == 4) // initialized local
+                        {
+                            locals.Add(name, i);
+                            EmitExpressionEvaluation((WeirdoGrammarParser.ExpressionContext)statement.GetChild(3));
+                            EmitIntPushing(i);
+                            sb.AppendLine("setlocal");
+                        }
+                    }
+                }
+                else if (statement.RETURN() != null)
                 {
                     EmitExpressionEvaluation(
                         (WeirdoGrammarParser.ExpressionContext)statement.GetChild(1));
                     sb.AppendLine("ret");
                     hasreturned = true;
+                }
+                else if (statement.push_expression() != null)
+                {
+                    EmitExpressionEvaluation(
+                        (WeirdoGrammarParser.ExpressionContext)statement.push_expression().GetChild(2));
+                }
+                else if (statement.popl_expression() != null)
+                {
+                    EmitIntPushing(GetLocalID(statement.popl_expression().GetChild(2).GetText(), ((TerminalNodeImpl)token.Payload).Symbol.Line));
+                    sb.AppendLine("setlocal");
+                }
+                else // assume we're setting certain value to local
+                {
+                    var stoken = statement.GetChild(1);
+                    var sctoken = (CommonToken)stoken.Payload;
+
+                    if (sctoken.Type == WeirdoGrammarLexer.EQ) // setting certain value to local itself
+                    {
+                        EmitExpressionEvaluation(
+                            (WeirdoGrammarParser.ExpressionContext)statement.GetChild(2));
+                        EmitIntPushing(GetLocalID(token.GetText(), ((CommonToken)token.Payload).Line));
+                        sb.AppendLine("setlocal");
+                    }
+                    else if (sctoken.Type == WeirdoGrammarLexer.DOT) // setting certain value to local's field
+                    {
+                        var ttoken = statement.GetChild(2);
+                        var tctoken = (CommonToken)ttoken.Payload;
+
+                        if (tctoken.Type == WeirdoGrammarLexer.ID) // are we?
+                        {
+                            EmitExpressionEvaluation(
+                                (WeirdoGrammarParser.ExpressionContext)statement.GetChild(2));
+                            EmitIntPushing(GetLocalID(token.GetText(), ((CommonToken)token.Payload).Line));
+                            sb.AppendLine("setlocal");
+                        }
+                        else
+                        {
+                            ThrowAnError(tctoken.Line, "wait, that's not a valid name for a field!");
+                        }
+                    }
+                    else // assume we're not
+                    {
+                        ThrowAnError(sctoken.Line, "i wonder what you are trying to do there");
+                    }
                 }
             }
 
@@ -276,6 +317,9 @@ namespace wdOS.Weirdo
                 sb.AppendLine("pushundf");
                 sb.AppendLine("ret");
             }
+
+            sb.Insert(0, $".maxarg {ctx.Arguments.Length}\n");
+            sb.Insert(0, $".maxlocal {locals.Count}\n");
 
             ctx.FinalAssembly = sb;
 

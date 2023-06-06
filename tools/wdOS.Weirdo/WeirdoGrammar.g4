@@ -17,15 +17,36 @@ expression: expression (ADD|SUB|MUL|DIV) expression
     | INT
 	| TRUE
 	| FALSE
-    | ID (DOT ID)*
+	| argument_expression
+	| ID
     ;
 
 function_name
 	: ID
 	;
 
+function_arg
+	: ID
+	;
+
 function_call_expression
     : CALL LPAREN function_name (COMMA expression)* RPAREN
+	;
+	
+function_icall_expression
+    : ICALL LPAREN INT RPAREN
+	;
+	
+push_expression
+    : PUSH LPAREN expression RPAREN
+	;
+	
+popl_expression
+    : POPL LPAREN ID RPAREN
+	;
+
+argument_expression
+	: ARGUMENT LPAREN ID RPAREN
 	;
 	
 string_literal
@@ -45,8 +66,12 @@ statement
 	| if_statement
 	| print_statement
 	| function_call_expression
-	| ID (DOT ID)* EQ expression
+	| function_icall_expression
+	| ID EQ expression
+	| ID LBRACK expression RBRACK EQ expression
 	| RETURN expression
+	| push_expression
+	| popl_expression
     ;
 	
 print_statement
@@ -58,7 +83,7 @@ if_statement
 	;
     
 arg_list
-    : (ID)? (COMMA ID)*
+    : (function_arg)? (COMMA function_arg)*
     ;
     
 function
@@ -79,6 +104,8 @@ LPAREN : '(' ;
 RPAREN : ')' ;
 LCURLY : '{' ;
 RCURLY : '}' ;
+LBRACK : '[' ;
+RBRACK : ']' ;
 ADD : '+' ;
 SUB : '-' ;
 MUL : '*' ;
@@ -94,9 +121,13 @@ TRUE : 'true' ;
 FALSE : 'false' ;
 NULL : 'null' ;
 UNDEFINED : 'undefined' ;
+ARGUMENT : 'argument' ;
 DBQOUTE : '"' ;
 QUOTE : '\'' ;
 CALL : 'call' ;
+ICALL : '__internal_call' ;
+PUSH : '__push' ;
+POPL : '__pop_local' ;
 IF : 'if' ;
 
 INT : ('-')?[0-9]+ ;
