@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS", "platform\wdOS\wdOS.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Setup", "shell\wdOS.Setup\wdOS.Setup.csproj", "{728F0805-B006-4E97-8D9B-4123D85C3574}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "wdOS.Runtime", "wdOS.Runtime\wdOS.Runtime.shproj", "{4C97AC66-DC03-45FF-806D-4CF6A930AAA9}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "wdOS.Runtime", "platform\wdOS.Runtime\wdOS.Runtime.shproj", "{4C97AC66-DC03-45FF-806D-4CF6A930AAA9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "windows-pillow-jit", "experiments\windows-pillow-jit\windows-pillow-jit.vcxproj", "{C78E4151-6826-406D-89F5-6C25EDDEA598}"
 EndProject
@@ -207,8 +207,8 @@ Global
 		SolutionGuid = {96A31AB2-D4ED-4A57-8310-1C0E08B8C02A}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		wdOS.Runtime\wdOS.Runtime.projitems*{4c97ac66-dc03-45ff-806d-4cf6a930aaa9}*SharedItemsImports = 13
-		wdOS.Runtime\wdOS.Runtime.projitems*{6c520ddc-166f-4920-b210-80a482e5692f}*SharedItemsImports = 5
-		wdOS.Runtime\wdOS.Runtime.projitems*{8daef3f5-f02b-4aca-8e5b-e57a28326a4b}*SharedItemsImports = 5
+		platform\wdOS.Runtime\wdOS.Runtime.projitems*{4c97ac66-dc03-45ff-806d-4cf6a930aaa9}*SharedItemsImports = 13
+		platform\wdOS.Runtime\wdOS.Runtime.projitems*{6c520ddc-166f-4920-b210-80a482e5692f}*SharedItemsImports = 5
+		platform\wdOS.Runtime\wdOS.Runtime.projitems*{8daef3f5-f02b-4aca-8e5b-e57a28326a4b}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

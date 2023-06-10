@@ -29,6 +29,6 @@
     <Exec Command=":: antlr4 ./WeirdoGrammar.g4 -Dlanguage=CSharp -o ./" />
   </Target>
 
-  <Import Project="..\..\wdOS.Runtime\wdOS.Runtime.projitems" Label="Shared" />
+  <Import Project="..\..\platform\wdOS.Runtime\wdOS.Runtime.projitems" Label="Shared" />
 
 </Project>
