@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using wdOS.Pillow;
+using wdOS.Platform;
 
 namespace wdOS.Weirdo
 {
@@ -35,7 +36,7 @@ namespace wdOS.Weirdo
                 {
                     Console.WriteLine("starting program...");
 
-                    RuntimeEngine.SetupPillowEnvironment();
+                    RuntimeManager.Initialize();
 
                     var res = output.Execute("");
                     if (res.IsExceptionUnwinding)

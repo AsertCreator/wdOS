@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using wdOS.Pillow;
 
 namespace wdOS.Platform
 {
@@ -70,6 +71,49 @@ namespace wdOS.Platform
             BuildConstants.VersionMinor + "." +
             BuildConstants.VersionPatch;
         public static int AllocPID() => nextpid++;
+        public static int Execute(string path, string cmd)
+        {
+            Process process = new();
+            int result = int.MinValue;
+
+            process.IsRunning = true;
+            process.PID = AllocPID();
+
+            PlatformManager.AllProcesses.Add(process);
+
+            try
+            {
+                if (!FileSystemManager.FileExists(path)) return result;
+
+                byte[] bytes = FileSystemManager.ReadBytesFile(path);
+                EEExecutable executable = ExecutionEngine.Load(bytes);
+
+                var funcres = executable.Execute(cmd);
+
+                if (funcres.IsExceptionUnwinding)
+                {
+                    OnProcessCrash(funcres);
+                    return result;
+                }
+
+                if (funcres.ReturnedValue.ObjectType == ExecutionEngine.ObjectTypeInteger)
+                    result = (int)funcres.ReturnedValue.ObjectValue;
+                else
+                    result = 0;
+
+                process.IsRunning = false;
+            }
+            catch
+            {
+                process.IsRunning = false;
+                OnProcessCrash(null);
+            }
+            return result;
+        }
+        public static void OnProcessCrash(EEFunctionResult res)
+        {
+            // todo: process crash handler
+        }
         public static unsafe void Initialize()
         {
             if (!initialized)

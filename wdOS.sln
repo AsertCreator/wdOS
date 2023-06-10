@@ -44,6 +44,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS", "platform\wdOS\wdOS.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Setup", "shell\wdOS.Setup\wdOS.Setup.csproj", "{728F0805-B006-4E97-8D9B-4123D85C3574}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "wdOS.Runtime", "wdOS.Runtime\wdOS.Runtime.shproj", "{4C97AC66-DC03-45FF-806D-4CF6A930AAA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -178,8 +180,14 @@ Global
 		{8DAEF3F5-F02B-4ACA-8E5B-E57A28326A4B} = {E6644132-73D8-44F8-BF87-A8BB7F2B351E}
 		{9A615655-5E01-444E-AD73-8B23F9EFDF21} = {E6644132-73D8-44F8-BF87-A8BB7F2B351E}
 		{728F0805-B006-4E97-8D9B-4123D85C3574} = {112B5D3B-F3BD-4D98-8491-324410A8EFF5}
+		{4C97AC66-DC03-45FF-806D-4CF6A930AAA9} = {E6644132-73D8-44F8-BF87-A8BB7F2B351E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {96A31AB2-D4ED-4A57-8310-1C0E08B8C02A}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		wdOS.Runtime\wdOS.Runtime.projitems*{4c97ac66-dc03-45ff-806d-4cf6a930aaa9}*SharedItemsImports = 13
+		wdOS.Runtime\wdOS.Runtime.projitems*{6c520ddc-166f-4920-b210-80a482e5692f}*SharedItemsImports = 5
+		wdOS.Runtime\wdOS.Runtime.projitems*{8daef3f5-f02b-4aca-8e5b-e57a28326a4b}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

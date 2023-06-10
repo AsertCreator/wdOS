@@ -1,6 +1,4 @@
-﻿using Cosmos.Core;
-using Cosmos.Core.Memory;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15,6 +13,7 @@ namespace wdOS.Platform
         public const int FileStdOut = -1;
         public const int FileStdErr = -2;
         public const int FileStdIn = -3;
+        public static List<IRuntimeComponent> AllComponents = new();
         public static bool initialized = false;
         public unsafe static void Initialize()
         {
@@ -136,56 +135,6 @@ namespace wdOS.Platform
             }
             return -1;
         }
-        public static int Execute(string path, string cmd)
-        {
-            Process process = new();
-            int result = int.MinValue;
-            process.IsRunning = true;
-            PlatformManager.AllProcesses.Add(process);
-
-            try
-            {
-                if (!FileSystemManager.FileExists(path)) return result;
-
-                byte[] bytes = FileSystemManager.ReadBytesFile(path);
-                EEExecutable executable = ExecutionEngine.Load(bytes);
-
-                var funcres = executable.Execute(cmd);
-
-                if (funcres.IsExceptionUnwinding)
-                {
-                    OnProcessCrash(funcres);
-                    return result;
-                }
-
-                if (funcres.ReturnedValue.ObjectType == ExecutionEngine.ObjectTypeInteger)
-                    result = (int)funcres.ReturnedValue.ObjectValue;
-                else
-                    result = 0;
-
-                process.IsRunning = false;
-            }
-            catch
-            {
-                process.IsRunning = false;
-                OnProcessCrash(null);
-            }
-            return result;
-        }
         public static int GetRuntimeVersion() => 10;
-        public static void OnProcessCrash(EEFunctionResult res)
-        {
-            // todo: process crash handling
-        }
-    }
-    public unsafe class Process
-    {
-        public int PID = PlatformManager.AllocPID();
-        public string BinaryPath;
-        public string ConsoleArguments;
-        public string CurrentDirectory;
-        public EEExecutable ExecutableFile;
-        public Process Executor;
-        public bool IsRunning = false;
     }
 }
