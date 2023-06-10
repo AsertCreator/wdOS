@@ -46,6 +46,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdOS.Setup", "shell\wdOS.Se
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "wdOS.Runtime", "wdOS.Runtime\wdOS.Runtime.shproj", "{4C97AC66-DC03-45FF-806D-4CF6A930AAA9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "windows-pillow-jit", "experiments\windows-pillow-jit\windows-pillow-jit.vcxproj", "{C78E4151-6826-406D-89F5-6C25EDDEA598}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +169,24 @@ Global
 		{728F0805-B006-4E97-8D9B-4123D85C3574}.Release|x64.Build.0 = Release|Any CPU
 		{728F0805-B006-4E97-8D9B-4123D85C3574}.Release|x86.ActiveCfg = Release|Any CPU
 		{728F0805-B006-4E97-8D9B-4123D85C3574}.Release|x86.Build.0 = Release|Any CPU
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Debug|Any CPU.Build.0 = Debug|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Debug|x64.ActiveCfg = Debug|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Debug|x64.Build.0 = Debug|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Debug|x86.ActiveCfg = Debug|Win32
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Debug|x86.Build.0 = Debug|Win32
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Production|Any CPU.ActiveCfg = Debug|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Production|Any CPU.Build.0 = Debug|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Production|x64.ActiveCfg = Debug|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Production|x64.Build.0 = Debug|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Production|x86.ActiveCfg = Debug|Win32
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Production|x86.Build.0 = Debug|Win32
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Release|Any CPU.ActiveCfg = Release|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Release|Any CPU.Build.0 = Release|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Release|x64.ActiveCfg = Release|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Release|x64.Build.0 = Release|x64
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Release|x86.ActiveCfg = Release|Win32
+		{C78E4151-6826-406D-89F5-6C25EDDEA598}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,6 +201,7 @@ Global
 		{9A615655-5E01-444E-AD73-8B23F9EFDF21} = {E6644132-73D8-44F8-BF87-A8BB7F2B351E}
 		{728F0805-B006-4E97-8D9B-4123D85C3574} = {112B5D3B-F3BD-4D98-8491-324410A8EFF5}
 		{4C97AC66-DC03-45FF-806D-4CF6A930AAA9} = {E6644132-73D8-44F8-BF87-A8BB7F2B351E}
+		{C78E4151-6826-406D-89F5-6C25EDDEA598} = {D791F30B-EE30-469B-919F-DCC8CB17BFD0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {96A31AB2-D4ED-4A57-8310-1C0E08B8C02A}
