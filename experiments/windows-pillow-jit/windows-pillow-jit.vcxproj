@@ -129,11 +129,6 @@
   <ItemGroup>
     <ClCompile Include="windows-pillow-jit.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\tools\wdos.weirdo\bin\debug\net7.0\out.plex">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
