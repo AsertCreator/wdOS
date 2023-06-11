@@ -423,11 +423,6 @@ namespace wdOS.Platform
                             ExecuteScriptFile(path);
                             return true;
                         }
-                        else if (path.EndsWith(".tse"))
-                        {
-                            ExecuteBinaryFile(path, Utilities.ConcatArray(args));
-                            return true;
-                        }
                         else return false;
                     }
                 }
@@ -451,11 +446,6 @@ namespace wdOS.Platform
             string[] lines = FileSystemManager.ReadStringFile(path).Split('\n');
             for (int i = 0; i < lines.Length; i++)
                 ExecuteCmd(lines[i]);
-        }
-        public static int ExecuteBinaryFile(string path, string args)
-        {
-            RuntimeManager.Execute(path, args);
-            return 0;
         }
         public static ConsoleCommand FindCommandByName(string name)
         {
