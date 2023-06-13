@@ -30,7 +30,7 @@ namespace wdOS.Platform
         }
         public static bool RenderButton(string text, int x, int y)
         {
-
+            return false;
         }
     }
 }
