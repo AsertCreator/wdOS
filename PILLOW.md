@@ -13,7 +13,7 @@ already can run programs. Weirdo Compiler is somewhat functional too.
 **Q**: How's that possible?<br/>
 **A**: It's simple. It doesn't JIT code to MSIL, but interprets it.
 
-**Q**: How Weirdo Compielr works?<br/>
+**Q**: How Weirdo Compiler works?<br/>
 **A**: It's built on ANTLR4.
 
 **Q**: What's system requirements?<br/>

@@ -220,17 +220,38 @@ namespace wdOS.Platform
         }
         public static void Relogin()
         {
-            retry:
-            Console.Write("login: ");
-            string username = Console.ReadLine();
-            Console.Write("password: ");
-            string password = Console.ReadLine();
-            if (UserManager.Login(username, password) != UserManager.UserLoginResultLoggedInto)
+            var list = UserManager.FindNonSystemUsers();
+
+			if (list.Length == 0)
             {
-                Console.WriteLine("invalid credentials\n");
-                goto retry;
+                Console.WriteLine("no users available");
+                Bootstrapper.WaitForShutdown(true, 5, false);
             }
-            Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
+            else if (list.Length == 1)
+			{
+                var target = list[0];
+                Console.WriteLine($"as {target.UserName} being only user in system, logging in as them...");
+
+				if (UserManager.Login(target.Username, "", true) != UserManager.UserLoginResultLoggedInto)
+				{
+					Console.WriteLine("user database is corrupted");
+					Bootstrapper.WaitForShutdown(true, 5, false);
+				}
+			}
+            else
+			{
+			    retry:
+				Console.Write("login: ");
+				string username = Console.ReadLine();
+				Console.Write("password: ");
+				string password = Console.ReadLine();
+				if (UserManager.Login(username, password) != UserManager.UserLoginResultLoggedInto)
+				{
+					Console.WriteLine("invalid credentials\n");
+					goto retry;
+				}
+				Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
+			}
         }
         public static void Shutdown(ShutdownType type, bool halt = false, uint panic = 0)
         {

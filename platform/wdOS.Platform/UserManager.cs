@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform
 {
-    public delegate void EnumerateUsersCallback(UserManager.User user);
-    public delegate bool FindUsersPredicate(UserManager.User user);
+    public delegate void EnumerateUsersCallback(User user);
+    public delegate bool FindUsersPredicate(User user);
     public static class UserManager
     {
         public static string[] ProfileSubfolders =
@@ -136,7 +136,7 @@ namespace wdOS.Platform
 
             if (!UpdateUserDatabase())
             {
-                BroadcastManager.SendBroadcast(EveryoneUser, "User Database",
+                BroadcastManager.SendBroadcast(UserManager.EveryoneUser, "User Database",
                     "User Manager notifies you, that it wasn't able to save User Database, " +
                     "please save your work for PC maintainer to repair it");
             }
@@ -171,102 +171,111 @@ namespace wdOS.Platform
             return true;
         }
         public static string GetUserProfile(User user) => "0:\\PrivateUsers\\" + user.Username + '\\';
-        public class RootUser : User
-        {
-            public RootUser() : base("root", "root", "", 0)
-            {
-                IsDisabled = false;
-                privs.IsRoot = true;
-                IsReplicatedOverNetwork = false;
-            }
-            public RootUser(string username) : base(username, "root", "", 0)
-            {
-                IsDisabled = false;
-                privs.IsRoot = true;
-                IsReplicatedOverNetwork = false;
-            }
-        }
-        public class User
-        {
-            internal string Username;
-            internal string UserGroup;
-            internal string UserKey;
-            internal int UserLockType;
-            internal bool IsHidden;
-            internal bool IsDisabled;
-            internal bool IsLocal = true;
-            public string UserName => Username;
-            public bool IsRoot => privs.IsRoot | privs.IsSystem;
-            public bool IsSystem => privs.IsSystem;
-            public bool IsRegularRoot => !privs.IsSystem && privs.IsRoot;
-            public bool IsAbleToManageHardware => privs.IsAbleToManageHardware || IsRoot;
-            public bool IsAbleToManageServices => privs.IsAbleToManageServices || IsRoot;
-            public bool IsAbleToUseProtectedFS => privs.IsAbleToUseProtectedFS || IsRoot;
-            public bool IsAbleToManageUsers => privs.IsAbleToManageUsers || IsRoot;
-            public bool IsAbleToShutdown => privs.IsAbleToShutdown || IsRoot;
-            public bool IsReplicated => IsReplicatedOverNetwork;
-            protected bool IsReplicatedOverNetwork = false;
-            protected UserPrivileges privs;
-            public User(string userName, string userGroup, string userKey, int userLockType)
-            {
-                Username = userName.Replace("/", "_").Replace("\\", "_").Replace(";", "_").Replace(" ", "_");
-                UserGroup = userGroup;
-                UserKey = userKey;
-                UserLockType = userLockType;
-                IsHidden = false;
-                IsDisabled = true;
-                privs = new();
-            }
-            public void SetUserGroup(string group)
-            {
-                if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
-                UserGroup = group;
-            }
-            public void SetUserLock(int locktype, string key)
-            {
-                if (CurrentUser != this || !CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
-                UserLockType = locktype;
-                UserKey = key;
-            }
-            public void SetHiddenState(bool state)
-            {
-                if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
-                IsHidden = state;
-            }
-            public void SetDisabledState(bool state)
-            {
-                if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
-                IsDisabled = state;
-            }
-            public void SetReplicatableState(bool state)
-            {
-                if (!CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
-                IsReplicatedOverNetwork = state;
-            }
-            public void MakeRoot()
-            {
-                if (!CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
-                privs.IsRoot = true;
-            }
-            public bool MakeRegular()
-            {
-                if (!CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
-                if (FindRegularRootUsers().Length == 1) return false;
-                privs.IsRoot = false;
+	}
+	public class RootUser : User
+	{
+		public RootUser() : base("root", "root", "", 0)
+		{
+			IsDisabled = false;
+			privs.IsRoot = true;
+			IsReplicatedOverNetwork = false;
+		}
+		public RootUser(string username) : base(username, "root", "", 0)
+		{
+			IsDisabled = false;
+			privs.IsRoot = true;
+			IsReplicatedOverNetwork = false;
+		}
+	}
+	public class EveryoneUser : User
+	{
+		public EveryoneUser() : base("everyone", "world", "", 0)
+		{
+			IsDisabled = false;
+			privs.IsSystem = true;
+			IsReplicatedOverNetwork = false;
+		}
+	}
+	public class User
+	{
+		internal string Username;
+		internal string UserGroup;
+		internal string UserKey;
+		internal int UserLockType;
+		internal bool IsHidden;
+		internal bool IsDisabled;
+		internal bool IsLocal = true;
+		public string UserName => Username;
+		public bool IsRoot => privs.IsRoot | privs.IsSystem;
+		public bool IsSystem => privs.IsSystem;
+		public bool IsRegularRoot => !privs.IsSystem && privs.IsRoot;
+		public bool IsAbleToManageHardware => privs.IsAbleToManageHardware || IsRoot;
+		public bool IsAbleToManageServices => privs.IsAbleToManageServices || IsRoot;
+		public bool IsAbleToUseProtectedFS => privs.IsAbleToUseProtectedFS || IsRoot;
+		public bool IsAbleToManageUsers => privs.IsAbleToManageUsers || IsRoot;
+		public bool IsAbleToShutdown => privs.IsAbleToShutdown || IsRoot;
+		public bool IsReplicated => IsReplicatedOverNetwork;
+		protected bool IsReplicatedOverNetwork = false;
+		protected UserPrivileges privs;
+		public User(string userName, string userGroup, string userKey, int userLockType)
+		{
+			Username = userName.Replace("/", "_").Replace("\\", "_").Replace(";", "_").Replace(" ", "_");
+			UserGroup = userGroup;
+			UserKey = userKey;
+			UserLockType = userLockType;
+			IsHidden = false;
+			IsDisabled = true;
+			privs = new();
+		}
+		public void SetUserGroup(string group)
+		{
+			if (!UserManager.CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+			UserGroup = group;
+		}
+		public void SetUserLock(int locktype, string key)
+		{
+			if (UserManager.CurrentUser != this || !UserManager.CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+			UserLockType = locktype;
+			UserKey = key;
+		}
+		public void SetHiddenState(bool state)
+		{
+			if (!UserManager.CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+			IsHidden = state;
+		}
+		public void SetDisabledState(bool state)
+		{
+			if (!UserManager.CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+			IsDisabled = state;
+		}
+		public void SetReplicatableState(bool state)
+		{
+			if (!UserManager.CurrentUser.IsAbleToManageUsers) throw new InsufficientPrivilegesException();
+			IsReplicatedOverNetwork = state;
+		}
+		public void MakeRoot()
+		{
+			if (!UserManager.CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
+			privs.IsRoot = true;
+		}
+		public bool MakeRegular()
+		{
+			if (!UserManager.CurrentUser.IsRoot) throw new InsufficientPrivilegesException();
+			if (UserManager.FindRegularRootUsers().Length == 1) return false;
+			privs.IsRoot = false;
 
-                return true;
-            }
-        }
-        public sealed class UserPrivileges
-        {
-            public bool IsRoot;
-            public bool IsSystem;
-            public bool IsAbleToManageHardware;
-            public bool IsAbleToManageServices;
-            public bool IsAbleToUseProtectedFS;
-            public bool IsAbleToManageUsers;
-            public bool IsAbleToShutdown;
-        }
-    }
-    public sealed class InsufficientPrivilegesException : Exception { }
+			return true;
+		}
+	}
+	public sealed class UserPrivileges
+	{
+		public bool IsRoot;
+		public bool IsSystem;
+		public bool IsAbleToManageHardware;
+		public bool IsAbleToManageServices;
+		public bool IsAbleToUseProtectedFS;
+		public bool IsAbleToManageUsers;
+		public bool IsAbleToShutdown;
+	}
+	public sealed class InsufficientPrivilegesException : Exception { }
 }

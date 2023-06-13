@@ -23,7 +23,7 @@ namespace wdOS.Platform
                 initialized = true;
             }
         }
-        public static void SendBroadcast(UserManager.User to, string subject, string message)
+        public static void SendBroadcast(User to, string subject, string message)
         {
             allBroadcasts.Add(new()
             {
@@ -90,8 +90,8 @@ namespace wdOS.Platform
         public string Subject;
         public string Message;
         public DateTime SendTime;
-        public UserManager.User Sender;
-        public UserManager.User Sendee;
+        public User Sender;
+        public User Sendee;
         public Broadcast(byte[] bytes)
         {
             BinaryReader br = new(new MemoryStream(bytes));

@@ -17,7 +17,12 @@ namespace wdOS.Platform
         public unsafe static int RunDebugShell()
         {
             try
-            {
+			{
+				WindowManager.Initialize();
+				WindowManager.Start();
+
+				return 0;
+                // temporaily f u, debugshell
                 AllCommands = new()
                 {
                     new()
@@ -157,16 +162,7 @@ namespace wdOS.Platform
                             if (args.Length != 0) { Console.WriteLine("test-graphics: too much arguments"); return 1; }
 
                             WindowManager.Initialize();
-                            Cosmos.System.MouseManager.ScreenWidth = WindowManager.Width;
-                            Cosmos.System.MouseManager.ScreenHeight = WindowManager.Height;
-                            bool running = true;
-
-                            while (running)
-                            {
-                                WindowManager.RenderFrame();
-                            }
-
-                            Power.ACPIShutdown();
+                            WindowManager.Start();
 
                             return 0;
                         }
@@ -178,7 +174,7 @@ namespace wdOS.Platform
                         Execute = args =>
                         {
                             if (args.Length != 1) { Console.WriteLine("user-create: too much or too few arguments"); return 1; }
-                            UserManager.User user = new(args[0], "users", "", 0);
+                            User user = new(args[0], "users", "", 0);
                             if (!UserManager.CreateUser(user))
                             {
                                 Console.WriteLine("failed to create user");
@@ -196,7 +192,7 @@ namespace wdOS.Platform
                         {
                             if (args.Length != 2) { Console.WriteLine("user-setpass: too much or too few arguments"); return 1; }
 
-                            UserManager.User user = UserManager.FindByName(args[0]);
+                            User user = UserManager.FindByName(args[0]);
                             if (user == null) { Console.WriteLine("user-setpass: no such user"); return 1; }
 
                             user.SetUserLock(UserManager.UserLockTypePass, args[1]);
@@ -212,7 +208,7 @@ namespace wdOS.Platform
                         {
                             if (args.Length != 1) { Console.WriteLine("user-makeroot: too much arguments"); return 1; }
 
-                            UserManager.User user = UserManager.FindByName(args[0]);
+                            User user = UserManager.FindByName(args[0]);
                             if (user == null) { Console.WriteLine("user-makeroot: no such user"); return 1; }
 
                             if (!user.IsRoot)
@@ -237,7 +233,7 @@ namespace wdOS.Platform
                         {
                             if (args.Length != 1) { Console.WriteLine("user-makeregular: too much arguments"); return 1; }
 
-                            UserManager.User user = UserManager.FindByName(args[0]);
+                            User user = UserManager.FindByName(args[0]);
                             if (user == null) { Console.WriteLine("user-makeregular: no such user"); return 1; }
                             
                             if (user.IsRoot)
@@ -285,7 +281,7 @@ namespace wdOS.Platform
                         {
                             if (args.Length != 1) { Console.WriteLine("user-switch: too much or too few arguments"); return 1; }
 
-                            UserManager.User user = UserManager.FindByName(args[0]);
+                            User user = UserManager.FindByName(args[0]);
                             if (user == null) { Console.WriteLine("user-switch: no such user"); return 1; }
 
                             if (user.UserLockType == 1)
