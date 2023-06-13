@@ -208,15 +208,28 @@ namespace wdOS.Platform
         public static class BuildConstants
         {
             public const int VersionMajor = 0;
-            public const int VersionMinor = 10;
+            public const int VersionMinor = 11;
             public const int VersionPatch = 0;
-            public const int CurrentType = TypePreBeta;
+            public const int CurrentOSType = TypePreBeta;
             public const int TypePreAlpha = 0;
-            public const int TypeAlpha = 0;
-            public const int TypePreBeta = 1;
-            public const int TypeBeta = 2;
-            public const int TypePreRelease = 3;
-            public const int TypeRelease = 4;
+            public const int TypeAlpha = 100;
+            public const int TypePreBeta = 200;
+            public const int TypeBeta = 300;
+            public const int TypePreRelease = 400;
+            public const int TypeRelease = 500;
+            public static string GetDevStageName(int stage)
+            {
+                return stage switch
+                {
+					TypePreAlpha => "pre-alpha",
+					TypeAlpha => "alpha",
+                    TypePreBeta => "pre-beta",
+					TypeBeta => "beta",
+                    TypePreRelease => "pre-release",
+					TypeRelease => "release",
+					_ => "unknown"
+                };
+            }
         }
         public static void Relogin()
         {

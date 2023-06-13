@@ -6,6 +6,7 @@
         <Platform>cosmos</Platform>
         <SupportsX86Intrinsics>false</SupportsX86Intrinsics>
         <SelfContained>True</SelfContained>
+        <Configurations>Debug;Release;Production</Configurations>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -17,11 +18,13 @@
         <Profile>VMware</Profile>
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
-    </PropertyGroup>
+        <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<NoWarn>1701;1702;1416</NoWarn>
 		<Optimize>True</Optimize>
+		<DebugEnabled>True</DebugEnabled>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
@@ -32,6 +35,8 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<NoWarn>1701;1702;1416</NoWarn>
+		<Optimize>True</Optimize>
+		<DebugEnabled>False</DebugEnabled>
 	</PropertyGroup>
 
     <ItemGroup>
