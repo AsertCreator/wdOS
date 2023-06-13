@@ -1,4 +1,5 @@
 ﻿using Cosmos.Core;
+using Cosmos.HAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -155,40 +156,17 @@ namespace wdOS.Platform
                         {
                             if (args.Length != 0) { Console.WriteLine("test-graphics: too much arguments"); return 1; }
 
-                            GraphicsManager.Initialize();
-                            Cosmos.System.MouseManager.ScreenWidth = (uint)GraphicsManager.CurrentMode.Width;
-                            Cosmos.System.MouseManager.ScreenHeight = (uint)GraphicsManager.CurrentMode.Height;
+                            WindowManager.Initialize();
+                            Cosmos.System.MouseManager.ScreenWidth = WindowManager.Width;
+                            Cosmos.System.MouseManager.ScreenHeight = WindowManager.Height;
                             bool running = true;
 
                             while (running)
                             {
-                                var mouse = new Rect() 
-                                { 
-                                    Top = (int)Cosmos.System.MouseManager.Y,
-                                    Left = (int)Cosmos.System.MouseManager.X,
-                                    Right = (int)(GraphicsManager.CurrentMode.Width - Cosmos.System.MouseManager.X),
-                                    Bottom = (int)(GraphicsManager.CurrentMode.Height - Cosmos.System.MouseManager.Y),
-                                };
-                                GraphicsManager.FillRectangle(System.Drawing.Color.Beige, GraphicsManager.ScreenSpanRect);
-                                GraphicsManager.FillRectangle(System.Drawing.Color.Black, mouse);
-                                GCImplementation.Free(mouse);
-                                
-                                GraphicsManager.Swap();
-
-                                if (Cosmos.System.KeyboardManager.TryReadKey(out Cosmos.System.KeyEvent ev))
-                                {
-                                    switch (ev.Key)
-                                    {
-                                        case Cosmos.System.ConsoleKeyEx.Q:
-                                            if ((ev.Modifiers & ConsoleModifiers.Control) != 0 &&
-                                                (ev.Modifiers & ConsoleModifiers.Alt) != 0)
-                                                running = false;
-                                            break;
-                                    }
-                                }
+                                WindowManager.RenderFrame();
                             }
 
-                            GraphicsManager.Disable();
+                            Power.ACPIShutdown();
 
                             return 0;
                         }

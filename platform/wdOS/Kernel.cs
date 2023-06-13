@@ -8,8 +8,7 @@ using Sys = Cosmos.System;
 namespace wdOS
 {
     // simple bootstrapper
-    // if you want featureful and heck of a lot buggy OS, go to wdOS.Core
-    // if you want somewhat featureless and almost bug-free OS, go to wdOS.Platform
+    // for actual code, go to wdOS.Platform
     [SupportedOSPlatform("windows")]
     public class Kernel : Sys.Kernel
     {

@@ -12,8 +12,10 @@ namespace wdOS.Platform
     public static class ServiceManager
     {
         public static List<Service> Services = new();
+        public static List<Action> EachSecondActions = new();
         public static PIT.PITTimer ServiceTimer;
         private static bool initialized = false;
+        private static uint osscilations = 0;
         private static uint nextsid = 0;
         public static void Initialize()
         {
@@ -36,13 +38,22 @@ namespace wdOS.Platform
                 500000000, true);
                 Cosmos.HAL.Global.PIT.RegisterTimer(ServiceTimer);
 
-                CreateManagedService("PeriodicGC", "Service, that periodically collects memory garbage", () =>
+                CreateManagedService("PeriodicGC", "Service, that periodically collects memory garbage. This is a critical service.", () =>
                 {
                     Heap.Collect();
                     return true;
                 });
 
-                initialized = true;
+				CreateManagedService("EachSecond", "Service, that calls certain methods within kernel each second. This is a critical service.", () =>
+				{
+                    osscilations++;
+                    if (osscilations % 2 == 0) 
+                        for (int i = 0; i < EachSecondActions.Count; i++) 
+                            EachSecondActions[i]();
+					return true;
+				});
+
+				initialized = true;
             }
         }
         public static uint AllocSID() => nextsid++;
