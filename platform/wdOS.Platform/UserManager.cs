@@ -97,7 +97,8 @@ namespace wdOS.Platform
         public static User[] FindPasswordUsers() => FindUsersByPredicate(x => x.UserLockType == UserLockTypePass);
         public static User[] FindNonPasswordUsers() => FindUsersByPredicate(x => x.UserLockType == UserLockTypeNone);
         public static User[] FindSystemUsers() => FindUsersByPredicate(x => x.IsSystem);
-        public static User[] FindRegularRootUsers() => FindUsersByPredicate(x => x.IsRegularRoot);
+		public static User[] FindNonSystemUsers() => FindUsersByPredicate(x => !x.IsSystem);
+		public static User[] FindRegularRootUsers() => FindUsersByPredicate(x => x.IsRegularRoot);
         public static User[] FindUsersByPredicate(FindUsersPredicate predicate)
         {
             List<User> users = new List<User>();
