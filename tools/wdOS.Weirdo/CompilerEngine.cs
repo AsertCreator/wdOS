@@ -334,7 +334,9 @@ namespace wdOS.Weirdo
             }
             public override void EnterString_literal([NotNull] WeirdoGrammarParser.String_literalContext context)
             {
-                StringLiterals.Add(context.GetText()[1..^1]);
+                string str = context.GetText()[1..^1];
+                if (!StringLiterals.Contains(str))
+                    StringLiterals.Add(str);
             }
             public override void EnterGlobal_directive([NotNull] WeirdoGrammarParser.Global_directiveContext context)
             {

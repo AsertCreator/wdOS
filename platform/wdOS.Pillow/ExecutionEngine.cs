@@ -35,36 +35,42 @@ namespace wdOS.Pillow
                 for (int i = 0; i < RunningThreads.Count; i++)
                 {
                     var thread = RunningThreads[i];
-                    var ctx = thread.Contexts.Peek();
-                    thread.Step(ref ctx, thread.DumpStack);
-                    if (!ctx.IsRunning)
+                    if (thread.Contexts.Count != 0)
                     {
-                        if (thread.Contexts.Count == 1)
+                        var ctx = thread.Contexts.Peek();
+                        thread.Step(ref ctx, thread.DumpStack);
+                        if (!ctx.IsRunning)
                         {
-                            if (!ctx.FunctionResult.IsExceptionUnwinding)
+                            if (thread.Contexts.Count == 1)
                             {
-                                thread.Result = thread.Contexts.Peek().FunctionResult;
-                                ended.Add(thread);
+                                if (!ctx.FunctionResult.IsExceptionUnwinding)
+                                {
+                                    thread.Result = thread.Contexts.Peek().FunctionResult;
+                                    ended.Add(thread);
+                                }
+                                else
+                                {
+                                    // todo: exception handling in scheduler
+                                }
                             }
                             else
                             {
-                                // todo: exception handling in scheduler
+                                if (!ctx.FunctionResult.IsExceptionUnwinding)
+                                {
+                                    thread.Contexts.Pop(); // discard current context, it has ended
+                                    ctx = thread.Contexts.Pop();
+                                    ctx.FunctionStack.Push(ctx.FunctionResult.ReturnedValue);
+                                }
+                                else
+                                {
+                                    // todo: exception handling in scheduler
+                                }
                             }
                         }
-                        else
-                        {
-                            if (!ctx.FunctionResult.IsExceptionUnwinding)
-                            {
-                                var obj = ctx.FunctionStack.Pop();
-                                thread.Contexts.Pop(); // discard current context, it has ended
-                                ctx = thread.Contexts.Pop();
-                                ctx.FunctionStack.Push(obj);
-                            }
-                            else
-                            {
-                                // todo: exception handling in scheduler
-                            }
-                        }
+                    }
+                    else
+                    {
+                        ended.Add(thread);
                     }
                 }
                 for (int i = 0; i < ended.Count; i++)

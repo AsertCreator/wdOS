@@ -1,5 +1,11 @@
+function getHello(){
+	return "hello ";
+}
+function getWorld(){
+	return "world"
+}
 function main(){
-	local x = "hello ";
-	local y = "world";
+	local x = call(getHello);
+	local y = call(getWorld);
 	return x + y + "!";
 }

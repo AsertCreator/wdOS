@@ -53,10 +53,20 @@ above.
 
 
 **Q**: Can I make apps or drivers for this OS?<br/>
-**A**: Somewhat. wdOS is now has somewhat working Pillow Runtime, so you can embed and run
+**A**: Somewhat. wdOS now has somewhat working Pillow Runtime, so you can embed and run
 primitive apps. Finally it works!
 
 
 **Q**: Can I install system to drive?<br/>
 **A**: Nope. Kernel itself currently is not installable, beacuse Cosmos's implementation 
 of CDFS is broken and systems based on it aren't able to read CDROM.
+
+### Credits
+
+Cosmos Project - Cosmos Contributors (2005-2023)<br/>
+ANTLR4 Runtime Libraries - © Copyright ANTLR (1992-2023)<br/>
+PrismOS API Library - © Copyleft Terminal.cs and contributors (2021-2023)
+
+> Personal names are hidden for privacy reasons
+
+<b>© Copyright AsertCreator 2023</b>

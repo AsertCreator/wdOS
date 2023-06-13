@@ -27,8 +27,7 @@ namespace wdOS.Weirdo
             {
                 byte[] bytes = ExecutionEngine.Save(output);
                 File.WriteAllBytes(OutputFilePath ??
-                    throw new NullReferenceException("s" +
-                    "omehow output file path became null"), bytes);
+                    throw new NullReferenceException("somehow output file path became null"), bytes);
                 
                 Console.WriteLine($"written {bytes.Length} bytes");
 
