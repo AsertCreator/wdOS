@@ -4,7 +4,7 @@ using PrismAPI.Hardware.GPU;
 using System;
 using System.Collections.Generic;
 using wdOS.Platform.UI;
-using static wdOS.Platform.PlatformManager.BuildConstants;
+using static wdOS.Platform.BuildConstants;
 
 namespace wdOS.Platform
 {

@@ -20,11 +20,11 @@ namespace wdOS.Platform.UI
 			{
 				Texts = new string[2];
 				Texts[0] = "wdOS Platform, version: " +
-					PlatformManager.BuildConstants.VersionMajor + "." +
-					PlatformManager.BuildConstants.VersionMinor + "." +
-					PlatformManager.BuildConstants.VersionPatch + ", stage: " +
-					PlatformManager.BuildConstants.GetDevStageName(
-						PlatformManager.BuildConstants.CurrentOSType);
+					BuildConstants.VersionMajor + "." +
+					BuildConstants.VersionMinor + "." +
+					BuildConstants.VersionPatch + ", stage: " +
+					BuildConstants.GetDevStageName(
+						BuildConstants.CurrentOSType);
 				Texts[1] = "Built on Cosmos Project. Uses PrismAPI.";
 				initialized = true;
 			}

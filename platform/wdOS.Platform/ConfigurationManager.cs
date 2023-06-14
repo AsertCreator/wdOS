@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.System.Graphics.Fonts;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -143,5 +144,52 @@ namespace wdOS.Platform
             2 => ContentBytes,
             _ => null,
         };
-    }
+	}
+	public static class SystemSettings
+	{
+		public static int CrashPowerOffTimeout = 5;
+		public static int SystemTerminalFont = 0;
+		public static int ServicePeriod = 1000;
+		public static bool EnableAudio = false;
+		public static bool EnableLogging = true;
+		public static bool EnableNetwork = false;
+		public static bool EnableVerbose = false;
+		public static bool EnableServices = false;
+		public static bool EnablePeriodicGC = true;
+		public static bool RamdiskAsRoot = false;
+		public static int RamdiskSizeKB = 0;
+		public static bool LoadUsersFromDisk = false;
+		public static bool VerboseMode = false;
+		public static bool LogIntoConsole = true;
+		public static Dictionary<int, PCScreenFont> TerminalFonts = new()
+		{
+			[0] = PCScreenFont.Default
+		};
+	}
+	public static class BuildConstants
+	{
+		public const int VersionMajor = 0;
+		public const int VersionMinor = 11;
+		public const int VersionPatch = 0;
+		public const int CurrentOSType = TypePreBeta;
+		public const int TypePreAlpha = 0;
+		public const int TypeAlpha = 100;
+		public const int TypePreBeta = 200;
+		public const int TypeBeta = 300;
+		public const int TypePreRelease = 400;
+		public const int TypeRelease = 500;
+		public static string GetDevStageName(int stage)
+		{
+			return stage switch
+			{
+				TypePreAlpha => "pre-alpha",
+				TypeAlpha => "alpha",
+				TypePreBeta => "pre-beta",
+				TypeBeta => "beta",
+				TypePreRelease => "pre-release",
+				TypeRelease => "release",
+				_ => "unknown"
+			};
+		}
+	}
 }

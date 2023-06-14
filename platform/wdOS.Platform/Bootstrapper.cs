@@ -1,17 +1,13 @@
-﻿using Cosmos.Core.Memory;
-using Cosmos.Core;
-using Cosmos.HAL;
-using Cosmos.System.Graphics;
-using System;
+﻿using System;
 using System.Linq;
-using Sys = Cosmos.System;
-using Cosmos.Debug.Kernel;
-using static wdOS.Platform.PlatformManager;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Collections.Generic;
+using Cosmos.HAL;
+using Cosmos.Core;
+using Cosmos.System.Graphics;
 using Cosmos.Core.Multiboot;
+using Cosmos.Debug.Kernel;
+using static wdOS.Platform.PlatformManager;
 
 namespace wdOS.Platform
 {
@@ -48,14 +44,15 @@ namespace wdOS.Platform
             }
             catch (Exception e)
             {
-                PlatformManager.HandleNETException(e);
+                Console.WriteLine("critical error");
+                WaitForShutdown(true, 5, false);
             }
         }
         public static void LateInitialization()
         {
             try
             {
-                PlatformManager.LogIntoConsole = false;
+                SystemSettings.LogIntoConsole = false;
 
                 PlatformManager.SessionAge = 1;
                 Cosmos.HAL.Global.EnableInterrupts();
@@ -71,12 +68,12 @@ namespace wdOS.Platform
                     Console.WriteLine("bootloader  : " + BootloaderName);
                 }
 
-                PlatformManager.Relogin();
+                PlatformManager.AskForLogin();
             }
             catch (Exception e)
             {
-                Log("late initialization crash! message: " + e.Message, "bootstrap", LogLevel.Fatal);
-                PlatformManager.Panic(5);
+                Log("late initialization failure! message: " + e.Message, "bootstrap", LogLevel.Fatal);
+                PlatformManager.Panic("late initialization failure");
             }
         }
         [SupportedOSPlatform("windows")]
@@ -88,20 +85,20 @@ namespace wdOS.Platform
                 Console.SetWindowSize(90, 30);
                 VGAScreen.SetFont(font.CreateVGAFont(), font.Height);
 
-                Log("wdOS Platform is booting, running on " + CPU.GetCPUBrandString(), "bootstrap");
+				SessionAge = 0;
+
+				if (!SystemSettings.EnableLogging)
+				{
+					Console.WriteLine("logging is disabled!");
+					KernelDebugger.Send("logging is disabled!");
+				}
+
+				Log("wdOS Platform is booting, running on " + CPU.GetCPUBrandString(), "bootstrap");
                 Log("current kernel version: " + GetPlatformVersion(), "bootstrap");
                 Log("current memory amount: " + GetTotalRAM(), "bootstrap");
 
-                SessionAge = 0;
-
                 CheckMultibootTags();
                 ParseCommandLineArgs();
-
-                if (!SystemSettings.EnableLogging)
-                {
-                    Console.WriteLine("logging is disabled!");
-                    KernelDebugger.Send("logging is disabled!");
-                }
 
                 try
                 {
@@ -128,10 +125,7 @@ namespace wdOS.Platform
                 }
                 catch { }
 
-                if (FileSystemManager.VFS.GetDisks().Count == 0) PlatformManager.Panic(2);
-
-                PlatformManager.AttachedKeyboards = Cosmos.HAL.Global.GetKeyboardDevices().ToList();
-                PlatformManager.AttachedMice = Cosmos.HAL.Global.GetMouseDevices().ToList();
+                if (FileSystemManager.VFS.GetDisks().Count == 0) PlatformManager.Panic("no disks attached");
 
                 Log("initialized os!", "bootstrap");
             }
@@ -139,9 +133,9 @@ namespace wdOS.Platform
             {
                 string msg = "unable to perform initialization! type: " + exc.GetType().Name + ", message: " + exc.Message;
                 Log(msg, "bootstrap", LogLevel.Fatal);
-                Console.WriteLine(msg);
-                PlatformManager.Shutdown(ShutdownType.Panic, panic: 5);
-            }
+                Console.WriteLine(msg); 
+                PlatformManager.Panic("initialization failed");
+			}
         }
         public static void ParseCommandLineArgs()
         {
@@ -154,13 +148,13 @@ namespace wdOS.Platform
                         switch (CommandLineArgs[i])
                         {
                             case "-v" or "--verbose":
-                                VerboseMode = true;
+                                SystemSettings.VerboseMode = true;
                                 break;
                             case "-no-acpi":
                                 HardwareManager.ForceDisableACPI = true;
                                 break;
                             case "-no-logging":
-                                PlatformManager.SystemSettings.EnableLogging = false;
+                                SystemSettings.EnableLogging = false;
                                 break;
                             case "-shell":
                                 string type = CommandLineArgs[++i];
@@ -220,7 +214,7 @@ namespace wdOS.Platform
             {
                 Console.WriteLine((restart ? "restarting" : "shutting down") + " in " + timeout);
                 Utilities.WaitFor((uint)(timeout * 1000));
-                PlatformManager.Shutdown(ShutdownType.SoftShutdown, restart);
+                PlatformManager.ShutdownSystem(ShutdownType.SoftShutdown, restart);
             }
             else
             {

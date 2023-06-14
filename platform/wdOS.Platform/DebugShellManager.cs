@@ -116,7 +116,7 @@ namespace wdOS.Platform
                         Execute = args =>
                         {
                             if (args.Length != 0) { Console.WriteLine("logcat: too much arguments"); return 1; }
-                            Console.WriteLine(PlatformManager.GetSystemLog());
+                            Console.WriteLine(PlatformManager.SystemLog);
                             return 0;
                         }
                     },

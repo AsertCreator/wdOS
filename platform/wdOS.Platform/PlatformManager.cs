@@ -16,62 +16,41 @@ namespace wdOS.Platform
     public static partial class PlatformManager
     {
         public static Process KernelProcess;
-        public static Process CurrentProcess;
         public static List<Process> AllProcesses;
-        public static List<KeyboardBase> AttachedKeyboards;
-        public static List<MouseBase> AttachedMice;
         public static List<KernelModule> LoadedModules = new();
         public static StringBuilder SystemLog = new();
-        public static bool LoadUsersFromDisk = false;
-        public static bool VerboseMode = false;
-        public static bool LogIntoConsole = true;
         public static int SessionAge = 0;
-        public static int FailureDepth = 0;
-        public static Dictionary<uint, string> ErrorTexts = new()
-        {
-            [0] = "MANUALLY_INITIATED_CRASH",
-            [1] = "INVALID_CPU_OPCODE",
-            [2] = "NO_BLOCK_DEVICES",
-            [3] = "NO_INPUT_DEVICES",
-            [4] = "GENERAL_PROTECTION_FAULT",
-            [5] = "SYSTEM_EXCEPTION",
-            [6] = "SYSTEM_SHUTDOWN",
-            [7] = "INVALID_CPUID"
-        };
         private static int nextpid = 0;
         private static bool initialized = false;
-        public static void Log(string message, string component, LogLevel level = LogLevel.Info)
+		public static int GetCPUBitWidth()
+		{
+			int ecx = 0, edx = 0, unused = 0;
+			CPU.ReadCPUID(1, ref unused, ref unused, ref ecx, ref edx);
+			return (edx & 1 << 30) != 0 ? 64 : 32;
+		}
+		public static string GetPlatformVersion() =>
+			BuildConstants.VersionMajor + "." +
+			BuildConstants.VersionMinor + "." +
+			BuildConstants.VersionPatch;
+		public static int AllocPID() => nextpid++;
+		public static void Log(string message, string component, LogLevel level = LogLevel.Info)
         {
             if (SystemSettings.EnableLogging)
             {
-                string data = "[" + component + "][" + GetLogLevelAsString(level) +
-                    "][" + GetTimeAsString() + "] " + message;
+                string data = "[" + component + "][" + level switch
+				{
+					LogLevel.Info => "info ",
+					LogLevel.Warning => "warn ",
+					LogLevel.Error => "error",
+					LogLevel.Fatal => "fatal",
+					_ => "unknw",
+				} + "][" + GetTimeAsString() + "] " + message;
                 Bootstrapper.KernelDebugger.Send(data);
                 SystemLog.Append(data + '\n');
-                if (LogIntoConsole || VerboseMode) Console.WriteLine(data);
+                if (SystemSettings.LogIntoConsole || SystemSettings.VerboseMode) Console.WriteLine(data);
             }
         }
-        public static StringBuilder GetSystemLog() => SystemLog;
-        public static string GetLogLevelAsString(LogLevel level) => level switch
-        {
-            LogLevel.Info => "info ",
-            LogLevel.Warning => "warn ",
-            LogLevel.Error => "error",
-            LogLevel.Fatal => "fatal",
-            _ => "unknw",
-        };
-        public static int GetCPUBitWidth()
-        {
-            int ecx = 0, edx = 0, unused = 0;
-            CPU.ReadCPUID(1, ref unused, ref unused, ref ecx, ref edx);
-            return (edx & 1 << 30) != 0 ? 64 : 32;
-        }
-        public static string GetPlatformVersion() =>
-            BuildConstants.VersionMajor + "." +
-            BuildConstants.VersionMinor + "." +
-            BuildConstants.VersionPatch;
-        public static int AllocPID() => nextpid++;
-        public static int Execute(string path, string cmd)
+		public static int Execute(string path, string cmd)
         {
             Process process = new();
             int result = int.MinValue;
@@ -92,7 +71,7 @@ namespace wdOS.Platform
 
                 if (funcres.IsExceptionUnwinding)
                 {
-                    OnProcessCrash(funcres);
+                    // todo: process crash handling
                     return result;
                 }
 
@@ -106,13 +85,9 @@ namespace wdOS.Platform
             catch
             {
                 process.IsRunning = false;
-                OnProcessCrash(null);
-            }
-            return result;
-        }
-        public static void OnProcessCrash(EEFunctionResult res)
-        {
-            // todo: process crash handler
+				// todo: process crash handling
+			}
+			return result;
         }
         public static unsafe void Initialize()
         {
@@ -129,36 +104,10 @@ namespace wdOS.Platform
                     IsRunning = true
                 };
                 KernelProcess.Executor = KernelProcess;
-                CurrentProcess = KernelProcess;
 
                 PlatformManager.Log("set up basic platform!", "platformmanager");
                 initialized = true;
             }
-        }
-        public static void HandleNETException(Exception exc)
-        {
-            string text = "unhandled platform exception, type: " + exc.GetType().Name + ", msg: " + exc.Message;
-            Console.WriteLine(text);
-            Panic(text);
-        }
-        public static void Panic(uint message)
-        {
-            PlatformManager.SessionAge = 3;
-
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.BackgroundColor = ConsoleColor.Black;
-
-            string text0 = "!!! panic !!! " + ErrorTexts[message];
-            string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
-
-            PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
-            PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
-
-            Console.WriteLine(text0);
-            Console.WriteLine(text1);
-
-            Bootstrapper.WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
-            while (true) { }
         }
         public static void Panic(string msg)
         {
@@ -176,7 +125,7 @@ namespace wdOS.Platform
             Console.WriteLine(text0);
             Console.WriteLine(text1);
 
-            Bootstrapper.WaitForShutdown(true, PlatformManager.SystemSettings.CrashPowerOffTimeout, true);
+            Bootstrapper.WaitForShutdown(true, SystemSettings.CrashPowerOffTimeout, true);
             while (true) { }
         }
         public static string GetTimeAsString() =>
@@ -186,52 +135,7 @@ namespace wdOS.Platform
         public static string GetDateAsString() =>
             (RTC.DayOfTheMonth < 10 ? "0" + RTC.DayOfTheMonth : RTC.DayOfTheMonth) + "." +
             (RTC.Month < 10 ? "0" + RTC.Month : RTC.Month) + "." + RTC.Year;
-        public static class SystemSettings
-        {
-            public static int CrashPowerOffTimeout = 5;
-            public static int SystemTerminalFont = 0;
-            public static int ServicePeriod = 1000;
-            public static Address CustomAddress = null;
-            public static Address RouterAddress = null;
-            public static bool EnableAudio = false;
-            public static bool EnableLogging = true;
-            public static bool EnableNetwork = false;
-            public static bool EnableVerbose = false;
-            public static bool EnableServices = false;
-            public static bool EnablePeriodicGC = true;
-            public static bool RamdiskAsRoot = false;
-            public static Dictionary<int, PCScreenFont> TerminalFonts = new()
-            {
-                [0] = PCScreenFont.Default
-            };
-        }
-        public static class BuildConstants
-        {
-            public const int VersionMajor = 0;
-            public const int VersionMinor = 11;
-            public const int VersionPatch = 0;
-            public const int CurrentOSType = TypePreBeta;
-            public const int TypePreAlpha = 0;
-            public const int TypeAlpha = 100;
-            public const int TypePreBeta = 200;
-            public const int TypeBeta = 300;
-            public const int TypePreRelease = 400;
-            public const int TypeRelease = 500;
-            public static string GetDevStageName(int stage)
-            {
-                return stage switch
-                {
-					TypePreAlpha => "pre-alpha",
-					TypeAlpha => "alpha",
-                    TypePreBeta => "pre-beta",
-					TypeBeta => "beta",
-                    TypePreRelease => "pre-release",
-					TypeRelease => "release",
-					_ => "unknown"
-                };
-            }
-        }
-        public static void Relogin()
+        public static void AskForLogin()
         {
             var list = UserManager.FindNonSystemUsers();
 
@@ -243,13 +147,29 @@ namespace wdOS.Platform
             else if (list.Length == 1)
 			{
                 var target = list[0];
-                Console.WriteLine($"as {target.UserName} being only user in system, logging in as them...");
+                Console.WriteLine($"{target.UserName} is only loggable user in system, logging in...");
 
-				if (UserManager.Login(target.Username, "", true) != UserManager.UserLoginResultLoggedInto)
+                if (target.UserLockType == 0)
 				{
-					Console.WriteLine("user database is corrupted");
-					Bootstrapper.WaitForShutdown(true, 5, false);
+					if (UserManager.Login(target.Username, "", true) != UserManager.UserLoginResultLoggedInto)
+					{
+						Console.WriteLine("user database is corrupted");
+						Bootstrapper.WaitForShutdown(true, 5, false);
+					}
 				}
+                else
+				{
+				retry:
+					Console.WriteLine("login: " + target.UserName);
+					Console.Write("password: ");
+					string password = Console.ReadLine();
+					if (UserManager.Login(target.UserName, password) != UserManager.UserLoginResultLoggedInto)
+					{
+						Console.WriteLine("invalid credentials\n");
+						goto retry;
+					}
+				}
+				Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
 			}
             else
 			{
@@ -266,7 +186,7 @@ namespace wdOS.Platform
 				Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
 			}
         }
-        public static void Shutdown(ShutdownType type, bool halt = false, uint panic = 0)
+        public static void ShutdownSystem(ShutdownType type, bool halt = false, string panic = null)
         {
             Console.WriteLine('\n'); // double new line
             SessionAge = 2;
@@ -322,15 +242,15 @@ namespace wdOS.Platform
                     Console.WriteLine("restart failed! cpu halted");
                     while (true) CPU.Halt();
                 case ShutdownType.Panic:
-                    Panic(panic);
+                    Panic(panic ?? "<null string>");
                     while (true) CPU.Halt();
                 case ShutdownType.Halt:
                     Console.WriteLine("cpu halted");
                     while (true) CPU.Halt();
             }
         }
-    }
-    public enum ShutdownType
+	}
+	public enum ShutdownType
     {
         SoftShutdown, SoftRestart, HardShutdown, HardRestart, Panic, Halt
     }

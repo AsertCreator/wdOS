@@ -18,7 +18,7 @@ namespace wdOS
 
             DebugShellManager.RunDebugShell();
 
-            PlatformManager.Shutdown(ShutdownType.SoftShutdown);
+            PlatformManager.ShutdownSystem(ShutdownType.SoftShutdown);
         }
         protected override void Run() { }
     }

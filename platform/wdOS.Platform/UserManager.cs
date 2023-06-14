@@ -31,11 +31,7 @@ namespace wdOS.Platform
                 LastLoginTime = DateTime.Now - new TimeSpan(10, 0, 0);
                 NoLoginMaxTime = new TimeSpan(0, 10, 0);
 
-                EveryoneUser = new("everyone", "users", "", 0)
-                {
-                    IsHidden = true,
-                    IsDisabled = true
-                };
+                EveryoneUser = new EveryoneUser();
 
                 AvailableUsers = new()
                 {
