@@ -1,9 +1,7 @@
-﻿using PrismAPI.Graphics;
+﻿using Cosmos.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace wdOS.Platform.UI
 {
@@ -11,16 +9,48 @@ namespace wdOS.Platform.UI
 	{
 		public int AppBarWidth;
 		public int AppBarHeight;
+		public Dictionary<string, Action> MenuActions = new();
 		private bool initialized = false;
+		private bool showmenu = false;
 		public void Render()
 		{
-            if (!initialized)
+			var desk = WindowManager.DesktopList[WindowManager.CurrentDesktopIndex];
+			var y = WindowManager.CanvasObject.Height - AppBarHeight + 5;
+
+			if (!initialized)
             {
 				AppBarHeight = 35;
 				AppBarWidth = WindowManager.CanvasObject.Width + 10;
+				MenuActions["Shutdown PC"] = () => PlatformManager.ShutdownSystem(ShutdownType.SoftShutdown);
+				MenuActions["Restart PC"] = () => PlatformManager.ShutdownSystem(ShutdownType.SoftRestart);
+				MenuActions["Open up Test Window"] = () => 
+					desk.Windows.Add(new()
+					{
+						Location = new() { X = 120, Y = 120 },
+						Size = new() { X = 300, Y = 300 },
+						Text = "Hello World!"
+					});
+				MenuActions["Close"] = () => showmenu = false;
 				initialized = true;
             }
-			CommonRenderer.RenderBox(-5, WindowManager.CanvasObject.Height - AppBarHeight + 5, AppBarWidth, AppBarHeight);
+
+			CommonRenderer.RenderBox(-5, y, AppBarWidth, AppBarHeight);
+			if (CommonRenderer.RenderButton("Menu", 5, y + 3, 50, 23, false, ConsoleKeyEx.LWin)) showmenu = !showmenu;
+			if (showmenu)
+			{
+				for (int i = 0; i < MenuActions.Count; i++)
+				{
+					var kvp = MenuActions.ElementAt(i);
+					if (CommonRenderer.RenderButton(kvp.Key, 0, y - 23 * (MenuActions.Count - i), 200, 23, false))
+						kvp.Value();
+				}
+			}
+
+			for (int i = 0; i < desk.Windows.Count; i++)
+			{
+				var wnd = desk.Windows[i];
+				CommonRenderer.RenderButton(wnd.Text, 55 + 155 * i, y + 3, 150, 23, false);
+			}
 		}
 	}
 }

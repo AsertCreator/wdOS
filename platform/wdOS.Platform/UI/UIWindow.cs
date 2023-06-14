@@ -14,7 +14,7 @@ namespace wdOS.Platform.UI
 		public string Text;
 		public Point Location;
 		public Point Size;
-		public Color BackgroundColor = WindowManager.GrayColor;
+		public Color BackgroundColor = Color.White;
 		public Process Process = PlatformManager.KernelProcess;
 		public ulong ZIndex = NextZIndex++;
 		public UIWindowStyle Style;
@@ -27,6 +27,13 @@ namespace wdOS.Platform.UI
 		public void Render()
 		{
 			CommonRenderer.RenderBox(Location.X, Location.Y, Size.X, Size.Y);
+			WindowManager.CanvasObject.DrawFilledRectangle(
+				Location.X + 3, 
+				Location.Y + 6 + WindowManager.SystemFont.Size, 
+				(ushort)(Size.X - 6), 
+				(ushort)(Size.Y - WindowManager.SystemFont.Size - 9),
+				0, 
+				BackgroundColor);
 			WindowManager.CanvasObject.DrawString(Location.X + 3, Location.Y + 3, Text, WindowManager.SystemFont, Color.Black, false);
 
 			for (int i = 0; i < Controls.Count; i++) Controls[i].Render();

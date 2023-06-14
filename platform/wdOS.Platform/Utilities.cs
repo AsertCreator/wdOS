@@ -65,4 +65,17 @@ namespace wdOS.Platform
         public static string ConnectArgs(string[] args, char sep) => string.Join(sep, args);
         public static bool HasFlag(int value, int match) => (value & match) != 0;
     }
+
+	public class CircularBuffer<T>
+	{
+		private int tail = 0;
+		private int head = 0;
+		private T[] buffer;
+		public CircularBuffer(int capacity) => buffer = new T[capacity];
+		public T Read() => buffer[Wrap(tail++)];
+        public T Peek() => buffer[Wrap(tail)];
+		public void Write(T value) => buffer[Wrap(head++)] = value;
+		public void Clear() => tail = head;
+		private int Wrap(int n) => n % buffer.Length;
+	}
 }

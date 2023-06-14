@@ -32,7 +32,7 @@ namespace wdOS.Platform.UI
 			{
 				string text = Texts[i];
 				ushort x = SystemFont.MeasureString(text);
-				CanvasObject.DrawString(ScreenWidth - x - 5 - RightMargin, ScreenHeight - (Texts.Length - i) * SystemFont.Size - 5 - ScreenHeight, text, SystemFont, Color.White);
+				CanvasObject.DrawString(ScreenWidth - x - 5 - RightMargin, ScreenHeight - (Texts.Length - i) * SystemFont.Size - 5 - ScreenHeight - BottomMargin, text, SystemFont, Color.White);
 			}
 		}
 	}

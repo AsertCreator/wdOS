@@ -1,4 +1,5 @@
-﻿using PrismAPI.Graphics;
+﻿using Cosmos.System;
+using PrismAPI.Graphics;
 using System.Collections.Generic;
 
 namespace wdOS.Platform.UI
@@ -12,8 +13,21 @@ namespace wdOS.Platform.UI
 		public UIVersionText VersionText = new();
 		public UIAppBar AppBar = new();
 		public Color BackgroundColor = WindowManager.BackgroundColor;
+		public CircularBuffer<KeyEvent> KeyBuffer;
+		private bool initialized = false;
 		public void Render()
 		{
+			if (!initialized)
+			{
+				KeyBuffer = new(4);
+				initialized = true;
+			}
+
+			if (KeyboardManager.KeyAvailable)
+			{
+				KeyBuffer.Write(KeyboardManager.ReadKey());
+			}
+
 			WindowManager.CanvasObject.Clear(BackgroundColor);
 
 			// left for testing commonrenderer
