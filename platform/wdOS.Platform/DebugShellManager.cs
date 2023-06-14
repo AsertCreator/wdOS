@@ -18,11 +18,6 @@ namespace wdOS.Platform
         {
             try
 			{
-				WindowManager.Initialize();
-				WindowManager.Start();
-
-				return 0;
-                // temporaily f u, debugshell
                 AllCommands = new()
                 {
                     new()
@@ -149,20 +144,6 @@ namespace wdOS.Platform
 
                             var res = exec.Execute("");
                             Console.WriteLine(res.ReturnedValue.ToString());
-
-                            return 0;
-                        }
-                    },
-                    new()
-                    {
-                        Name = "test-graphics",
-                        Description = "test graphics",
-                        Execute = args =>
-                        {
-                            if (args.Length != 0) { Console.WriteLine("test-graphics: too much arguments"); return 1; }
-
-                            WindowManager.Initialize();
-                            WindowManager.Start();
 
                             return 0;
                         }
@@ -322,6 +303,17 @@ namespace wdOS.Platform
 
                             return 0;
                         }
+                    },
+                    new()
+                    {
+                        Name = "shell",
+                        Description = "opens up ui shell",
+                        Execute = args =>
+                        {
+				            WindowManager.Initialize();
+				            WindowManager.Start();
+                            return 0;
+						}
                     }
                 };
 
