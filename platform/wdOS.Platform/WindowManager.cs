@@ -27,7 +27,7 @@ namespace wdOS.Platform
             {
                 SystemFont = Font.Fallback;
                 CanvasObject = Display.GetDisplay(ScreenWidth, ScreenHeight);
-                DesktopList.Add(
+                DesktopList.Add( // wow thats swiftui
                     new()
                     {
                         Windows = new()
@@ -36,7 +36,29 @@ namespace wdOS.Platform
                             {
                                 Location = new() { X = 120, Y = 120 },
                                 Size = new() { X = 300, Y = 300 },
-                                Text = "Hello World!"
+                                Text = "Hello World!",
+                                BackgroundColor = GrayColor,
+                                Controls = new()
+                                {
+                                    new UIButton()
+                                    {
+                                        Text = "OK",
+                                        Location = new(10, 10),
+                                        Size = new(100, 23)
+                                    },
+									new UIButton()
+									{
+										Text = "Cancel",
+										Location = new(10, 38),
+										Size = new(100, 23)
+									},
+									new UIButton()
+									{
+										Text = "Apply",
+										Location = new(10, 66),
+										Size = new(100, 23)
+									},
+								}
                             }
                         }
                     }
@@ -59,9 +81,5 @@ namespace wdOS.Platform
             }
         }
     }
-    public struct Point
-    {
-        public int X;
-        public int Y;
-    }
+    public record struct Point(int X, int Y);
 }

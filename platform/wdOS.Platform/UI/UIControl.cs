@@ -14,6 +14,6 @@ namespace wdOS.Platform.UI
 		public Point Location;
 		public Point Size;
 
-		public abstract void Render();
+		public abstract void Render(Canvas cnv);
 	}
 }

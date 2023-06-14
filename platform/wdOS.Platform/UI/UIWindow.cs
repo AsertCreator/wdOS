@@ -1,4 +1,8 @@
-﻿using PrismAPI.Graphics;
+﻿using Cosmos.Core;
+using Cosmos.Core.Memory;
+using Cosmos.System.FileSystem;
+using PrismAPI.Graphics;
+using PrismAPI.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,27 +20,83 @@ namespace wdOS.Platform.UI
 		public Point Size;
 		public Color BackgroundColor = Color.White;
 		public Process Process = PlatformManager.KernelProcess;
+		public UIDesktop Desktop = null;
 		public ulong ZIndex = NextZIndex++;
 		public UIWindowStyle Style;
 		public List<UIControl> Controls = new();
+		public Canvas DrawBuffer;
+		private bool initialized = false;
+		~UIWindow()
+		{
+			GCImplementation.Free(DrawBuffer);
+		}
 		public void AddControl(UIControl control)
 		{
 			Controls.Add(control);
 			control.Window = this;
 		}
+		public void Resize(Point ns)
+		{
+			Size = ns;
+			switch (Style)
+			{
+				default:
+				case UIWindowStyle.None:
+					DrawBuffer = new Canvas((ushort)(Size.X - 6), (ushort)(Size.Y - 9 - WindowManager.SystemFont.Size));
+					break;
+				case UIWindowStyle.FullScreen:
+					DrawBuffer = new Canvas((ushort)Size.X, (ushort)Size.Y);
+					break;
+				case UIWindowStyle.NoBorder:
+					DrawBuffer = new Canvas((ushort)Size.X, (ushort)Size.Y);
+					break;
+				case UIWindowStyle.Transparent:
+					DrawBuffer = new Canvas((ushort)Size.X, (ushort)Size.Y);
+					break;
+			}
+		}
+		public unsafe void Close()
+		{
+			Desktop.Windows.Remove(this);
+			Heap.Free(DrawBuffer.Internal);
+			GCImplementation.Free(DrawBuffer);
+		}
 		public void Render()
 		{
-			CommonRenderer.RenderBox(Location.X, Location.Y, Size.X, Size.Y);
-			WindowManager.CanvasObject.DrawFilledRectangle(
-				Location.X + 3, 
-				Location.Y + 6 + WindowManager.SystemFont.Size, 
-				(ushort)(Size.X - 6), 
-				(ushort)(Size.Y - WindowManager.SystemFont.Size - 9),
-				0, 
-				BackgroundColor);
-			WindowManager.CanvasObject.DrawString(Location.X + 3, Location.Y + 3, Text, WindowManager.SystemFont, Color.Black, false);
+			if (!initialized)
+			{
+				Resize(Size);
 
-			for (int i = 0; i < Controls.Count; i++) Controls[i].Render();
+				Desktop = WindowManager.DesktopList[WindowManager.CurrentDesktopIndex];
+				if (Style == UIWindowStyle.FullScreen)
+				{
+					Size.X = Desktop.DesktopWidth;
+					Size.Y = Desktop.DesktopHeight;
+					Location.X = 0;
+					Location.Y = 0;
+				}
+				if (Style == UIWindowStyle.Transparent) BackgroundColor = Color.Transparent;
+
+				initialized = true;
+			}
+			switch (Style)
+			{
+				default:
+				case UIWindowStyle.None:
+					CommonRenderer.RenderBox(Location.X, Location.Y, Size.X, Size.Y, WindowManager.CanvasObject);
+					DrawBuffer.DrawFilledRectangle(0, 0, (ushort)Size.X, (ushort)Size.Y, 0, BackgroundColor);
+					WindowManager.CanvasObject.DrawImage(Location.X + 3, Location.Y + 6 + WindowManager.SystemFont.Size, DrawBuffer);
+					WindowManager.CanvasObject.DrawString(Location.X + 3, Location.Y + 3, Text, WindowManager.SystemFont, Color.Black, false);
+					break;
+				case UIWindowStyle.FullScreen:
+				case UIWindowStyle.Transparent:
+				case UIWindowStyle.NoBorder:
+					DrawBuffer.DrawFilledRectangle(0, 0, (ushort)Size.X, (ushort)Size.Y, 0, BackgroundColor);
+					WindowManager.CanvasObject.DrawImage(Location.X, Location.Y, DrawBuffer, true);
+					break;
+			}
+
+			for (int i = 0; i < Controls.Count; i++) Controls[i].Render(DrawBuffer);
 		}
 	}
 	public enum UIWindowStyle

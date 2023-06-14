@@ -14,7 +14,7 @@ namespace wdOS.Platform.UI
 		public int BottomMargin;
 		public int RightMargin;
 		private bool initialized = false;
-		public void Render()
+		public void Render(Canvas cnv)
 		{
 			if (!initialized)
 			{
@@ -32,7 +32,7 @@ namespace wdOS.Platform.UI
 			{
 				string text = Texts[i];
 				ushort x = SystemFont.MeasureString(text);
-				CanvasObject.DrawString(ScreenWidth - x - 5 - RightMargin, ScreenHeight - (Texts.Length - i) * SystemFont.Size - 5 - ScreenHeight - BottomMargin, text, SystemFont, Color.White);
+				cnv.DrawString(ScreenWidth - x - 5 - RightMargin, ScreenHeight - (Texts.Length - i) * SystemFont.Size - 5 - ScreenHeight - BottomMargin, text, SystemFont, Color.White);
 			}
 		}
 	}
