@@ -1,6 +1,6 @@
 # wdOS
 [Cosmos](https://github.com/CosmosOS/Cosmos)-based operating system for x86 PCs. 
-Shall be somewhat architectually and "what use it for"-ly similair to Windows NT.
+Shall be somewhat architectually and "what use it for"-ly similiar to Windows NT.
 Bundled with Pillow Runtime and Weirdo Compiler which both make up Pillow Platform.
 For more information, read `PILLOW.md` file.
 
@@ -9,7 +9,7 @@ I've got this to version 0.10.0, pre-beta. Note, that system is currently has tw
 versions: wdOS Core and wdOS Platform. Latter one is newer and more stable. First
 one is very buggy and definitely not modular. however, first one has cool things
 that most of Cosmos-built OSes have. wdOS Core's development is stopped, now I work
-on more stable and modular system, wdOS Platofrm. That feature list below is frozen 
+on more stable and modular system, wdOS Platform. That feature list below is frozen 
 and corresponds to wdOS Core. 
 
 Almost implemented features:
