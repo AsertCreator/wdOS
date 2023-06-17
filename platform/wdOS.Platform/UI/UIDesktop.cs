@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using PrismAPI.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace wdOS.Platform.UI
@@ -14,6 +15,7 @@ namespace wdOS.Platform.UI
 		public UIAppBar AppBar = new();
 		public Color BackgroundColor = WindowManager.BackgroundColor;
 		public CircularBuffer<KeyEvent> KeyBuffer;
+		private Random rng = new();
 		private bool initialized = false;
 		public void Render()
 		{
@@ -36,6 +38,8 @@ namespace wdOS.Platform.UI
 			AppBar.Render(WindowManager.CanvasObject);
 			VersionText.BottomMargin = AppBar.AppBarHeight - 5;
 			VersionText.Render(WindowManager.CanvasObject);
+
+			CommonRenderer.RenderStatic(20, 20, rng.Next().ToString(), WindowManager.CanvasObject, Color.White);
 		}
 	}
 }
