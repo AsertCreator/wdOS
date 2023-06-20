@@ -78,6 +78,9 @@ namespace wdOS.Platform.Shell.UI
                 CanvasObject.DrawFilledRectangle((int)Cosmos.System.MouseManager.X, (int)Cosmos.System.MouseManager.Y, 24, 24, 0, NearWhiteColor);
 
                 CanvasObject.Update();
+
+                Cosmos.Core.Memory.Heap.Collect();
+
                 Framecount++;
             }
         }
