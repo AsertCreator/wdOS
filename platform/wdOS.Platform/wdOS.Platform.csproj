@@ -29,10 +29,6 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Shell\Widgets\" />
-    </ItemGroup>
-
     <Import Project="..\wdOS.Runtime\wdOS.Runtime.projitems" Label="Shared" />
 
 </Project>

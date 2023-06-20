@@ -49,21 +49,39 @@ namespace wdOS.Platform.Shell.UI
             cnv.DrawLine(x + width - 1, y + height - 1, x + width - 1, y + 1, Color.LightGray);
         }
         public static bool RenderButton(string text, int x, int y, int width, int height, Canvas cnv, bool center = true, ConsoleKeyEx ex = default)
-        {
-            RenderRaisedBox(x, y, width, height, cnv);
-            if (center)
-                cnv.DrawString(x + width / 2, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, true);
+		{
+			if (ex != default)
+			{
+				var desk = WindowManager.DesktopList[WindowManager.CurrentDesktopIndex];
+				var ke = desk.KeyBuffer.Peek();
+
+				if (ke.Key == ex) return true;
+			}
+
+			if (Collide((int)MouseManager.X, (int)MouseManager.Y, x, y, width, height) && MouseManager.MouseState == MouseState.Left)
+			{
+				RenderSunkenBox(x, y, width, height, cnv);
+
+				if (center)
+					cnv.DrawString(x + width / 2, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, true);
+				else
+					cnv.DrawString(x + 3, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, false);
+
+                return true;
+			}
             else
-                cnv.DrawString(x + 3, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, false);
+			{
+				RenderRaisedBox(x, y, width, height, cnv);
 
-            if (ex != default)
-            {
-                var desk = WindowManager.DesktopList[WindowManager.CurrentDesktopIndex];
-                var ke = desk.KeyBuffer.Peek();
+				if (center)
+					cnv.DrawString(x + width / 2, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, true);
+				else
+					cnv.DrawString(x + 3, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, false);
 
-                if (ke.Key == ex) return true;
-            }
-            return false;
+				return false;
+			}
         }
+        public static bool Collide(int mx, int my, int bx, int by, int bw, int bh) => 
+            mx >= bx && mx <= bx + bw && my >= by && my <= by + bh;
     }
 }
