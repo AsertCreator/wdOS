@@ -30,7 +30,7 @@ namespace wdOS.Platform
                 DesktopList.Add( // wow thats swiftui
                     new()
                     {
-                        Windows = new()
+                        Widgets = new()
                         { 
                             new()
                             {

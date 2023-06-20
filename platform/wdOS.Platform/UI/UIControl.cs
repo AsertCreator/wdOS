@@ -9,7 +9,7 @@ namespace wdOS.Platform.UI
 {
 	public abstract class UIControl
 	{
-		public UIWindow Window;
+		public UIWidget Window;
 		public string Text;
 		public Point Location;
 		public Point Size;

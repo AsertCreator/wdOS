@@ -12,7 +12,7 @@ using XSharp.Assembler.x86;
 
 namespace wdOS.Platform.UI
 {
-	public sealed class UIWindow
+	public sealed class UIWidget
 	{
 		public static ulong NextZIndex = 0;
 		public string Text;
@@ -26,7 +26,7 @@ namespace wdOS.Platform.UI
 		public List<UIControl> Controls = new();
 		public Canvas DrawBuffer;
 		private bool initialized = false;
-		~UIWindow()
+		~UIWidget()
 		{
 			GCImplementation.Free(DrawBuffer);
 		}
@@ -57,7 +57,7 @@ namespace wdOS.Platform.UI
 		}
 		public unsafe void Close()
 		{
-			Desktop.Windows.Remove(this);
+			Desktop.Widgets.Remove(this);
 			Heap.Free(DrawBuffer.Internal);
 			GCImplementation.Free(DrawBuffer);
 		}
@@ -83,7 +83,7 @@ namespace wdOS.Platform.UI
 			{
 				default:
 				case UIWindowStyle.None:
-					CommonRenderer.RenderBox(Location.X, Location.Y, Size.X, Size.Y, WindowManager.CanvasObject);
+					CommonRenderer.RenderRaisedBox(Location.X, Location.Y, Size.X, Size.Y, WindowManager.CanvasObject);
 					DrawBuffer.DrawFilledRectangle(0, 0, (ushort)Size.X, (ushort)Size.Y, 0, BackgroundColor);
 					WindowManager.CanvasObject.DrawImage(Location.X + 3, Location.Y + 6 + WindowManager.SystemFont.Size, DrawBuffer);
 					WindowManager.CanvasObject.DrawString(Location.X + 3, Location.Y + 3, Text, WindowManager.SystemFont, Color.Black, false);

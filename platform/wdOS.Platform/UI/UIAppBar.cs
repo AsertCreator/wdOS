@@ -25,7 +25,7 @@ namespace wdOS.Platform.UI
 				MenuActions["Shutdown PC"] = () => PlatformManager.ShutdownSystem(ShutdownType.SoftShutdown);
 				MenuActions["Restart PC"] = () => PlatformManager.ShutdownSystem(ShutdownType.SoftRestart);
 				MenuActions["Open up Test Window"] = () => 
-					desk.Windows.Add(new()
+					desk.Widgets.Add(new()
 					{
 						Location = new() { X = 120, Y = 120 },
 						Size = new() { X = 300, Y = 300 },
@@ -35,7 +35,7 @@ namespace wdOS.Platform.UI
 				initialized = true;
             }
 
-			CommonRenderer.RenderBox(-5, y, AppBarWidth, AppBarHeight, cnv);
+			CommonRenderer.RenderRaisedBox(-5, y, AppBarWidth, AppBarHeight, cnv);
 			if (CommonRenderer.RenderButton("Menu", 5, y + 3, 50, 23, cnv, false, ConsoleKeyEx.LWin)) showmenu = !showmenu;
 			if (showmenu)
 			{
@@ -47,9 +47,9 @@ namespace wdOS.Platform.UI
 				}
 			}
 
-			for (int i = 0; i < desk.Windows.Count; i++)
+			for (int i = 0; i < desk.Widgets.Count; i++)
 			{
-				var wnd = desk.Windows[i];
+				var wnd = desk.Widgets[i];
 				CommonRenderer.RenderButton(wnd.Text, 55 + 155 * i, y + 3, 150, 23, cnv, false);
 			}
 		}
