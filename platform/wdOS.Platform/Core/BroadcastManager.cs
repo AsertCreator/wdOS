@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace wdOS.Platform
+namespace wdOS.Platform.Core
 {
     public static class BroadcastManager
     {
@@ -44,14 +44,14 @@ namespace wdOS.Platform
             {
                 var broadcast = allBroadcasts[i];
                 if (broadcast.Sendee == UserManager.CurrentUser ||
-                    broadcast.Sender == UserManager.CurrentUser || 
+                    broadcast.Sender == UserManager.CurrentUser ||
                     broadcast.Sendee == UserManager.EveryoneUser)
                     availableBroadcasts.Add(broadcast);
             }
 
             return availableBroadcasts.ToArray();
         }
-        public static void LoadBroadcasts() 
+        public static void LoadBroadcasts()
         {
             if (!FileSystemManager.FileExists(BroadcastPath))
             {

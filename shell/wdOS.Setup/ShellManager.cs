@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using wdOS.Platform;
+using wdOS.Platform.Core;
 
 namespace wdOS.Setup.Platform
 {

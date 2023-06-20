@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace wdOS.Platform
+namespace wdOS.Platform.Core
 {
     public static class FileSystemManager
     {

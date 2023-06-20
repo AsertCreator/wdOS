@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace wdOS.Platform
+namespace wdOS.Platform.Core
 {
     public static class ServiceManager
     {
@@ -44,16 +44,16 @@ namespace wdOS.Platform
                     return true;
                 });
 
-				CreateManagedService("EachSecond", "Service, that calls certain methods within kernel each second. This is a critical service.", () =>
-				{
+                CreateManagedService("EachSecond", "Service, that calls certain methods within kernel each second. This is a critical service.", () =>
+                {
                     osscilations++;
-                    if (osscilations % 2 == 0) 
-                        for (int i = 0; i < EachSecondActions.Count; i++) 
+                    if (osscilations % 2 == 0)
+                        for (int i = 0; i < EachSecondActions.Count; i++)
                             EachSecondActions[i]();
-					return true;
-				});
+                    return true;
+                });
 
-				initialized = true;
+                initialized = true;
             }
         }
         public static uint AllocSID() => nextsid++;

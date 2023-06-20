@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Text;
 using wdOS.Platform;
+using wdOS.Platform.Core;
 using Sys = Cosmos.System;
 
 namespace wdOS
@@ -16,7 +17,7 @@ namespace wdOS
         {
             Bootstrapper.Main(mDebugger);
 
-            DebugShellManager.RunDebugShell();
+            ShellManager.Start();
 
             PlatformManager.ShutdownSystem(ShutdownType.SoftShutdown);
         }

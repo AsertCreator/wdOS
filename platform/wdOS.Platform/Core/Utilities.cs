@@ -9,7 +9,7 @@ using Cosmos.Core.Memory;
 using XSharp.Assembler;
 using XSharp;
 
-namespace wdOS.Platform
+namespace wdOS.Platform.Core
 {
     public static unsafe class Utilities
     {
@@ -37,7 +37,7 @@ namespace wdOS.Platform
             StringBuilder sb = new();
             byte* ptr = (byte*)c;
             for (int i = 0; ptr[i] != 0; i++)
-                sb.Append((char)(ptr[i]));
+                sb.Append((char)ptr[i]);
             return sb.ToString();
         }
         public static int StringLength(byte* c)
@@ -66,16 +66,16 @@ namespace wdOS.Platform
         public static bool HasFlag(int value, int match) => (value & match) != 0;
     }
 
-	public class CircularBuffer<T>
-	{
-		private int tail = 0;
-		private int head = 0;
-		private T[] buffer;
-		public CircularBuffer(int capacity) => buffer = new T[capacity];
-		public T Read() => buffer[Wrap(tail++)];
+    public class CircularBuffer<T>
+    {
+        private int tail = 0;
+        private int head = 0;
+        private T[] buffer;
+        public CircularBuffer(int capacity) => buffer = new T[capacity];
+        public T Read() => buffer[Wrap(tail++)];
         public T Peek() => buffer[Wrap(tail)];
-		public void Write(T value) => buffer[Wrap(head++)] = value;
-		public void Clear() => tail = head;
-		private int Wrap(int n) => n % buffer.Length;
-	}
+        public void Write(T value) => buffer[Wrap(head++)] = value;
+        public void Clear() => tail = head;
+        private int Wrap(int n) => n % buffer.Length;
+    }
 }

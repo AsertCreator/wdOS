@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using wdOS.Platform.Shell.UI;
 
-namespace wdOS.Platform
+namespace wdOS.Platform.Core
 {
-    public sealed class ShellManager
+    public static class ShellManager
     {
-        public void Start()
+        public static void Start()
         {
             WindowManager.Initialize();
             WindowManager.Start();

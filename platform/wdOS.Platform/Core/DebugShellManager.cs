@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using wdOS.Pillow;
+using wdOS.Platform.Shell.UI;
 
-namespace wdOS.Platform
+namespace wdOS.Platform.Core
 {
     public static class DebugShellManager
     {
@@ -17,7 +18,7 @@ namespace wdOS.Platform
         public unsafe static int RunDebugShell()
         {
             try
-			{
+            {
                 AllCommands = new()
                 {
                     new()
@@ -46,7 +47,7 @@ namespace wdOS.Platform
                             {
                                 var mod = PlatformManager.LoadedModules[i];
                                 Console.WriteLine(mod.Name + ", start addr: 0x" + mod.ModuleStart.ToString("X8") + ", end addr: 0x" + mod.ModuleEnd + ", size: " + (mod.ModuleEnd - mod.ModuleStart));
-			                }
+                            }
                             return 0;
                         }
                     },
@@ -216,7 +217,7 @@ namespace wdOS.Platform
 
                             User user = UserManager.FindByName(args[0]);
                             if (user == null) { Console.WriteLine("user-makeregular: no such user"); return 1; }
-                            
+
                             if (user.IsRoot)
                             {
                                 if (!UserManager.CurrentUser.IsRoot) { Console.WriteLine("user-makeregular: access denied"); return 1; }
@@ -225,7 +226,7 @@ namespace wdOS.Platform
                                 {
                                     Console.WriteLine("user-makeregular: failed to lower rights. reason may be that you are only " +
                                         "regular root in the system and you're trying to lower your rights. at least one regular root " +
-                                        "shall persist in the system"); 
+                                        "shall persist in the system");
                                     return 1;
                                 }
                             }
@@ -247,7 +248,7 @@ namespace wdOS.Platform
 
                             if (!UserManager.RemoveUser(args[0]))
                             {
-                                Console.WriteLine("user-remove: no such user"); 
+                                Console.WriteLine("user-remove: no such user");
                                 return 1;
                             }
 
@@ -295,10 +296,10 @@ namespace wdOS.Platform
                         {
                             if (args.Length != 0) { Console.WriteLine("user-list: too much arguments"); return 1; }
 
-                            UserManager.EnumerateUsers(x => 
+                            UserManager.EnumerateUsers(x =>
                             {
                                 Console.WriteLine(x.Username + ", is root: " + x.IsRoot + ", is hidden: " + x.IsHidden + ", is replicatable: " + x.IsReplicated + ", is local: " + x.IsLocal);
-                            }, 
+                            },
                             true);
 
                             return 0;
@@ -310,10 +311,10 @@ namespace wdOS.Platform
                         Description = "opens up ui shell",
                         Execute = args =>
                         {
-				            WindowManager.Initialize();
-				            WindowManager.Start();
+                            WindowManager.Initialize();
+                            WindowManager.Start();
                             return 0;
-						}
+                        }
                     }
                 };
 

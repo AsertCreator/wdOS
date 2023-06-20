@@ -3,10 +3,9 @@ using PrismAPI.Graphics.Fonts;
 using PrismAPI.Hardware.GPU;
 using System;
 using System.Collections.Generic;
-using wdOS.Platform.UI;
-using static wdOS.Platform.BuildConstants;
+using static wdOS.Platform.Core.BuildConstants;
 
-namespace wdOS.Platform
+namespace wdOS.Platform.Shell.UI
 {
     public static class WindowManager
     {
@@ -17,7 +16,7 @@ namespace wdOS.Platform
         public static Color BackgroundColor = Color.ClassicBlue;
         public static Color GrayColor = new Color(198, 198, 198);
         public static Color NearWhiteColor = new Color(222, 222, 222);
-		public static List<UIDesktop> DesktopList = new List<UIDesktop>();
+        public static List<UIDesktop> DesktopList = new List<UIDesktop>();
         public static int CurrentDesktopIndex = 0;
         public static ulong Framecount;
         private static bool initialized = false;
@@ -31,7 +30,7 @@ namespace wdOS.Platform
                     new()
                     {
                         Widgets = new()
-                        { 
+                        {
                             new()
                             {
                                 Location = new() { X = 120, Y = 120 },
@@ -46,19 +45,19 @@ namespace wdOS.Platform
                                         Location = new(10, 10),
                                         Size = new(100, 23)
                                     },
-									new UIButton()
-									{
-										Text = "Cancel",
-										Location = new(10, 38),
-										Size = new(100, 23)
-									},
-									new UIButton()
-									{
-										Text = "Apply",
-										Location = new(10, 66),
-										Size = new(100, 23)
-									},
-								}
+                                    new UIButton()
+                                    {
+                                        Text = "Cancel",
+                                        Location = new(10, 38),
+                                        Size = new(100, 23)
+                                    },
+                                    new UIButton()
+                                    {
+                                        Text = "Apply",
+                                        Location = new(10, 66),
+                                        Size = new(100, 23)
+                                    },
+                                }
                             }
                         }
                     }

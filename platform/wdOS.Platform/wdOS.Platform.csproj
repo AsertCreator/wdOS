@@ -30,7 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Widgets\" />
+      <Folder Include="Shell\Widgets\" />
     </ItemGroup>
 
     <Import Project="..\wdOS.Runtime\wdOS.Runtime.projitems" Label="Shared" />

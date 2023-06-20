@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using wdOS.Pillow;
 
-namespace wdOS.Platform
+namespace wdOS.Platform.Core
 {
     public static partial class PlatformManager
     {
@@ -22,35 +22,35 @@ namespace wdOS.Platform
         public static int SessionAge = 0;
         private static int nextpid = 0;
         private static bool initialized = false;
-		public static int GetCPUBitWidth()
-		{
-			int ecx = 0, edx = 0, unused = 0;
-			CPU.ReadCPUID(1, ref unused, ref unused, ref ecx, ref edx);
-			return (edx & 1 << 30) != 0 ? 64 : 32;
-		}
-		public static string GetPlatformVersion() =>
-			BuildConstants.VersionMajor + "." +
-			BuildConstants.VersionMinor + "." +
-			BuildConstants.VersionPatch;
-		public static int AllocPID() => nextpid++;
-		public static void Log(string message, string component, LogLevel level = LogLevel.Info)
+        public static int GetCPUBitWidth()
+        {
+            int ecx = 0, edx = 0, unused = 0;
+            CPU.ReadCPUID(1, ref unused, ref unused, ref ecx, ref edx);
+            return (edx & 1 << 30) != 0 ? 64 : 32;
+        }
+        public static string GetPlatformVersion() =>
+            BuildConstants.VersionMajor + "." +
+            BuildConstants.VersionMinor + "." +
+            BuildConstants.VersionPatch;
+        public static int AllocPID() => nextpid++;
+        public static void Log(string message, string component, LogLevel level = LogLevel.Info)
         {
             if (SystemSettings.EnableLogging)
             {
                 string data = "[" + component + "][" + level switch
-				{
-					LogLevel.Info => "info ",
-					LogLevel.Warning => "warn ",
-					LogLevel.Error => "error",
-					LogLevel.Fatal => "fatal",
-					_ => "unknw",
-				} + "][" + GetTimeAsString() + "] " + message;
+                {
+                    LogLevel.Info => "info ",
+                    LogLevel.Warning => "warn ",
+                    LogLevel.Error => "error",
+                    LogLevel.Fatal => "fatal",
+                    _ => "unknw",
+                } + "][" + GetTimeAsString() + "] " + message;
                 Bootstrapper.KernelDebugger.Send(data);
                 SystemLog.Append(data + '\n');
                 if (SystemSettings.LogIntoConsole || SystemSettings.VerboseMode) Console.WriteLine(data);
             }
         }
-		public static int Execute(string path, string cmd)
+        public static int Execute(string path, string cmd)
         {
             Process process = new();
             int result = int.MinValue;
@@ -58,7 +58,7 @@ namespace wdOS.Platform
             process.IsRunning = true;
             process.PID = AllocPID();
 
-            PlatformManager.AllProcesses.Add(process);
+            AllProcesses.Add(process);
 
             try
             {
@@ -85,15 +85,15 @@ namespace wdOS.Platform
             catch
             {
                 process.IsRunning = false;
-				// todo: process crash handling
-			}
-			return result;
+                // todo: process crash handling
+            }
+            return result;
         }
         public static unsafe void Initialize()
         {
             if (!initialized)
             {
-                PlatformManager.Log("setting up system folders...", "platformmanager");
+                Log("setting up system folders...", "platformmanager");
                 for (int i = 0; i < FileSystemManager.SystemFolders.Length; i++)
                     FileSystemManager.CreateDirectory("0:\\" + FileSystemManager.SystemFolders[i]);
 
@@ -105,22 +105,22 @@ namespace wdOS.Platform
                 };
                 KernelProcess.Executor = KernelProcess;
 
-                PlatformManager.Log("set up basic platform!", "platformmanager");
+                Log("set up basic platform!", "platformmanager");
                 initialized = true;
             }
         }
         public static void Panic(string msg)
         {
-            PlatformManager.SessionAge = 3;
+            SessionAge = 3;
 
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.BackgroundColor = ConsoleColor.Black;
 
             string text0 = "!!! panic !!! message: " + msg;
-            string text1 = "current kernel version: " + PlatformManager.GetPlatformVersion();
+            string text1 = "current kernel version: " + GetPlatformVersion();
 
-            PlatformManager.Log(text0, "failuremanager", LogLevel.Fatal);
-            PlatformManager.Log(text1, "failuremanager", LogLevel.Fatal);
+            Log(text0, "failuremanager", LogLevel.Fatal);
+            Log(text1, "failuremanager", LogLevel.Fatal);
 
             Console.WriteLine(text0);
             Console.WriteLine(text1);
@@ -139,52 +139,52 @@ namespace wdOS.Platform
         {
             var list = UserManager.FindNonSystemUsers();
 
-			if (list.Length == 0)
+            if (list.Length == 0)
             {
                 Console.WriteLine("no users available");
                 Bootstrapper.WaitForShutdown(true, 5, false);
             }
             else if (list.Length == 1)
-			{
+            {
                 var target = list[0];
                 Console.WriteLine($"{target.UserName} is only loggable user in system, logging in...");
 
                 if (target.UserLockType == 0)
-				{
-					if (UserManager.Login(target.Username, "", true) != UserManager.UserLoginResultLoggedInto)
-					{
-						Console.WriteLine("user database is corrupted");
-						Bootstrapper.WaitForShutdown(true, 5, false);
-					}
-				}
+                {
+                    if (UserManager.Login(target.Username, "", true) != UserManager.UserLoginResultLoggedInto)
+                    {
+                        Console.WriteLine("user database is corrupted");
+                        Bootstrapper.WaitForShutdown(true, 5, false);
+                    }
+                }
                 else
-				{
-				retry:
-					Console.WriteLine("login: " + target.UserName);
-					Console.Write("password: ");
-					string password = Console.ReadLine();
-					if (UserManager.Login(target.UserName, password) != UserManager.UserLoginResultLoggedInto)
-					{
-						Console.WriteLine("invalid credentials\n");
-						goto retry;
-					}
-				}
-				Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
-			}
+                {
+                retry:
+                    Console.WriteLine("login: " + target.UserName);
+                    Console.Write("password: ");
+                    string password = Console.ReadLine();
+                    if (UserManager.Login(target.UserName, password) != UserManager.UserLoginResultLoggedInto)
+                    {
+                        Console.WriteLine("invalid credentials\n");
+                        goto retry;
+                    }
+                }
+                Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
+            }
             else
-			{
-			    retry:
-				Console.Write("login: ");
-				string username = Console.ReadLine();
-				Console.Write("password: ");
-				string password = Console.ReadLine();
-				if (UserManager.Login(username, password) != UserManager.UserLoginResultLoggedInto)
-				{
-					Console.WriteLine("invalid credentials\n");
-					goto retry;
-				}
-				Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
-			}
+            {
+            retry:
+                Console.Write("login: ");
+                string username = Console.ReadLine();
+                Console.Write("password: ");
+                string password = Console.ReadLine();
+                if (UserManager.Login(username, password) != UserManager.UserLoginResultLoggedInto)
+                {
+                    Console.WriteLine("invalid credentials\n");
+                    goto retry;
+                }
+                Console.WriteLine("logged in as " + UserManager.CurrentUser.Username);
+            }
         }
         public static void ShutdownSystem(ShutdownType type, bool halt = false, string panic = null)
         {
@@ -249,8 +249,8 @@ namespace wdOS.Platform
                     while (true) CPU.Halt();
             }
         }
-	}
-	public enum ShutdownType
+    }
+    public enum ShutdownType
     {
         SoftShutdown, SoftRestart, HardShutdown, HardRestart, Panic, Halt
     }

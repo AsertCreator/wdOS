@@ -7,7 +7,8 @@ using Cosmos.Core;
 using Cosmos.System.Graphics;
 using Cosmos.Core.Multiboot;
 using Cosmos.Debug.Kernel;
-using static wdOS.Platform.PlatformManager;
+using static wdOS.Platform.Core.PlatformManager;
+using wdOS.Platform.Core;
 
 namespace wdOS.Platform
 {
