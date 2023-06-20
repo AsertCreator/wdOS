@@ -1,4 +1,5 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core;
+using Cosmos.System;
 using PrismAPI.Graphics;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,9 @@ namespace wdOS.Platform.Shell.UI
         {
             if (!initialized)
             {
-                KeyBuffer = new(4);
+                MouseManager.ScreenWidth = (uint)DesktopWidth;
+				MouseManager.ScreenHeight = (uint)DesktopHeight;
+				KeyBuffer = new(4);
                 initialized = true;
             }
 
@@ -33,7 +36,12 @@ namespace wdOS.Platform.Shell.UI
 
             AppBar.Render(WindowManager.CanvasObject);
 
-            CommonRenderer.RenderStatic(20, 20, WindowManager.Framecount.ToString(), WindowManager.CanvasObject, Color.White);
+            string text = "Frame #" + WindowManager.Framecount.ToString() + 
+                "\nMemory usage percentage: " + GCImplementation.GetUsedRAM() / (double)(CPU.GetAmountOfRAM() * 1048576) * 100.0 + "%";
+
+			CommonRenderer.RenderStatic(20, 20, text, WindowManager.CanvasObject, Color.White);
+
+            GCImplementation.Free(text);
         }
     }
 }

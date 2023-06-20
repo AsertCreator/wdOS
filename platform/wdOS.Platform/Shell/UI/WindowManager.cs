@@ -75,6 +75,8 @@ namespace wdOS.Platform.Shell.UI
                 var curdesk = DesktopList[CurrentDesktopIndex];
                 curdesk.Render();
 
+                CanvasObject.DrawFilledRectangle((int)Cosmos.System.MouseManager.X, (int)Cosmos.System.MouseManager.Y, 24, 24, 0, NearWhiteColor);
+
                 CanvasObject.Update();
                 Framecount++;
             }

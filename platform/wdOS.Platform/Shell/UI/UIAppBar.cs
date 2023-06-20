@@ -14,6 +14,7 @@ namespace wdOS.Platform.Shell.UI
         public Dictionary<string, Action> MenuActions = new();
         private bool initialized = false;
         private bool showmenu = false;
+        private string menuBtnText = "Menu";
         public void Render(Canvas cnv)
         {
             var desk = WindowManager.DesktopList[WindowManager.CurrentDesktopIndex];
@@ -37,7 +38,7 @@ namespace wdOS.Platform.Shell.UI
             }
 
             CommonRenderer.RenderRaisedBox(-5, y, AppBarWidth, AppBarHeight, cnv);
-            if (CommonRenderer.RenderButton("Menu", 5, y + 3, 50, 23, cnv, false, ConsoleKeyEx.LWin)) showmenu = !showmenu;
+            if (CommonRenderer.RenderButton(menuBtnText, 5, y + 3, 50, 23, cnv, false, ConsoleKeyEx.LWin)) showmenu = !showmenu;
             if (showmenu)
             {
                 for (int i = 0; i < MenuActions.Count; i++)
