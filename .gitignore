@@ -36,3 +36,5 @@ x86/
 *.svclog
 *.scc
 *.map
+/platform/wdOS.Platform/Core/DynamicLinkerManager.cs
+/platform/wdOS.Platform/Core/ElfFile.cs

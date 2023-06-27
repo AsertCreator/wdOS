@@ -9,12 +9,13 @@ namespace wdOS.Platform.Shell.Widgets
 {
 	public abstract class WidgetBase
 	{
-		public static List<WidgetBase> RegisteredWidgets = new();
 		public string Name;
 		public string Description;
 		public string Version;
-		public UIWidget AttachedUIWidget;
-		public int InitialWidth;
-		public int InitialHeight;
-	}
-}
+		public abstract int InitialWidth { get; }
+		public abstract int InitialHeight { get; }
+		public abstract bool IsHidden { get; }
+		public abstract bool IsSystem { get; }
+		public abstract uint WidgetID { get; }
+		public abstract void SetupUIWindow(UIWindow uw, object arg);
+	}}

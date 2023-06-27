@@ -10,13 +10,24 @@ namespace wdOS.Platform.Shell.Widgets
 {
 	public class CalculatorWidget : WidgetBase
 	{
-		public CalculatorWidget() 
+		public const uint ID = 200;
+
+		public override int InitialWidth => 400;
+		public override int InitialHeight => 400;
+		public override bool IsHidden => false;
+		public override bool IsSystem => true;
+		public override uint WidgetID => ID;
+
+		public CalculatorWidget()
 		{
 			Name = "Calculator";
 			Description = "Calculator Widget";
 			Version = PlatformManager.GetPlatformVersion();
-			InitialWidth = 400;
-			InitialHeight = 400;
+		}
+
+		public override void SetupUIWindow(UIWindow uw, object arg)
+		{
+			
 		}
 	}
 }

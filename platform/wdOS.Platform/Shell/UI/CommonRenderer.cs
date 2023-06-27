@@ -48,11 +48,10 @@ namespace wdOS.Platform.Shell.UI
             cnv.DrawLine(x + width - 1, y + height - 1, x + 1, y + height - 1, Color.LightGray);
             cnv.DrawLine(x + width - 1, y + height - 1, x + width - 1, y + 1, Color.LightGray);
         }
-        public static bool RenderButton(string text, int x, int y, int width, int height, Canvas cnv, bool center = true, ConsoleKeyEx ex = default)
+        public static bool RenderButton(string text, int x, int y, int width, int height, Canvas cnv, UIDesktop desk, bool center = true, ConsoleKeyEx ex = default)
 		{
 			if (ex != default)
 			{
-				var desk = WindowManager.DesktopList[WindowManager.CurrentDesktopIndex];
 				var ke = desk.KeyBuffer.Peek();
 
 				if (ke.Key == ex) return true;

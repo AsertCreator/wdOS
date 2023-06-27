@@ -19,6 +19,7 @@
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
         <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
+        <ExtractMapFile>True</ExtractMapFile>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
