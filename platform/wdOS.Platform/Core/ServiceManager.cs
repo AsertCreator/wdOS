@@ -68,8 +68,20 @@ namespace wdOS.Platform.Core
             };
             Services.Add(serv);
             return serv.SID;
-        }
-        public static Service GetServiceBySID(uint sid)
+		}
+		public unsafe static uint CreateUnmanagedService(string name, string desc, void* callback)
+		{
+			Service serv = new()
+			{
+				Name = name,
+				Description = desc,
+				AuxObject = new IntPtr(callback),
+				Tick = x => ((delegate* unmanaged[Cdecl]<int>)((IntPtr)x.AuxObject).ToPointer())() == 1
+			};
+			Services.Add(serv);
+			return serv.SID;
+		}
+		public static Service GetServiceBySID(uint sid)
         {
             for (int i = 0; i < Services.Count; i++)
             {
