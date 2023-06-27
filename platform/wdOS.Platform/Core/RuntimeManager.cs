@@ -7,8 +7,19 @@ using System.Threading.Tasks;
 
 namespace wdOS.Platform.Core
 {
-	public unsafe static class DynamicLinkerManager
+	public unsafe static class RuntimeManager
 	{
+		public static List<Memory<byte>> UsedMemory;
+		private static bool initialized = false;
+
+		public static void Initialize()
+		{
+			if (!initialized)
+			{
+				UsedMemory = new();
+				initialized = true;
+			}
+		}
 		public static T CallInUsermode<T>(void* addr)
 		{
 			var func = ((delegate* unmanaged[Cdecl]<T>)(addr));

@@ -249,8 +249,18 @@ namespace wdOS.Platform.Core
                     while (true) CPU.Halt();
             }
         }
-    }
-    public enum ShutdownType
+	}
+	public unsafe class Process
+	{
+		public int PID;
+		public string BinaryPath;
+		public string ConsoleArguments;
+		public string CurrentDirectory;
+		public EEExecutable ExecutableFile;
+		public Process Executor;
+		public bool IsRunning = false;
+	}
+	public enum ShutdownType
     {
         SoftShutdown, SoftRestart, HardShutdown, HardRestart, Panic, Halt
     }

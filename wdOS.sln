@@ -165,6 +165,5 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		platform\wdOS.Runtime\wdOS.Runtime.projitems*{4c97ac66-dc03-45ff-806d-4cf6a930aaa9}*SharedItemsImports = 13
 		platform\wdOS.Runtime\wdOS.Runtime.projitems*{6c520ddc-166f-4920-b210-80a482e5692f}*SharedItemsImports = 5
-		platform\wdOS.Runtime\wdOS.Runtime.projitems*{8daef3f5-f02b-4aca-8e5b-e57a28326a4b}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

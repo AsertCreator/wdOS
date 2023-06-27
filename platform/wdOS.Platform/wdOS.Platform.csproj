@@ -29,6 +29,4 @@
       </Reference>
     </ItemGroup>
 
-    <Import Project="..\wdOS.Runtime\wdOS.Runtime.projitems" Label="Shared" />
-
 </Project>
