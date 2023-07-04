@@ -16,7 +16,7 @@
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="CosmosPlugs" Version="1.0.0" />
-        <PackageReference Include="PrismAPI" Version="1.0.2" />
+        <PackageReference Include="PrismAPI" Version="1.0.3" />
     </ItemGroup>
 
     <ItemGroup>

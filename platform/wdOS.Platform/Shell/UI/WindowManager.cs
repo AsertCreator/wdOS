@@ -144,7 +144,7 @@ namespace wdOS.Platform.Shell.UI
                 BackgroundColor = Color.LightGray,
                 DesktopOwner = session.User,
                 DesktopAuxObject = null,
-                Name = "AssociatedDesktop of " + session.User.UserName
+                Name = "Desktop of " + session.User.UserName
             };
         }
         public static void SetupNotifyDesktop()
@@ -154,7 +154,7 @@ namespace wdOS.Platform.Shell.UI
 				DesktopAuxObject = null,
 				DesktopOwner = UserManager.EveryoneUser,
 				BackgroundColor = Color.LightGray,
-                Name = "Notify AssociatedDesktop"
+                Name = "Notification Desktop"
 			};
 		}
         public static void Start()

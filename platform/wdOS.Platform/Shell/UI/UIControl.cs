@@ -13,6 +13,9 @@ namespace wdOS.Platform.Shell.UI
         public string Text;
         public Point Location;
         public Point Size;
+        public Color Foreground = Color.Black;
+		public Color Background = Color.Transparent;
+		public Action OnActivation;
 
         public abstract void Render(Canvas cnv);
     }

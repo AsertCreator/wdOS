@@ -57,28 +57,15 @@ namespace wdOS.Platform.Shell.UI
 				if (ke.Key == ex) return true;
 			}
 
-			if (Collide((int)MouseManager.X, (int)MouseManager.Y, x, y, width, height) && MouseManager.MouseState == MouseState.Left)
-			{
-				RenderSunkenBox(x, y, width, height, cnv);
+            var pressed = Collide((int)MouseManager.X, (int)MouseManager.Y, x, y, width, height) && MouseManager.MouseState == MouseState.Left;
+			
+            if (pressed) RenderSunkenBox(x, y, width, height, cnv);
+			else RenderRaisedBox(x, y, width, height, cnv);
 
-				if (center)
-					cnv.DrawString(x + width / 2, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, true);
-				else
-					cnv.DrawString(x + 3, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, false);
+			if (center) cnv.DrawString(x + width / 2, y + height / 2, text, WindowManager.SystemFont, Color.Black, center);
+			else cnv.DrawString(x + 3, y + height / 2, text, WindowManager.SystemFont, Color.Black, center);
 
-                return true;
-			}
-            else
-			{
-				RenderRaisedBox(x, y, width, height, cnv);
-
-				if (center)
-					cnv.DrawString(x + width / 2, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, true);
-				else
-					cnv.DrawString(x + 3, y + height / 2 - WindowManager.SystemFont.Size / 2, text, WindowManager.SystemFont, Color.Black, false);
-
-				return false;
-			}
+            return pressed;
         }
         public static bool Collide(int mx, int my, int bx, int by, int bw, int bh) => 
             mx >= bx && mx <= bx + bw && my >= by && my <= by + bh;

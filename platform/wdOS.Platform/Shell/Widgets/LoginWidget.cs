@@ -20,7 +20,7 @@ namespace wdOS.Platform.Shell.Widgets
 
 		public LoginWidget()
 		{
-			Name = "Login";
+			Name = "wdOS: Login";
 			Description = Name;
 			Version = PlatformManager.GetPlatformVersion();
 		}
@@ -30,11 +30,26 @@ namespace wdOS.Platform.Shell.Widgets
 			uw.Location = new Point(
 				WindowManager.ScreenWidth / 2 - InitialWidth / 2,
 				WindowManager.ScreenHeight / 2 - InitialWidth / 2);
+
+			uw.AddControl(new UIStatic() { Location = new Point(5, 5), Text = "Welcome! Select your profile and login." });
+
 			uw.AddControl(new UIButton()
 			{
-				Location = new Point(5, InitialWidth - 23 - 5),
-				Size = new Point(InitialWidth - 10, 23),
+				Location = new Point(80 * 0 + 5, uw.GetClientAreaSizeY() - 23 - 5),
+				Size = new Point(75, 23),
 				Text = "Login"
+			});
+			uw.AddControl(new UIButton()
+			{
+				Location = new Point(80 * 1 + 5, uw.GetClientAreaSizeY() - 23 - 5),
+				Size = new Point(75, 23),
+				Text = "Shutdown"
+			});
+			uw.AddControl(new UIButton()
+			{
+				Location = new Point(80 * 2 + 5, uw.GetClientAreaSizeY() - 23 - 5),
+				Size = new Point(75, 23),
+				Text = "Restart"
 			});
 		}
 	}

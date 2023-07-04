@@ -37,10 +37,10 @@ namespace wdOS.Platform.Shell.UI
             for (int i = 0; i < Widgets.Count; i++)
                 Widgets[i].Render();
 
-            string text = "Frame #" + WindowManager.Framecount.ToString() + 
-                "\nMemory usage percentage: " + GCImplementation.GetUsedRAM() / (double)(CPU.GetAmountOfRAM() * 1048576) * 100.0 + "%";
+            string text = "Frame #" + WindowManager.Framecount.ToString() + ", FPS: " + WindowManager.CanvasObject.GetFPS() +
+				"\nMemory usage percentage: " + GCImplementation.GetUsedRAM() / (double)(CPU.GetAmountOfRAM() * 1048576) * 100.0 + "%";
 
-			CommonRenderer.RenderStatic(20, 20, text, WindowManager.CanvasObject, Color.White);
+			CommonRenderer.RenderStatic(4, 4, text, WindowManager.CanvasObject, Color.White);
 
             GCImplementation.Free(text);
         }
