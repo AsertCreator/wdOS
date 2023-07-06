@@ -30,19 +30,20 @@ namespace wdOS.Platform.Core
 
 		private static void HandleSWI(ref INTs.IRQContext ctx)
 		{
-			SystemCallInfo info = new();
-
-			info.FuncNumber = (ushort)ctx.EAX;
-			info.RegisterEAX = ctx.EAX;
-			info.RegisterEBX = ctx.EBX;
-			info.RegisterECX = ctx.ECX;
-			info.RegisterEDX = ctx.EDX;
-			info.RegisterESI = ctx.ESI;
-			info.RegisterEDI = ctx.EDI;
-			info.RegisterESP = ctx.ESP;
-			info.RegisterEBP = ctx.EBP;
-			info.RegisterEFL = (uint)ctx.EFlags;
-			info.RegisterEIP = ctx.EIP;
+			SystemCallInfo info = new()
+			{
+				FuncNumber = (ushort)ctx.EAX,
+				RegisterEAX = ctx.EAX,
+				RegisterEBX = ctx.EBX,
+				RegisterECX = ctx.ECX,
+				RegisterEDX = ctx.EDX,
+				RegisterESI = ctx.ESI,
+				RegisterEDI = ctx.EDI,
+				RegisterESP = ctx.ESP,
+				RegisterEBP = ctx.EBP,
+				RegisterEFL = (uint)ctx.EFlags,
+				RegisterEIP = ctx.EIP
+			};
 
 			if (!SystemCallHandlers.ContainsKey(info.FuncNumber))
 			{

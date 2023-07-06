@@ -43,7 +43,7 @@ namespace wdOS.Platform
 
                 LateInitialization();
             }
-            catch (Exception e)
+            catch
             {
                 Console.WriteLine("critical error");
                 WaitForShutdown(true, 5, false);

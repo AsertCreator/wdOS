@@ -13,14 +13,6 @@ namespace wdOS.Platform.Core
         {
             WindowManager.Initialize();
             WindowManager.Start();
-
-            return;
-            // nope
-            if (Bootstrapper.AlterShell == "debugsh")
-            {
-                Console.WriteLine("Debug Shell ended with code " + DebugShellManager.RunDebugShell());
-                while (true) { }
-            }
         }
     }
 }
