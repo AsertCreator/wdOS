@@ -19,9 +19,10 @@ namespace wdOS.Platform.Shell.UI
         public static ushort ScreenWidth = 800;
         public static ushort ScreenHeight = 600;
         public static Color BackgroundColor = Color.ClassicBlue;
-        public static Color GrayColor = new Color(198, 198, 198);
-        public static Color NearWhiteColor = new Color(222, 222, 222);
-        public static UIDesktop CurrentDesktop;
+        public static Color GrayColor = new (198, 198, 198);
+        public static Color NearWhiteColor = new (222, 222, 222);
+		public static Color DarkColor = new (128, 128, 128);
+		public static UIDesktop CurrentDesktop;
 		public static UIDesktop NotifyDesktop;
 		public static List<UIDesktop> UserDesktops;
 		public static List<WidgetBase> RegisteredWidgets = new();
@@ -38,7 +39,6 @@ namespace wdOS.Platform.Shell.UI
 					CanvasObject = Display.GetDisplay(ScreenWidth, ScreenHeight);
 
                     RegisteredWidgets.Add(new LoginWidget());
-					RegisteredWidgets.Add(new CalculatorWidget());
 
 					SetupNotifyDesktop();
                     CurrentDesktop = NotifyDesktop;
@@ -56,10 +56,6 @@ namespace wdOS.Platform.Shell.UI
 						Console.Clear();
                         Console.WriteLine("wdOS was unable to initialize graphical shell. Press any key to return to Debug Shell...");
                         Console.ReadKey();
-
-						Console.WriteLine("To try run graphical shell again, execute \"shell\" command\n");
-
-						DebugShellManager.RunDebugShell();
 					}
                     else
                     {
@@ -69,11 +65,12 @@ namespace wdOS.Platform.Shell.UI
 						Console.SetWindowSize(90, 30);
 
 						Console.Clear();
-						Console.WriteLine("To try run graphical shell again, execute \"shell\" command\n");
-
-						DebugShellManager.RunDebugShell();
 					}
-                }
+
+					Console.WriteLine("To try run graphical shell again, execute \"shell\" command\n");
+
+					DebugShellManager.RunDebugShell();
+				}
             }
         }
         public static WidgetBase FindWidgetByID(uint id)
@@ -88,12 +85,14 @@ namespace wdOS.Platform.Shell.UI
         }
         public static UserSession CreateUISession()
         {
-            UserSession session = new UserSession();
-            session.InteractDesktop = null;
-            session.User = UserManager.CurrentUser;
-            return session;
+			UserSession session = new()
+			{
+				InteractDesktop = null,
+				User = UserManager.CurrentUser
+			};
+			return session;
         }
-        public static unsafe void DestroyWidget(ref UIWindow widget)
+        public static unsafe void DestroyWindow(ref UIWindow widget)
         {
             for (int i = 0; i < widget.Controls.Count; i++)
             {
@@ -116,17 +115,17 @@ namespace wdOS.Platform.Shell.UI
         }
         public static void DestroyDesktop(ref UIDesktop desktop)
         {
-            for (int i = 0; i < desktop.Widgets.Count; i++)
+            for (int i = 0; i < desktop.Windows.Count; i++)
             {
-                var widget = desktop.Widgets[i];
-                DestroyWidget(ref widget);
+                var widget = desktop.Windows[i];
+                DestroyWindow(ref widget);
             }
 
             GCImplementation.Free(desktop.KeyBuffer);
 			GCImplementation.Free(desktop.Name);
 			GCImplementation.Free(desktop.BackgroundColor);
 			GCImplementation.Free(desktop.DesktopAuxObject);
-			GCImplementation.Free(desktop.Widgets);
+			GCImplementation.Free(desktop.Windows);
 			GCImplementation.Free(desktop);
 
             desktop = null;

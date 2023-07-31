@@ -16,7 +16,7 @@ namespace wdOS.Platform.Shell.UI
         public int DesktopHeight = WindowManager.ScreenHeight;
 		public int DesktopID = nextdeskid++;
 		public object DesktopAuxObject;
-		public List<UIWindow> Widgets = new();
+		public List<UIWindow> Windows = new();
 		public CircularBuffer<KeyEvent> KeyBuffer = new(4);
 		public User DesktopOwner;
         private bool initialized = false;
@@ -34,8 +34,8 @@ namespace wdOS.Platform.Shell.UI
             if (KeyboardManager.KeyAvailable) KeyBuffer.Write(KeyboardManager.ReadKey());
 
             WindowManager.CanvasObject.Clear(BackgroundColor);
-            for (int i = 0; i < Widgets.Count; i++)
-                Widgets[i].Render();
+            for (int i = 0; i < Windows.Count; i++)
+                Windows[i].Render();
 
             string text = "Frame #" + WindowManager.Framecount.ToString() + ", FPS: " + WindowManager.CanvasObject.GetFPS() +
 				"\nMemory usage percentage: " + GCImplementation.GetUsedRAM() / (double)(CPU.GetAmountOfRAM() * 1048576) * 100.0 + "%";
@@ -46,20 +46,7 @@ namespace wdOS.Platform.Shell.UI
         }
         public void OpenWidget(WidgetBase wb, object arg)
         {
-            var widget = new UIWindow()
-            {
-                WindowTitle = wb.Name,
-                BackgroundColor = Color.White,
-                AssociatedDesktop = this,
-                Location = new Point(25, 25),
-                Size = new Point(wb.InitialWidth, wb.InitialHeight),
-                AssociatedWidget = wb,
-                WindowStyle = UIWindowStyle.None
-            };
-
-            wb.SetupUIWindow(widget, arg);
-
-            Widgets.Add(widget);
+            Windows.Add(wb.CreateWindow(arg));
         }
     }
 }

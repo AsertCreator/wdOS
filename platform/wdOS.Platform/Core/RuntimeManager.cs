@@ -22,6 +22,7 @@ namespace wdOS.Platform.Core
 		}
 		public static T CallInUsermode<T>(void* addr)
 		{
+			// todo: switch to usermode
 			var func = ((delegate* unmanaged[Cdecl]<T>)(addr));
 			return func();
 		}

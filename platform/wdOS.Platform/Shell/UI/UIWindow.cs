@@ -14,7 +14,7 @@ using XSharp.Assembler.x86;
 
 namespace wdOS.Platform.Shell.UI
 {
-    public sealed class UIWindow
+    public abstract class UIWindow
     {
         public static ulong NextZIndex = 0;
         public string WindowTitle;
@@ -36,42 +36,45 @@ namespace wdOS.Platform.Shell.UI
             control.Window = this;
         }
         public void Resize(Point ns)
-        {
-            Size = ns;
+		{
+			if (WindowStyle == UIWindowStyle.FullScreen)
+			{
+				Size.X = AssociatedDesktop.DesktopWidth;
+				Size.Y = AssociatedDesktop.DesktopHeight;
+				Location.X = 0;
+				Location.Y = 0;
+			}
+			if (WindowStyle == UIWindowStyle.Transparent) BackgroundColor = Color.Transparent;
+
+			Size = ns;
             ClientAreaBuffer = new Canvas((ushort)GetClientAreaSizeX(), (ushort)GetClientAreaSizeY());
-        }
+		}
         public void Close()
         {
-            var widget = this;
+            var window = this;
 
-			AssociatedDesktop.Widgets.Remove(this);
-            WindowManager.DestroyWidget(ref widget);
+			AssociatedDesktop.Windows.Remove(this);
+            WindowManager.DestroyWindow(ref window);
         }
         public int GetClientAreaSizeX() => WindowStyle != UIWindowStyle.None ? Size.X : Size.X - 6;
 		public int GetClientAreaSizeY() => WindowStyle != UIWindowStyle.None ? Size.Y : Size.Y - 9 - WindowManager.SystemFont.Size;
 		public void Render()
         {
             if (!initialized)
-            {
-                Resize(Size);
+			{
+				OnCreate();
+
+				Resize(Size);
 
                 AssociatedDesktop = WindowManager.CurrentDesktop;
-
-                if (WindowStyle == UIWindowStyle.FullScreen)
-                {
-                    Size.X = AssociatedDesktop.DesktopWidth;
-                    Size.Y = AssociatedDesktop.DesktopHeight;
-                    Location.X = 0;
-                    Location.Y = 0;
-                }
-                if (WindowStyle == UIWindowStyle.Transparent) BackgroundColor = Color.Transparent;
 
                 initialized = true;
 			}
 
-			ClientAreaBuffer.DrawFilledRectangle(0, 0, (ushort)Size.X, (ushort)Size.Y, 0, BackgroundColor);
-			ClientAreaBuffer.DrawString(5, 5, "Window Test", WindowManager.SystemFont, Color.Black);
+			ClientAreaBuffer.Clear(BackgroundColor);
 			for (int i = 0; i < Controls.Count; i++) Controls[i].Render(ClientAreaBuffer);
+
+            OnRender(ClientAreaBuffer);
 
 			switch (WindowStyle)
             {
@@ -87,7 +90,9 @@ namespace wdOS.Platform.Shell.UI
 					WindowManager.CanvasObject.DrawImage(Location.X, Location.Y, ClientAreaBuffer, true);
                     break;
             }
-        }
+		}
+		protected abstract void OnCreate();
+		protected abstract void OnRender(Canvas cnv);
     }
     public enum UIWindowStyle
     {

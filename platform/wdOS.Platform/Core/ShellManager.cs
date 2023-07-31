@@ -9,10 +9,11 @@ namespace wdOS.Platform.Core
 {
     public static class ShellManager
     {
+        private static object temp = new();
         public static void Start()
         {
-            WindowManager.Initialize();
-            WindowManager.Start();
-        }
+			WindowManager.Initialize();
+			WindowManager.Start();
+		}
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PrismAPI.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +13,6 @@ namespace wdOS.Platform.Shell.Widgets
 	{
 		public const uint ID = 100;
 
-		public override int InitialWidth => 400;
-		public override int InitialHeight => 300;
 		public override bool IsHidden => true;
 		public override bool IsSystem => true;
 		public override uint WidgetID => ID;
@@ -25,32 +24,41 @@ namespace wdOS.Platform.Shell.Widgets
 			Version = PlatformManager.GetPlatformVersion();
 		}
 
-		public override void SetupUIWindow(UIWindow uw, object arg)
+		private class LoginWidgetWindow : UIWindow
 		{
-			uw.Location = new Point(
-				WindowManager.ScreenWidth / 2 - InitialWidth / 2,
-				WindowManager.ScreenHeight / 2 - InitialWidth / 2);
+			protected override void OnCreate()
+			{
+				Location = new Point(
+					WindowManager.ScreenWidth / 2 - 400 / 2,
+					WindowManager.ScreenHeight / 2 - 150 / 2);
 
-			uw.AddControl(new UIStatic() { Location = new Point(5, 5), Text = "Welcome! Select your profile and login." });
+				BackgroundColor = WindowManager.GrayColor;
 
-			uw.AddControl(new UIButton()
+				AddControl(new UIButton()
+				{
+					Location = new Point(80 * 0 + 5, GetClientAreaSizeY() - 23 - 5),
+					Size = new Point(75, 23),
+					Text = "Login"
+				});
+				AddControl(new UIButton()
+				{
+					Location = new Point(80 * 1 + 5, GetClientAreaSizeY() - 23 - 5),
+					Size = new Point(75, 23),
+					Text = "Shutdown"
+				});
+				AddControl(new UIButton()
+				{
+					Location = new Point(80 * 2 + 5, GetClientAreaSizeY() - 23 - 5),
+					Size = new Point(75, 23),
+					Text = "Restart"
+				});
+			}
+			protected override void OnRender(Canvas cnv)
 			{
-				Location = new Point(80 * 0 + 5, uw.GetClientAreaSizeY() - 23 - 5),
-				Size = new Point(75, 23),
-				Text = "Login"
-			});
-			uw.AddControl(new UIButton()
-			{
-				Location = new Point(80 * 1 + 5, uw.GetClientAreaSizeY() - 23 - 5),
-				Size = new Point(75, 23),
-				Text = "Shutdown"
-			});
-			uw.AddControl(new UIButton()
-			{
-				Location = new Point(80 * 2 + 5, uw.GetClientAreaSizeY() - 23 - 5),
-				Size = new Point(75, 23),
-				Text = "Restart"
-			});
+				cnv.DrawString(5, 5, "Welcome! Select your profile and login", WindowManager.SystemFont, Color.Black);
+			}
 		}
+
+		public override UIWindow CreateWindow(object arg) => new LoginWidgetWindow();
 	}
 }
